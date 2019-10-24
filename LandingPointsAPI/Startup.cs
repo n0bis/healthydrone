@@ -33,7 +33,7 @@ namespace LandingPointsAPI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<AppDbContext>(options => {
-                options.UseInMemoryDatabase("supermarket-api-in-memory");
+                options.UseInMemoryDatabase("landingpoint-api-in-memory");
             });
 
             services.AddScoped<ILandingPointRepository, LandingPointRepository>();
