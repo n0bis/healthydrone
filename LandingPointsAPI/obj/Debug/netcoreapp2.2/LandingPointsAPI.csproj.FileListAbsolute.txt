@@ -1,0 +1,14 @@
+D:\HealthyDrone\healthydrone\LandingPointsAPI\bin\Debug\netcoreapp2.2\LandingPointsAPI.deps.json
+D:\HealthyDrone\healthydrone\LandingPointsAPI\bin\Debug\netcoreapp2.2\LandingPointsAPI.runtimeconfig.json
+D:\HealthyDrone\healthydrone\LandingPointsAPI\bin\Debug\netcoreapp2.2\LandingPointsAPI.runtimeconfig.dev.json
+D:\HealthyDrone\healthydrone\LandingPointsAPI\bin\Debug\netcoreapp2.2\LandingPointsAPI.dll
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.csprojAssemblyReference.cache
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.csproj.CoreCompileInputs.cache
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.RazorAssemblyInfo.cache
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.RazorAssemblyInfo.cs
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.AssemblyInfoInputs.cache
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.AssemblyInfo.cs
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.RazorTargetAssemblyInfo.cache
+D:\HealthyDrone\healthydrone\LandingPointsAPI\bin\Debug\netcoreapp2.2\LandingPointsAPI.pdb
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.dll
+D:\HealthyDrone\healthydrone\LandingPointsAPI\obj\Debug\netcoreapp2.2\LandingPointsAPI.pdb
