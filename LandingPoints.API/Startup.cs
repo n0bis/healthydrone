@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using LandingPoints.API.Mapping;
 
 namespace LandingPoints.API
 {
@@ -42,6 +43,14 @@ namespace LandingPoints.API
             services.AddScoped<ILandingPointService, LandingPointService>();
 
             services.AddControllers();
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new ModelToResourceProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
         }
 
