@@ -19,5 +19,10 @@ namespace LandingPoints.API.Persistance.Repositories
         {
             return await _context.LandingPoints.ToListAsync();
         }
+
+        public async Task AddAsync(LandingPoint landingPoint)
+        {
+            await _context.LandingPoints.AddAsync(landingPoint);
+        }
     }
 }

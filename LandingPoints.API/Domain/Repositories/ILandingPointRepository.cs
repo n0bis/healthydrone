@@ -9,6 +9,6 @@ namespace LandingPoints.API.Domain.Repositories
     public interface ILandingPointRepository
     {
         Task<IEnumerable<LandingPoint>> ListAsync();
-
+        Task AddAsync(LandingPoint landingPoint);
     }
 }

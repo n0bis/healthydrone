@@ -46,11 +46,13 @@ namespace LandingPoints.API
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new ModelToResourceProfile());
+                mc.AddProfile(new ModelToResourceProfile()); mc.AddProfile(new ResourceToModelProfile());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         }
 

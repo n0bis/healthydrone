@@ -12,10 +12,13 @@ namespace LandingPoints.API.Services
     public class LandingPointService : ILandingPointService
     {
         private readonly ILandingPointRepository _landingPointRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public LandingPointService(ILandingPointRepository landingPointRepository)
+        public LandingPointService(ILandingPointRepository landingPointRepository, IUnitOfWork unitOfWork)
         {
-            this._landingPointRepository = landingPointRepository;
+            _landingPointRepository = landingPointRepository;
+            _unitOfWork = unitOfWork;
+
         }
 
         public async Task<IEnumerable<LandingPoint>> ListAsync()
@@ -23,9 +26,21 @@ namespace LandingPoints.API.Services
             return await _landingPointRepository.ListAsync();
         }
 
-        public Task<SaveLandingPointResponse> SaveAsync(LandingPoint landingPoint)
+        public async Task<SaveLandingPointResponse> SaveAsync(LandingPoint landingPoint)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _landingPointRepository.AddAsync(landingPoint);
+                await _unitOfWork.CompleteAsync();
+
+                return new SaveLandingPointResponse(landingPoint);
+            }
+            catch (Exception ex)
+            {
+                return new SaveLandingPointResponse($"An error has occured while saving the Landing Point: {ex.Message}");
+            }
+
+
         }
     }
 }
