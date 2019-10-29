@@ -24,7 +24,7 @@ namespace alert_state_machine.Services
 
         public async Task Connect(IConfiguration config)
         {
-            this.utm.SetAuthToken(config["token"]);
+            this.utm.SetAuthToken(config["UTM:token"]);
             var channel = await this.utm.CreateChannel("adsb").SubscribeAsync();
             channel.OnMessage(OnMessage);
             await this.utm.ConnectAsync();
