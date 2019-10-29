@@ -12,6 +12,7 @@ namespace common.utm.service
         private bool _disposeHttpClient;
 
         public TokenClient Tokens { get; }
+        public OperationClient Operation { get; }
 
         public UTMService(string clientId, string clientSecret,
             string operatorMail, string operatorPass)
@@ -24,6 +25,7 @@ namespace common.utm.service
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
             this.Tokens = new TokenClient(_httpClient, new Credentials { ClientId = clientId, ClientSecret = clientSecret, OperatorMail = operatorMail, OperatorPass = operatorPass });
+            this.Operation = new OperationClient(_httpClient);
 
             this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Tokens.Auth().Result.access_token);
         }
