@@ -634,4 +634,5 @@ $RECYCLE.BIN/
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 
 # End of https://www.gitignore.io/api/macos,rider,csharp,windows,visualstudio
-alert_state_machine/appsettings.json
+.DS_Store
+.DS_Store

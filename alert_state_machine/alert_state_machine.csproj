@@ -23,4 +23,9 @@
   <Folder Include="Models\" />
   <Folder Include="Helpers\" />
 </ItemGroup>
+<ItemGroup>
+  <Reference Include="utm-service">
+    <HintPath>..\utm-service\utm-service\bin\Debug\netcoreapp3.0\utm-service.dll</HintPath>
+  </Reference>
+</ItemGroup>
 </Project>

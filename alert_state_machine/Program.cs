@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using alert_state_machine.Models;
 using alert_state_machine.Services;
 using Microsoft.Extensions.Configuration;
+using utm_service;
+using utm_service.Models;
 
 namespace alert_state_machine
 {
@@ -15,11 +16,10 @@ namespace alert_state_machine
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
             var config = builder.Build();
 
-            var utmService = new UTMService(config);
-            await utmService.Auth();
+            var utmService = new UTMService(config["UTM:clientid"], config["UTM:clientsecret"], config["UTM:username"], config["UTM:password"]);
 
-            List<Flight> flights = await utmService.GetFlightsAsync();
-            flights.ForEach(flight => Console.WriteLine(flight));
+            List<Flight> flights = await utmService.Operation.GetFlightsInAllOperationsAsync();
+            flights?.ForEach(flight => Console.WriteLine(flight.operationName));
 
             //var weatherSerivce = new WeatherService();
 
