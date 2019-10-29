@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace alert_state_machine.Persistence
@@ -30,7 +31,30 @@ namespace alert_state_machine.Persistence
             }
         }
 
-        // Stores the value for 24 hours, at that point in time a drone flight should be over
+        public async Task Set(string key, object value)
+        {
+            var db = this.redis.GetDatabase();
+            await db.StringSetAsync(key, JsonConvert.SerializeObject(value), new TimeSpan(24, 0, 0));
+        }
+
+        public async Task<T> Get<T>(string key)
+        {
+            var db = this.redis.GetDatabase();
+            try
+            {
+                var value = await db.StringGetAsync(key);
+                if (!value.IsNull)
+                {
+                    return JsonConvert.DeserializeObject<T>(value);
+                } else {
+                    return default(T);
+                }
+            } catch(Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> Set(string key, string value)
         {
             var db = this.redis.GetDatabase();

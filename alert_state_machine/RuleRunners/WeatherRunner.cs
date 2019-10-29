@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using alert_state_machine.Models;
 using alert_state_machine.Persistence;
 using alert_state_machine.Services;
 using alert_state_machine.States;
@@ -11,7 +13,7 @@ namespace alert_state_machine.RuleRunners
 {
     public static class WeatherRunner
     {
-        public static async void WeatherCheck(IConfiguration config)
+        public static async Task WeatherCheck(IConfiguration config)
         {
             using (var utmService = new UTMService(config["UTM:clientid"], config["UTM:clientsecret"],
                 config["UTM:username"], config["UTM:password"]))
@@ -26,24 +28,26 @@ namespace alert_state_machine.RuleRunners
                     redisService.Connect();
                     var process = new Process();
                     var key = $"{flight.uasOperation}-{flight.uas.uniqueIdentifier}-weather";
-                    var cachedProcess = await redisService.Get(key);
-                    if (cachedProcess != null)
-                        process.CurrentState = (ProcessState)Enum.Parse(typeof(ProcessState), cachedProcess);
-
-                    if (weatherResponse.main.temp < 20 && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive))
-                    {
-                        process.MoveNext();
+                    var cachedProcess = await redisService.Get<State>(key);
+                    if (cachedProcess != null) {
+                        process.CurrentState = cachedProcess.CurrentState;
+                    } else {
+                        cachedProcess = new State();
                     }
-                    else
-                    {
+
+                    if (weatherResponse.main.temp < 20 && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive)) {
+                        process.MoveNext();
+                    } else {
                         process.MovePrev();
                     }
 
-                    await redisService.Set(key, process.CurrentState.ToString());
-                    if (process.CurrentState == ProcessState.Raised)
-                    {
+                    
+                    if (process.CurrentState == ProcessState.Raised && !cachedProcess.Triggered && !cachedProcess.Handled) {
                         Console.WriteLine($"SEND ALERT FOR: {flight.uasOperation}-{flight.uas.uniqueIdentifier}-weather");
+                        cachedProcess.Triggered = true;
                     }
+                    cachedProcess.CurrentState = process.CurrentState;
+                    await redisService.Set(key, cachedProcess);
                 });
             }
         }
