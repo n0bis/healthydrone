@@ -1,7 +1,7 @@
-﻿using System.Net.Http;
-using common.utm.service.Models;
+﻿using System;
+using System.Net.Http;
 
-namespace common.utm.service.Clients
+namespace utm_service.Clients
 {
     public class ClientBase
     {
