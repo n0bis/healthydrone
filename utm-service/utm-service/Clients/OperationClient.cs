@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using common.utm.service.Models;
+using utm_service.Models;
 
-namespace common.utm.service.Clients
+namespace utm_service.Clients
 {
     public class OperationClient : ClientBase
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using common.utm.service.Clients;
-using common.utm.service.Models;
+using utm_service.Clients;
+using utm_service.Models;
 
-namespace common.utm.service
+namespace utm_service
 {
     public class UTMService : IDisposable
     {
@@ -32,7 +32,7 @@ namespace common.utm.service
 
         public void Dispose()
         {
-            if(this._disposeHttpClient)
+            if (this._disposeHttpClient)
             {
                 this._httpClient.Dispose();
                 this._disposeHttpClient = false;

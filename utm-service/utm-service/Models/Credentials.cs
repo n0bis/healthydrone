@@ -1,5 +1,5 @@
 ﻿using System;
-namespace common.utm.service.Models
+namespace utm_service.Models
 {
     public class Credentials
     {
