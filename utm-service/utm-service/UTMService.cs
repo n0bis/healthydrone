@@ -25,9 +25,9 @@ namespace utm_service
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
             this.Tokens = new TokenClient(_httpClient, new Credentials { ClientId = clientId, ClientSecret = clientSecret, OperatorMail = operatorMail, OperatorPass = operatorPass });
-            this.Operation = new OperationClient(_httpClient);
-
             this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Tokens.Auth().Result.access_token);
+
+            this.Operation = new OperationClient(_httpClient);
         }
 
         public void Dispose()
