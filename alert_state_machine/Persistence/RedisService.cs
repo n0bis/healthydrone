@@ -30,6 +30,7 @@ namespace alert_state_machine.Persistence
             }
         }
 
+        // Stores the value for 24 hours, at that point in time a drone flight should be over
         public async Task<bool> Set(string key, string value)
         {
             var db = this.redis.GetDatabase();

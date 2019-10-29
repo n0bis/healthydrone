@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using alert_state_machine.Commands;
-using alert_state_machine.States;
 
-namespace alert_state_machine
+namespace alert_state_machine.States
 {
     public class Process
     {
@@ -31,7 +30,7 @@ namespace alert_state_machine
         }
 
         private Dictionary<StateTransition, ProcessState> transitions;
-        public ProcessState CurrentState { get; private set; }
+        public ProcessState CurrentState { get; set; }
 
         public Process()
         {
@@ -54,9 +53,25 @@ namespace alert_state_machine
             return nextState;
         }
 
-        public ProcessState MoveNext(Command command)
+        public ProcessState MoveNext()
         {
+            Command command = CurrentState switch
+            {
+                ProcessState.Active => Command.Raised,
+                ProcessState.Raised => Command.Handled,
+                _ => Command.Active,
+            };
             CurrentState = GetNext(command);
+            return CurrentState;
+        }
+
+        public ProcessState MovePrev()
+        {
+            if (CurrentState == ProcessState.Active)
+            {
+                CurrentState = GetNext(Command.Terminated);
+                return CurrentState;
+            }
             return CurrentState;
         }
     }
