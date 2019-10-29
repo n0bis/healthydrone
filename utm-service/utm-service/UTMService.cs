@@ -19,7 +19,7 @@ namespace utm_service
         {
             this._disposeHttpClient = true;
             this._httpClient = new HttpClient();
-            this._httpClient.BaseAddress = new Uri("");
+            this._httpClient.BaseAddress = new Uri("https://healthdrone.unifly.tech");
             this._httpClient.DefaultRequestHeaders.Clear();
             this._httpClient.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
