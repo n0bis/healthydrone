@@ -16,10 +16,11 @@ namespace alert_state_machine
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
             var config = builder.Build();
 
-            var utmService = new UTMService(config["UTM:clientid"], config["UTM:clientsecret"], config["UTM:username"], config["UTM:password"]);
-
-            List<Flight> flights = await utmService.Operation.GetFlightsInAllOperationsAsync();
-            flights?.ForEach(flight => Console.WriteLine(flight.operationName));
+            using (var utmService = new UTMService(config["UTM:clientid"], config["UTM:clientsecret"], config["UTM:username"], config["UTM:password"]))
+            {
+                List<Flight> flights = await utmService.Operation.GetFlightsInAllOperationsAsync();
+                flights?.ForEach(flight => Console.WriteLine(flight.operationName));
+            }
 
             //var weatherSerivce = new WeatherService();
 
