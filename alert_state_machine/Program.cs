@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using alert_state_machine.Services;
 using Microsoft.Extensions.Configuration;
 using utm_service;
-using utm_service.Models;
-using alert_state_machine.Models;
-using alert_state_machine.Persistence;
-using alert_state_machine.States;
 using alert_state_machine.RuleRunners;
 
 namespace alert_state_machine
@@ -22,9 +17,14 @@ namespace alert_state_machine
                 .AddJsonFile("appsettings.json");
             var config = builder.Build();
 
-            Scheduler.IntervalInMinutes(3, () =>
+            var utmService = new UTMService(config["UTM:clientid"], config["UTM:clientsecret"],
+                config["UTM:username"], config["UTM:password"]);
+
+            Scheduler.IntervalInMinutes(1, async () =>
             {
-                WeatherRunner.WeatherCheck(config);
+                Console.WriteLine(DateTime.Now);
+                await WeatherRunner.WeatherCheck(config, utmService);
+                Console.WriteLine(DateTime.Now);
             });
 
             Console.ReadKey(true);
