@@ -3,9 +3,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using common.utm.service.Models;
+using utm_service.Models;
 
-namespace common.utm.service.Clients
+namespace utm_service.Clients
 {
     public class TokenClient : ClientBase
     {
