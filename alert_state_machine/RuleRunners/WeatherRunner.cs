@@ -50,7 +50,7 @@ namespace alert_state_machine.RuleRunners
         }
 
 		// localhost:9092
-		private static async Task SendAlert(object value)
+		private static void SendAlert(object value)
 		{
             var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
 
