@@ -54,17 +54,5 @@ namespace alert_state_machine.Persistence
                 throw;
             }
         }
-
-        public async Task<bool> Set(string key, string value)
-        {
-            var db = this.redis.GetDatabase();
-            return await db.StringSetAsync(key, value, new TimeSpan(24,0,0));
-        }
-
-        public async Task<string> Get(string key)
-        {
-            var db = this.redis.GetDatabase();
-            return await db.StringGetAsync(key);
-        }
     }
 }

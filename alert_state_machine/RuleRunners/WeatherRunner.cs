@@ -5,7 +5,9 @@ using alert_state_machine.Models;
 using alert_state_machine.Persistence;
 using alert_state_machine.Services;
 using alert_state_machine.States;
+using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using utm_service;
 using utm_service.Models;
 
@@ -39,12 +41,25 @@ namespace alert_state_machine.RuleRunners
                 }
                 
                 if (process.CurrentState == ProcessState.Raised && !cachedProcess.Triggered && !cachedProcess.Handled) {
-                    Console.WriteLine($"SEND ALERT FOR: {flight.uasOperation}-{flight.uas.uniqueIdentifier}-weather");
+                    SendAlert(cachedProcess);
                     cachedProcess.Triggered = true;
                 }
                 cachedProcess.CurrentState = process.CurrentState;
                 await redisService.Set(key, cachedProcess);
             });
+        }
+
+		// localhost:9092
+		private static async Task SendAlert(object value)
+		{
+            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+
+            using (var producer = new ProducerBuilder<Null, string>(config).Build())
+            {
+                producer.Produce("weather-alert", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
+
+                producer.Flush(TimeSpan.FromMilliseconds(100));
+            }
         }
     }
 }
