@@ -635,3 +635,4 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/macos,rider,csharp,windows,visualstudio
 alert_state_machine/appsettings.json
+LandingPoints.API/.vs/LandingPoints.API/v16/.suo
