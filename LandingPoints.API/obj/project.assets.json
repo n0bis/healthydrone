@@ -8105,11 +8105,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\HealthyDrone\\healthydrone\\LandingPoints.API\\LandingPoints.API.csproj",
+      "projectUniqueName": "C:\\Users\\birke\\Documents\\GitHub\\healthydrone\\LandingPoints.API\\LandingPoints.API.csproj",
       "projectName": "LandingPoints.API",
-      "projectPath": "D:\\HealthyDrone\\healthydrone\\LandingPoints.API\\LandingPoints.API.csproj",
+      "projectPath": "C:\\Users\\birke\\Documents\\GitHub\\healthydrone\\LandingPoints.API\\LandingPoints.API.csproj",
       "packagesPath": "C:\\Users\\birke\\.nuget\\packages\\",
-      "outputPath": "D:\\HealthyDrone\\healthydrone\\LandingPoints.API\\obj\\",
+      "outputPath": "C:\\Users\\birke\\Documents\\GitHub\\healthydrone\\LandingPoints.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
