@@ -7,16 +7,10 @@ package com.mycompany.drone.simulator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.core.DefaultDockerClientConfig;
-import com.github.dockerjava.core.DockerClientBuilder;
 import io.mavsdk.mission.Mission;
 import io.mavsdk.System;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -34,32 +28,25 @@ import okhttp3.Response;
  */
 public class RunMission {
 
-    private static final Logger logger = LoggerFactory.getLogger(RunMission.class);
-
     public static void main(String[] args) throws IOException {
-        Runtime.getRuntime().exec("./mavsdk_server_macos");
+        //Runtime.getRuntime().exec("./mavsdk_server_macos");
         authUTMService();
-        spinUpDocker();
-        /*java.lang.System.out.println("Starting example: mission...");
-        logger.debug("Starting example: mission...");
+        //spinUpDocker();
+        java.lang.System.out.println("Starting example: mission...");
 
         List<Mission.MissionItem> missionItems = new ArrayList<>();
-        missionItems.add(generateMissionItem(55.370421, 10.436873));*/
+        missionItems.add(generateMissionItem(55.370421, 10.436873));
         /*missionItems.add(generateMissionItem(47.398036222362471, 8.5450146439425509));
         missionItems.add(generateMissionItem(47.397825620791885, 8.5450092830163271));
         missionItems.add(generateMissionItem(47.397832880000003, 8.5455939999999995));*/
 
         // new System("host", 12412);
-        /*System drone = new System();
- 
-        drone.getAction().disarm();
-        
-        drone.getAction().setMaximumSpeed(0.1f);*/
+        System drone = new System();
         
         /*drone.getTelemetry()
                 .getPosition().doOnEach(position -> updateFlight(position.getValue().getLatitudeDeg(), position.getValue().getLongitudeDeg())).subscribe();*/
         
-        /*drone.getTelemetry()
+        drone.getTelemetry()
                 .getPosition().subscribe(position -> updateFlight(position.getLatitudeDeg(), position.getLongitudeDeg()));
         
         drone.getMission()
@@ -84,7 +71,7 @@ public class RunMission {
             latch.await();
         } catch (InterruptedException ignored) {
             
-        }*/
+        }
     }
 
     public static Mission.MissionItem generateMissionItem(double latitudeDeg, double longitudeDeg) {
@@ -155,18 +142,5 @@ public class RunMission {
             ex.printStackTrace();
             return null;
         }
-    }
-    
-    private static void spinUpDocker() {
-        DefaultDockerClientConfig.Builder config = DefaultDockerClientConfig.createDefaultConfigBuilder();
-        DockerClient dockerClient = DockerClientBuilder
-            .getInstance(config)
-            .build();
-        
-        CreateContainerResponse container = dockerClient.createContainerCmd("jonasvautherin/px4-gazebo-headless:v1.9.2")
-            .withEnv("PX4_HOME_LAT=55.3686619", "PX4_HOME_LON=10.4300876", "PX4_HOME_ALT=10")
-            .exec();
-
-         dockerClient.startContainerCmd(container.getId()).exec();
     }
 }
