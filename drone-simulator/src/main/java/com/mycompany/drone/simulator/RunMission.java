@@ -109,13 +109,13 @@ public class RunMission {
     public static void authUTMService() {
         //var headers = Headers.of("");
         var body = new FormBody.Builder()
-                .add("username", "mafal17@student.sdu.dk")
-                .add("password", "dfYSByw9vHCR3E7")
+                .add("username", "")
+                .add("password", "")
                 .add("grant_type", "password")
                 .build();
         var reuqest = new Request.Builder()
                 .url("https://healthdrone.unifly.tech/oauth/token")
-                .addHeader("Authorization", "Basic c2R1SGVhbHRoRHJvbmVDb25uZWN0OnNkdTIwMTkwM0hlYWx0aERyb25l")
+                .addHeader("Authorization", "Basic ")
                 .post(body)
                 .build();
         
