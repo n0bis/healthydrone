@@ -48,6 +48,9 @@ public class BaseClient<T> {
 
         try (var body = response.body()) {
             String payload = body.string();
+            if (payload.isEmpty())
+                return null;
+
             return mapper.readValue(payload, tType);
         } catch (JsonMappingException e) {
             e.printStackTrace();
