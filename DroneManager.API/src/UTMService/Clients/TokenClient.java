@@ -16,13 +16,14 @@ public class TokenClient extends BaseClient<TokenHolder> {
     }
 
     public TokenHolder Auth() {
-        try (var input = TokenClient.class.getClassLoader().getResourceAsStream("application.properties")) {
+        try (var input = TokenClient.class.getClassLoader().getResourceAsStream("/application.properties")) {
             var properties = new Properties();
-            properties.load(input);
+            if (input != null)
+                properties.load(input);
 
-            String secret = properties.get("utm.secret").toString();
-            String username = properties.get("utm.username").toString();
-            String password = properties.get("utm.password").toString();
+            String secret = "";//coalesce(properties.get("utm.secret").toString(), "");
+            String username = "";//coalesce(properties.get("utm.username").toString(), "");
+            String password = "";//coalesce(properties.get("utm.password").toString(), "");
 
             return this.executeForm(secret, username, password);
 
@@ -30,5 +31,9 @@ public class TokenClient extends BaseClient<TokenHolder> {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static <T> T coalesce(T one, T two) {
+        return one != null ? one : two;
     }
 }

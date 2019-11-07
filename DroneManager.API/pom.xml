@@ -15,7 +15,7 @@
     <description>Drone manager for drones</description>
 
     <properties>
-        <java.version>13</java.version>
+        <java.version>10</java.version>
     </properties>
 
     <dependencies>
@@ -50,6 +50,23 @@
             <version>4.2.2</version>
         </dependency>
         <dependency>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-client</artifactId>
+            <version>8.16.0</version>
+        </dependency>
+
+        <!--Dependencies for docker-client-->
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>2.29.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.bundles.repackaged</groupId>
+            <artifactId>jersey-guava</artifactId>
+            <version>2.25.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -67,6 +84,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>API.Application</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
