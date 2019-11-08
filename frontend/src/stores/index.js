@@ -1,7 +1,9 @@
-import userStore from "./UserStore";
 import layoutStore from "./LayoutStore";
+import mapStore from "./MapStore";
+import droneStore from "./DroneStore";
 
 export default {
-  userStore,
-  layoutStore
+  mapStore,
+  layoutStore,
+  droneStore
 };
