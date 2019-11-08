@@ -143,7 +143,7 @@ export default function App() {
             noWrap
             className={classes.title}
           >
-            Dashboard
+            Healthdrone
           </Typography>
           <IconButton color="inherit">
             <ReportIcon />
@@ -159,7 +159,7 @@ export default function App() {
       >
         <Paper square className="tabs">
           <Tabs
-            value={0}
+            value={1}
             indicatorColor="primary"
             textColor="primary"
             aria-label="disabled tabs example"
@@ -169,12 +169,12 @@ export default function App() {
           </Tabs>
         </Paper>
         <DronesList />
-        <DroneOptions />
       </Drawer>
       <main className={classes.content}>
         <Maps />
       </main>
       <Report />
+      <DroneOptions />
     </div>
   );
 }
