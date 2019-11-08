@@ -30,7 +30,10 @@ public class DroneManagerController {
 
     @RequestMapping(path= "sendDroneOnMission", method = RequestMethod.GET)
     public ResponseEntity sendDroneOnMission() {
-        droneSimulator.sendDroneOnMission();
+        String message = droneSimulator.sendDroneOnMission();
+
+        if (message != null)
+            return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity(HttpStatus.OK);
     }

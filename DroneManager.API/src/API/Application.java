@@ -13,8 +13,6 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-        //var utmService = new UTMService();
-        //utmService.clientTracking().updateFlight(55.355848, 10.440672);
     }
 
     @Bean

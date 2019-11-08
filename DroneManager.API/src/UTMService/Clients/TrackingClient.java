@@ -17,7 +17,7 @@ public class TrackingClient extends BaseClient<Response> {
     }
 
     public void updateFlight(double latitude, double longitude) {
-        var track = new Track(Instant.now().toString(), new Location(longitude, latitude), 1, new Location(10.326345, 55.470852), 1, 3.5, 2, 90, 0.1, 15.0, 89, "simulation");
+        var track = new Track(Instant.now().toString(), new Location(longitude, latitude), new Location(10.326345, 55.470852), 3.5, "simulation");
         try {
             this.executeJson(track);
         } catch (IOException e) {
