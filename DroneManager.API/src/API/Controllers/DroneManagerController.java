@@ -1,12 +1,12 @@
 package API.Controllers;
 
+import API.Domain.Models.Drone;
+import API.Resources.MissionResource;
 import DroneSimulator.DroneSimulator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -22,21 +22,20 @@ public class DroneManagerController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity createDrone() {
-        droneSimulator.createDrone();
+    public ResponseEntity createDrone(@RequestBody Drone drone) {
+        droneSimulator.createDrone(drone);
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(path= "sendDroneOnMission", method = RequestMethod.GET)
-    public ResponseEntity sendDroneOnMission() {
-        String message = droneSimulator.sendDroneOnMission();
+    @RequestMapping(path= "/sendOnMission/{id}", method = RequestMethod.POST)
+    public ResponseEntity sendDroneOnMission(@PathVariable("id") String id, @RequestBody MissionResource resource) {
+        String message = droneSimulator.sendDroneOnMission("", resource);
 
         if (message != null)
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
 
 }
