@@ -16,5 +16,6 @@ public class MissionResource {
 
     private List<DroneMission> missions;
     private Boolean returnToHomeAfterMission;
+    private String operationId;
 
 }

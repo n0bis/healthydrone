@@ -5,12 +5,16 @@ import API.Resources.MissionResource;
 import UTMService.UTMService;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.ExposedPort;
+import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import io.mavsdk.System;
+import io.mavsdk.action.Action;
 import io.mavsdk.mission.Mission;
+import org.springframework.util.SocketUtils;
 
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,27 +34,35 @@ public class DroneSimulator {
     }
 
     public void createDrone(Drone drone) {
+        ExposedPort tcp50051 = ExposedPort.tcp(50051);
+        var port = SocketUtils.findAvailableTcpPort();
+        Ports portsbinding = new Ports();
+        portsbinding.bind(tcp50051, Ports.Binding.bindPort(port));
+
         var mavsdkContainer = dockerClient
                 .createContainerCmd("mavsdk_server")
+                .withExposedPorts(tcp50051)
+                .withPortBindings(portsbinding)
                 .withTty(true)
                 .exec();
 
         dockerClient.startContainerCmd(mavsdkContainer.getId()).exec();
 
-        var mavsdkIp = dockerClient.inspectContainerCmd(mavsdkContainer.getId())
-                .exec().getNetworkSettings().getIpAddress();
+        /*var mavsdkIp = dockerClient.inspectContainerCmd(mavsdkContainer.getId())
+                .exec().getNetworkSettings().getIpAddress();*/
 
         var droneContainer = dockerClient
                 .createContainerCmd("jonasvautherin/px4-gazebo-headless:v1.9.2")
-                .withCmd("0.0.0.0 " + mavsdkIp)
-                .withEnv("PX4_HOME_LAT=55.3686619", "PX4_HOME_LON=10.4300876", "PX4_HOME_ALT=10")
+                //.withCmd("0.0.0.0 " + mavsdkIp)
+                .withEnv("PX4_HOME_LAT=" + drone.getHomeLocation().getLatitude(), "PX4_HOME_LON=" + drone.getHomeLocation().getLongitude(), "PX4_HOME_ALT=" + drone.getHomeLocation().getAltitude())
                 .withTty(true)
                 .exec();
 
         dockerClient.startContainerCmd(droneContainer.getId()).exec();
 
-        var droneSystem = new System(mavsdkIp, 50051);
-        //this.drones.put(drone.getId(), new DroneAssemble(droneSystem, hh, hh));
+        var droneSystem = new System("localhost", port);
+
+        this.drones.put(drone.getId(), new DroneAssemble(droneSystem, mavsdkContainer, droneContainer));
     }
 
     public String sendDroneOnMission(String id, MissionResource resource) {
@@ -59,10 +71,12 @@ public class DroneSimulator {
         resource.getMissions().forEach(mission -> missionItems.add(generateMissionItem(mission.getLatitude(), mission.getLongitude())));
         //missionItems.add(generateMissionItem(55.370421, 10.436873));
 
-        var drone = new System();
+        var drone = this.drones.get(id).getDrone();
 
         drone.getTelemetry()
-                .getPosition().subscribe(position -> utmService.clientTracking().updateFlight(position.getLatitudeDeg(), position.getLongitudeDeg()));
+                .getPosition()
+                .doOnError(error -> errorString.set(error.getMessage()))
+                .subscribe(position -> utmService.clientTracking().updateFlight(id, resource.getOperationId(), position.getLatitudeDeg(), position.getLongitudeDeg()));
 
         drone.getMission()
                 .uploadMission(missionItems)

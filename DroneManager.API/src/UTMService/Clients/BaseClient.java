@@ -13,6 +13,7 @@ public class BaseClient<T> {
 
     public final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     public final MediaType FORM = MediaType.parse("multipart/form-data");
+    private String baseUrl = "https://healthdrone.unifly.tech";
     private String url;
     private  String method;
     private final OkHttpClient client;
@@ -20,12 +21,20 @@ public class BaseClient<T> {
     private final TypeReference<T> tType;
     private Object body;
 
-    BaseClient(OkHttpClient client, String url, String method, TypeReference<T> tType) {
+    BaseClient(OkHttpClient client, TypeReference<T> tType) {
         this.client = client;
-        this.url = url;
-        this.method = method;
         this.mapper = new ObjectMapper();
         this.tType = tType;
+    }
+
+    protected BaseClient<T> setUrl(String url) {
+        this.url = url;
+        return this;
+    }
+
+    protected BaseClient<T> setMethod(String method) {
+        this.method = method;
+        return this;
     }
 
     protected BaseClient<T> setBody(Object value) {
@@ -35,7 +44,7 @@ public class BaseClient<T> {
 
     protected Request createRequest() {
         var builder = new Request.Builder()
-                .url(url)
+                .url(baseUrl + url)
                 .method(method, createBody());
         builder.addHeader("Content-Type", JSON.toString());
         return builder.build();
@@ -74,7 +83,7 @@ public class BaseClient<T> {
 
     protected Request createFormRequest(String secret, String username, String password) {
         var builder = new Request.Builder()
-                .url(url)
+                .url(baseUrl + url)
                 .method(method, createFormBody(username, password))
                 .addHeader("Authorization", "Basic " + secret);
         return builder.build();

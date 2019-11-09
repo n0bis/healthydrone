@@ -12,14 +12,14 @@ import java.time.Instant;
 public class TrackingClient extends BaseClient<Response> {
 
     public TrackingClient(OkHttpClient client) {
-        super(client,"https://healthdrone.unifly.tech/api/uasoperations/fb99e77b-4bfb-4a98-a32c-9717544b3903/uases/f7785735-5700-4e1c-a766-5ae7cbb4a4e3/track", "POST", new TypeReference<Response>() {
+        super(client, new TypeReference<Response>() {
         });
     }
 
-    public void updateFlight(double latitude, double longitude) {
+    public void updateFlight(String droneId, String operationId, double latitude, double longitude) {
         var track = new Track(Instant.now().toString(), new Location(longitude, latitude), new Location(10.326345, 55.470852), 3.5, "simulation");
         try {
-            this.executeJson(track);
+            this.setUrl("/api/uasoperations/" + operationId + "/uases/" + droneId + "/track").setMethod("POST").executeJson(track);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -11,7 +11,7 @@ public class TokenClient extends BaseClient<TokenHolder> {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public TokenClient(OkHttpClient client) {
-        super(client,"https://healthdrone.unifly.tech/oauth/token", "POST", new TypeReference<TokenHolder>() {
+        super(client, new TypeReference<TokenHolder>() {
         });
     }
 
@@ -25,7 +25,7 @@ public class TokenClient extends BaseClient<TokenHolder> {
             String username = "";//coalesce(properties.get("utm.username").toString(), "");
             String password = "";//coalesce(properties.get("utm.password").toString(), "");
 
-            return this.executeForm(secret, username, password);
+            return this.setUrl("/oauth/token").setMethod("POST").executeForm(secret, username, password);
 
         } catch (IOException e) {
             e.printStackTrace();

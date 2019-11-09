@@ -1,6 +1,6 @@
 package DroneSimulator;
 
-import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.CreateContainerResponse;
 import io.mavsdk.System;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import lombok.Setter;
 public class DroneAssemble {
 
     private System drone;
-    private DockerClient mavsdk;
-    private DockerClient droneContainer;
+    private CreateContainerResponse mavsdk;
+    private CreateContainerResponse droneContainer;
 
 }

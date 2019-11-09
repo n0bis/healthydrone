@@ -1,5 +1,6 @@
 package API.Domain.Models;
 
+import UTMService.Models.Location;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,5 +17,6 @@ public class Drone {
     private String id;
     private String model;
     private String nickname;
-    private double speed;
+    private Double speed;
+    private Location homeLocation;
 }

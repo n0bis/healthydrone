@@ -1,0 +1,68 @@
+{
+  "event": "#publish",
+  "data": {
+    "channel": "adsb",
+    "data": {
+      "data": [
+        {
+          "alertType": "UAS_COLLISION",
+          "alertLevel": "CRITICAL",
+          "subject": {
+            "reference": "a",
+            "uniqueIdentifier": "057d6105-d054-4ecf-8fbf-f7f885b67c18",
+            "type": "UAS",
+            "position": {
+              "longitude": 10.4329678,
+              "latitude": 55.3558619
+            },
+            "altitude": {
+              "reference": "GND",
+              "altitude": 11.482939720153809,
+              "unit": "ft"
+            },
+            "operator": "38dc3c7a-915e-4409-b6d9-a0dc409d8808",
+            "z": {
+              "reference": "GND",
+              "altitude": 11.482939720153809,
+              "unit": "ft"
+            },
+            "xy": {
+              "longitude": 10.4329678,
+              "latitude": 55.3558619
+            }
+          },
+          "relatedSubject": {
+            "reference": "5632",
+            "uniqueIdentifier": "e6448b2a-7874-4d76-adaf-d47c3dac6876",
+            "type": "UAS",
+            "position": {
+              "longitude": 10.4329678,
+              "latitude": 55.3558619
+            },
+            "altitude": {
+              "reference": "GND",
+              "altitude": 11.482939720153809,
+              "unit": "ft"
+            },
+            "operator": "38dc3c7a-915e-4409-b6d9-a0dc409d8808",
+            "z": {
+              "reference": "GND",
+              "altitude": 11.482939720153809,
+              "unit": "ft"
+            },
+            "xy": {
+              "longitude": 10.4329678,
+              "latitude": 55.3558619
+            }
+          },
+          "distance": {
+            "value": 0,
+            "uom": "m"
+          },
+          "time": "2019-11-09T11:40:41.610Z"
+        }
+      ],
+      "name": "TRACKING_ALERT"
+    }
+  }
+}
