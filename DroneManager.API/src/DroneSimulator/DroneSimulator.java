@@ -10,11 +10,9 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import io.mavsdk.System;
-import io.mavsdk.action.Action;
 import io.mavsdk.mission.Mission;
 import org.springframework.util.SocketUtils;
 
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
