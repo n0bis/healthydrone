@@ -11,19 +11,26 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import io.mavsdk.System;
 import io.mavsdk.mission.Mission;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Service;
 import org.springframework.util.SocketUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Service
 public class DroneSimulator {
 
     private final DockerClient dockerClient;
     private final UTMService utmService;
-    private final Map<String, DroneAssemble> drones = new HashMap<String, DroneAssemble>();
+    private final Map<String, DroneAssemble> drones = new ConcurrentHashMap<String, DroneAssemble>();
 
     public DroneSimulator() {
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder().build();
@@ -31,6 +38,7 @@ public class DroneSimulator {
         this.utmService = new UTMService();
     }
 
+    @Async("asyncExecutor")
     public void createDrone(Drone drone) {
         ExposedPort tcp50051 = ExposedPort.tcp(50051);
         var port = SocketUtils.findAvailableTcpPort();
@@ -50,7 +58,7 @@ public class DroneSimulator {
                 .exec().getNetworkSettings().getIpAddress();*/
 
         var droneContainer = dockerClient
-                .createContainerCmd("jonasvautherin/px4-gazebo-headless:v1.9.2")
+                .createContainerCmd("px4-gazebo-headless")
                 //.withCmd("0.0.0.0 " + mavsdkIp)
                 .withEnv("PX4_HOME_LAT=" + drone.getHomeLocation().getLatitude(), "PX4_HOME_LON=" + drone.getHomeLocation().getLongitude(), "PX4_HOME_ALT=" + drone.getHomeLocation().getAltitude())
                 .withTty(true)
@@ -60,9 +68,10 @@ public class DroneSimulator {
 
         var droneSystem = new System("localhost", port);
 
-        this.drones.put(drone.getId(), new DroneAssemble(droneSystem, mavsdkContainer, droneContainer));
+        this.drones.put(drone.getId(), new DroneAssemble(droneSystem, null, droneContainer));
     }
 
+    @Async("asyncExecutor")
     public String sendDroneOnMission(String id, MissionResource resource) {
         AtomicReference<String> errorString = new AtomicReference<>("");
         List<Mission.MissionItem> missionItems = new ArrayList<>();
@@ -74,7 +83,7 @@ public class DroneSimulator {
         drone.getTelemetry()
                 .getPosition()
                 .doOnError(error -> errorString.set(error.getMessage()))
-                .subscribe(position -> utmService.clientTracking().updateFlight(id, resource.getOperationId(), position.getLatitudeDeg(), position.getLongitudeDeg()));
+                .subscribe(position -> utmService.clientTracking().updateFlight(id, resource.getOperationId(), position.getLatitudeDeg(), position.getLongitudeDeg()), (err) -> { err.printStackTrace(); errorString.set(err.getMessage());});
 
         drone.getMission()
                 .uploadMission(missionItems)
@@ -85,7 +94,7 @@ public class DroneSimulator {
                 .andThen(drone.getMission().startMission())
                 .doOnError(error -> errorString.set(error.getMessage()))
                 .doOnComplete(() -> java.lang.System.out.println("send land notification"))
-                .subscribe();
+                .subscribe(() -> { java.lang.System.out.println("completed"); }, (err) -> { err.printStackTrace(); errorString.set(err.getMessage());});
 
         return errorString.get().isEmpty() ? null : errorString.get();
     }

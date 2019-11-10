@@ -19,6 +19,8 @@ public class TrackingClient extends BaseClient<Response> {
     public void updateFlight(String droneId, String operationId, double latitude, double longitude) {
         var track = new Track(Instant.now().toString(), new Location(longitude, latitude), new Location(10.326345, 55.470852), 3.5, "simulation");
         try {
+            System.out.println("droneId: " + droneId + " operationId: " + operationId + " lat: " + latitude + " lon: " + longitude);
+            System.out.println("track- lat: " + track.getLocation().getLatitude() + " lon: " + track.getLocation().getLongitude());
             this.setUrl("/api/uasoperations/" + operationId + "/uases/" + droneId + "/track").setMethod("POST").executeJson(track);
         } catch (IOException e) {
             e.printStackTrace();

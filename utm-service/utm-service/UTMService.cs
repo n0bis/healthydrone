@@ -13,6 +13,7 @@ namespace utm_service
 
         public TokenClient Tokens { get; }
         public OperationClient Operation { get; }
+        public TrackingClient Tracking { get; }
 
         public UTMService(string clientId, string clientSecret,
             string operatorMail, string operatorPass)
@@ -28,6 +29,7 @@ namespace utm_service
             this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Tokens.Auth().Result.access_token);
 
             this.Operation = new OperationClient(_httpClient);
+            this.Tracking = new TrackingClient(_httpClient);
         }
 
         public void Dispose()

@@ -1,0 +1,20 @@
+version: '3'
+services:
+    envoy:
+        build: ./envoy
+        ports:
+            - "9901:9901"
+            - "10000:10000"
+        links:
+            - mavsdk_server
+    mavsdk_server:
+        build: ./mavsdk_server
+        ports:
+            - "50051:50051"
+            - "14540:14540/udp"
+    #gazebo_sitl_headless:
+     #   image: jonasvautherin/px4-gazebo-headless:v1.9.2
+      #  environment:
+       #     - NO_PXH=1
+        #links:
+         #   - mavsdk_server
