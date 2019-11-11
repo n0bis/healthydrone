@@ -28,18 +28,26 @@ namespace alert_state_machine.RuleRunners
                 var process = new Process();
                 var key = $"{flight.uasOperation}-{flight.uas.uniqueIdentifier}-weather";
                 var cachedProcess = await redisService.Get<State>(key);
-                if (cachedProcess != null) {
+                if (cachedProcess != null)
+                {
                     process.CurrentState = cachedProcess.CurrentState;
-                } else {
+                }
+                else
+                {
                     cachedProcess = new State();
                 }
 
-                if (weatherResponse.main.temp < 20 && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive)) {
+                //Console.WriteLine(weatherResponse.rain?.precipitation.ToString());
+
+                if (weatherResponse.main.temp < -15 && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive)) {
                     process.MoveNext();
                 } else {
                     process.MovePrev();
                 }
+
                 
+
+
                 if (process.CurrentState == ProcessState.Raised && !cachedProcess.Triggered && !cachedProcess.Handled) {
                     SendAlert(cachedProcess);
                     cachedProcess.Triggered = true;
@@ -48,6 +56,7 @@ namespace alert_state_machine.RuleRunners
                 await redisService.Set(key, cachedProcess);
             });
         }
+
 
 		// localhost:9092
 		private static void SendAlert(object value)

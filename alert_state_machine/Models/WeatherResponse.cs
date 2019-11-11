@@ -8,5 +8,6 @@ namespace alert_state_machine.Models
         public Weather main { get; set; }
         public Wind wind { get; set; }
         public List<Description> weather { get; set; }
+        public Rain rain { get; set; }
     }
 }

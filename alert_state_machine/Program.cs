@@ -3,8 +3,8 @@ using System.IO;
 using System.Threading.Tasks;
 using alert_state_machine.Services;
 using Microsoft.Extensions.Configuration;
-using utm_service;
 using alert_state_machine.RuleRunners;
+using utm_service;
 
 namespace alert_state_machine
 {
