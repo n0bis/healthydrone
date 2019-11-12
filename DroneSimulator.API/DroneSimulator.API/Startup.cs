@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DroneSimulator.API.Domain.Models;
+using DroneSimulator.API.Domain.Services;
+using DroneSimulator.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +29,10 @@ namespace DroneSimulator.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddOptions();
+            services.Configure<DroneOpts>(Configuration.GetSection("Drone"));
+            services.Configure<UTMOpts>(Configuration.GetSection("UTM"));
+            services.AddScoped<IDroneSim, DroneSim>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,7 +43,7 @@ namespace DroneSimulator.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

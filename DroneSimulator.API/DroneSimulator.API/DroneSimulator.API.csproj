@@ -20,6 +20,11 @@
     <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\utm-service\utm-service\utm-service.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="utm-service">
       <HintPath>..\..\utm-service\utm-service\bin\Debug\netcoreapp3.0\utm-service.dll</HintPath>
     </Reference>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using utm_service.Clients;
 using utm_service.Models;
 
@@ -26,7 +27,12 @@ namespace utm_service
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
             this.Tokens = new TokenClient(_httpClient, new Credentials { ClientId = clientId, ClientSecret = clientSecret, OperatorMail = operatorMail, OperatorPass = operatorPass });
-            this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Tokens.Auth().Result.access_token);
+            Token token = null;
+            Task.Run(async () => token = await Tokens.Auth()).Wait();
+            if (token == null)
+                throw new Exception("Authentication went wrong");
+
+            this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
 
             this.Operation = new OperationClient(_httpClient);
             this.Tracking = new TrackingClient(_httpClient);

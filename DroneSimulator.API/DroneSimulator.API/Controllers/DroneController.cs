@@ -1,26 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DroneSimulator.API.Domain.Models;
-using DroneSimulator.API.Services;
+using DroneSimulator.API.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace DroneSimulator.API.Controllers
 {
     [Route("api/[controller]")]
     public class DroneController : Controller
     {
-        private DroneSim _droneSim;
-        private readonly IConfiguration _config;
+        private IDroneSim _droneSim;
 
-        public DroneController(IConfiguration config)
+        public DroneController(IDroneSim droneSim)
         {
-            this._config = config;
-            this._droneSim = new DroneSim(config);
+            this._droneSim = droneSim;
         }
 
         [HttpGet]

@@ -4,66 +4,50 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DroneSimulator.API.Domain.Models;
+using DroneSimulator.API.Domain.Services;
 using DroneSimulator.API.Helpers;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using utm_service;
 using utm_service.Models;
 
 namespace DroneSimulator.API.Services
 {
-    public class DroneSim
+    public class DroneSim : IDroneSim
     {
         private readonly double _earthRadius = 6371; // radius in km
         private readonly Drone _drone;
         private readonly UTMService _utmService;
 
-        public DroneSim(IConfiguration config)
+        public DroneSim(IOptions<DroneOpts> droneOpts, IOptions<UTMOpts> utmOpts)
         {
             this._drone = new Drone {
-                Id = config.GetValue<string>("Drone:id"),
-                OperationId = config.GetValue<string>("Drone:operationid"),
-                Velocity = config.GetValue<double>("Drone:velocity"),
-                Location = new Location {
-                    latitude = config.GetValue<double>("Drone:location:latitude"),
-                    longitude = config.GetValue<double>("Drone:location:longitude")
-                },
-                HomeLocation = new Location {
-                    latitude = config.GetValue<double>("Drone:homelocation:latitude"),
-                    longitude = config.GetValue<double>("Drone:homelocation:longitude")
-                }
+                Id = droneOpts.Value.id,
+                OperationId = droneOpts.Value.operationid,
+                Velocity = droneOpts.Value.velocity,
+                Location = droneOpts.Value.location,
+                HomeLocation = droneOpts.Value.homelocation
             };
             this._utmService = new UTMService(
-                config.GetValue<string>("UTM:clientid"),
-                config.GetValue<string>("UTM:clientsecret"),
-                config.GetValue<string>("UTM:username"),
-                config.GetValue<string>("UTM:password"));
+                utmOpts.Value.clientid,
+                utmOpts.Value.clientsecret,
+                utmOpts.Value.username,
+                utmOpts.Value.password
+            );
         }
 
         public async Task SendOnMission(List<Location> locations)
         {
             await TakeOffNotification();
-            var startLocation = locations.FirstOrDefault();
+            var startLocation = this._drone.Location;
             var endLocation = locations.LastOrDefault();
             var distanceBetweenPoints = CalculateDistanceBetweenLocations(startLocation, endLocation) * 1000; // multiply by 1000 to get in meters
             var timeRequired = distanceBetweenPoints / this._drone.Velocity;
 
             foreach (var (location, index) in locations.WithIndex())
             {
-                var nextLocation = locations.ElementAtOrDefault(index + 1);
-                var bearing = CalculateBearing(location, nextLocation);
-                var distanceInKm = this._drone.Velocity / 1000;
-                var intermediaryLocation = CalculateDestinationLocation(location, bearing, distanceInKm);
-
-                var coordinates = new Coordinates { latitude = intermediaryLocation.latitude, longitude = intermediaryLocation.longitude };
-                var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
-                var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
-                    this._drone.OperationId, track);
-                if (response) {
-                    this._drone.Location = intermediaryLocation;
-                    Console.WriteLine($"operation: {this._drone.OperationId} drone: {this._drone.Id} latitude: {track.location.latitude} longitude: {track.location.longitude}");
-                } else {
-                    Console.WriteLine("Error");
-                }
+                var nextLocation = locations.ElementAtOrDefault(index + 1) ?? endLocation;
+                await MoveTo((index == 0) ? startLocation : location, nextLocation);
             }
         }
 
