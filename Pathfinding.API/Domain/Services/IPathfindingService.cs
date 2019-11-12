@@ -1,12 +1,13 @@
 using Pathfinding.API.Domain.Models;
 using RoyT.AStar;
+using Pathfinding.API.Domain.Models;
 
 namespace Pathfinding.API.Domain.Services
 {
 
     public interface IPathfindingService
     {
-        public Coordinate[] FindPath();
-        public Coordinate[] PathConverter(Position[] pos);
+        public string[] FindPath();
+        public string[] PathConverter(Position[] pos, FlightPath flightPath);
     }
 }

@@ -1,6 +1,7 @@
 using Pathfinding.API.Domain.Models;
 using Pathfinding.API.Domain.Services;
 using RoyT.AStar;
+using Newtonsoft.Json;
 
 namespace Pathfinding.API.Services
 {
@@ -10,24 +11,28 @@ namespace Pathfinding.API.Services
 
         public CoordinatesService _coordinateService = new CoordinatesService();
 
-        public Coordinate[] FindPath()
+        public string[] FindPath()
         {
             AStarService astar = new AStarService();
             //TODO: Get start and end from UTM
-            Position[] path = astar.pathfind(new FlightPath(55.059750, 10.606870, 55.385391, 10.366900));
-            return (PathConverter(path));
+            FlightPath fp = new FlightPath(55.059750, 10.606870, 55.385391, 10.366900);
+
+            Position[] path = astar.pathfind(fp);
+            return (PathConverter(path,fp));
         }
 
-        public Coordinate[] PathConverter(Position[] path)
+        public string[] PathConverter(Position[] path, FlightPath flightPath)
         {
-            Coordinate[] coords = new Coordinate[path.Length];
-            int count = 0;
+            string[] strings = new string[path.Length + 2];
+            strings[0] = JsonConvert.SerializeObject(flightPath.startCoordinate);
+            int count = 1;
             foreach (Position pos in path)
             {
-                coords[count] = _coordinateService.CalculateCoordinate(pos);
+                strings[count] = JsonConvert.SerializeObject(_coordinateService.CalculateCoordinate(pos));
                 count++;
             }
-            return coords;
+            strings[count] = JsonConvert.SerializeObject(flightPath.endCoordinate);
+            return strings;
         }
     }
 }

@@ -7,18 +7,18 @@ namespace Pathfinding.API.Domain.Models
 {
     public class Coordinate
     {
-        public double _latitude { get; private set; }
-        public double _longitude { get; private set; }
+        public double latitude { get; private set; }
+        public double longitude { get; private set; }
 
         public Coordinate(double latitude, double longitude)
         {
-            _latitude = latitude;
-            _longitude = longitude;
+            this.latitude = latitude;
+            this.longitude = longitude;
         }
 
         public override String ToString()
         {
-            return (_latitude + "," + _longitude);
+            return (latitude + "," + longitude);
         }
     }
 }

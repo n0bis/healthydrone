@@ -19,9 +19,9 @@ namespace Pathfinding.API.Controllers
 
         // GET: api/Pathfinding
         [HttpGet]
-        public String[] GetPath()
+        public string[] GetPath()
         {
-            return (_coordinateService.CoordinateToString(_pathfindingService.FindPath()));
+            return _pathfindingService.FindPath();
         }
     }
 }

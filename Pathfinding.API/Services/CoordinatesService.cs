@@ -34,8 +34,8 @@ namespace Pathfinding.API.Services
 
         public Position CalculatePosition(Coordinate coord)
         {
-            _lat = coord._latitude;
-            _lon = coord._longitude;
+            _lat = coord.latitude;
+            _lon = coord.longitude;
 
             int x = Convert.ToInt32(((_lat * div) - xAdd) / xStep);
             int y = Convert.ToInt32(((_lon * div) - yAdd) / yStep);
