@@ -9,6 +9,7 @@ namespace Pathfinding.API.Services
     {
 
         CoordinatesService _coordinatesService = new CoordinatesService();
+        Grid grid = new Grid(1000, 1000, 1.0f);
 
         public Position[] pathfind(FlightPath flightpath)
         {
@@ -16,11 +17,14 @@ namespace Pathfinding.API.Services
             Position startPos = _coordinatesService.CalculatePosition(flightpath.startCoordinate);
             Position endPos = _coordinatesService.CalculatePosition(flightpath.endCoordinate);
 
-            var grid = new Grid(1000, 1000, 1.0f);
-
             Position[] path = grid.GetPath(startPos, endPos);
 
             return path;
+        }
+
+        public void blockPath()
+        {
+            //TODO: get no-fly zones and block the path.
         }
     }
 }

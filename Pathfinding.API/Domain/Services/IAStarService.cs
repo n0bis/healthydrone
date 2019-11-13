@@ -6,5 +6,6 @@ namespace Pathfinding.API.Domain.Services
     public interface IAStarService
     {
         public Position[] pathfind(FlightPath flightpath);
+        public void blockPath();
     }
 }

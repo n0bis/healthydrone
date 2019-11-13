@@ -16,7 +16,6 @@ namespace Pathfinding.API.Services
             AStarService astar = new AStarService();
             //TODO: Get start and end from UTM
             FlightPath fp = new FlightPath(55.059750, 10.606870, 55.385391, 10.366900);
-
             Position[] path = astar.pathfind(fp);
             return (PathConverter(path,fp));
         }

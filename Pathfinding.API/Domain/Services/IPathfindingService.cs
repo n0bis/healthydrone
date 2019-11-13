@@ -1,6 +1,5 @@
 using Pathfinding.API.Domain.Models;
 using RoyT.AStar;
-using Pathfinding.API.Domain.Models;
 
 namespace Pathfinding.API.Domain.Services
 {
