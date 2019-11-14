@@ -41,7 +41,7 @@ namespace alert_state_machine.RuleRunners
                 // For getting the weather descriptions, incase precipitation dont work...
                 // var precipitationList = new List<Description>(weatherResponse.weather); 
 
-                if ((weatherResponse.main.temp < -15 || weatherResponse.rain.precipitation > 7) && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive))
+                if ((weatherResponse.main.temp < -15 || weatherResponse.rain?.precipitation > 7) && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive))
                 {
                     process.MoveNext();
                 } else {
