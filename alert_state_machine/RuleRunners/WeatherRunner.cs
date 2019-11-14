@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using alert_state_machine.Models;
+﻿using alert_state_machine.Models;
 using alert_state_machine.Persistence;
 using alert_state_machine.Services;
 using alert_state_machine.States;
 using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using utm_service;
 using utm_service.Models;
 
@@ -37,17 +38,16 @@ namespace alert_state_machine.RuleRunners
                     cachedProcess = new State();
                 }
 
-                //Console.WriteLine(weatherResponse.rain?.precipitation.ToString());
+                // For getting the weather descriptions, incase precipitation dont work...
+                // var precipitationList = new List<Description>(weatherResponse.weather); 
 
-                if (weatherResponse.main.temp < -15 && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive)) {
+                if ((weatherResponse.main.temp < -15 || weatherResponse.rain.precipitation > 7) && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive))
+                {
                     process.MoveNext();
                 } else {
                     process.MovePrev();
                 }
-
                 
-
-
                 if (process.CurrentState == ProcessState.Raised && !cachedProcess.Triggered && !cachedProcess.Handled) {
                     SendAlert(cachedProcess);
                     cachedProcess.Triggered = true;
