@@ -1,15 +1,8 @@
 import React, { Component } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Popover from "@material-ui/core/Popover";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import { inject, observer } from "mobx-react";
 
-const useStyles = makeStyles(theme => ({
-  typography: {
-    padding: theme.spacing(2)
-  }
-}));
-
+@inject("mapStore", "droneStore")
+@observer
 class DroneOptions extends Component {
   handleClick = event => {
     setAnchorEl(event.currentTarget);
@@ -19,23 +12,50 @@ class DroneOptions extends Component {
     //setAnchorEl(null);
   };
 
+  createFligth = () => {
+    const { createFlight } = this.props.mapStore;
+    createFlight(
+      [55.676098, 12.568337],
+      [-122.36777130126949, 37.76914513791027]
+    );
+  };
+
   render() {
+    const { landingSpots, startFligth, setLanding } = this.props.mapStore;
+    const { showDroneOptions, closeDroneOptions } = this.props.droneStore;
+    const display = showDroneOptions ? "block" : "none";
     return (
-      <div>
-        <Popover
-          id={1}
-          open={false}
-          anchorReference="anchorPosition"
-          anchorPosition={{ top: 300, left: 340 }}
-          anchorOrigin={{
-            vertical: "center",
-            horizontal: "right"
-          }}
-        >
-          <div style={{ width: "350px", height: "300px" }}>
-            The content of the Popover.
+      <div className="drone-options fadeIn" style={{ display: display }}>
+        <div className="title">
+          <p>Drone ID: #31231345</p>
+          <div className="close-options" onClick={closeDroneOptions}>
+            Luk
           </div>
-        </Popover>
+        </div>
+        <div className="description">
+          <p>
+            <b>Bemærk</b> når du genere en rute kan den overlappe en anden rute.
+            Det kan derfor være en god ide at ændre rutens forløb.
+          </p>
+        </div>
+        <div className="actions">
+          <p>
+            <b>Fra</b>
+          </p>
+          <p>Svendbord</p>
+          <p>
+            <b>Til</b>
+          </p>
+          <select onChange={e => setLanding(e)}>
+            {landingSpots.map(item => (
+              <option value={item.id}>{item.name}</option>
+            ))}
+          </select>
+          <br />
+          <button onClick={this.createFligth}>Create fligth</button>
+          <br />
+          <button onClick={startFligth}>Start fligth</button>
+        </div>
       </div>
     );
   }
