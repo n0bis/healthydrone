@@ -4,7 +4,8 @@ namespace alert_state_machine.Models
 {
     public class Rain
     {
-        [JsonProperty(PropertyName = "3h")]
+        [JsonProperty(PropertyName = "1h")]
         public double precipitation { get; set; }
+
     }
 }
