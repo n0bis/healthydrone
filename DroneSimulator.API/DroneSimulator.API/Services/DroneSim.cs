@@ -91,7 +91,6 @@ namespace DroneSimulator.API.Services
 
                 var coordinates = new Coordinates { latitude = intermediaryLocation.latitude, longitude = intermediaryLocation.longitude };
                 var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
-                Thread.Sleep(1000);
                 var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
                     this._drone.OperationId, track);
                 if (response)
