@@ -39,8 +39,6 @@ namespace DroneSimulator.API.Services
         public async Task SendOnMission(List<Location> locations, CancellationToken cancellationToken)
         {
             await TakeOffNotification();
-            var startLocation = _drone.Location;
-            var endLocation = locations.LastOrDefault();
 
             foreach (var (location, index) in locations.WithIndex())
             {
@@ -49,8 +47,7 @@ namespace DroneSimulator.API.Services
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                var nextLocation = locations.ElementAtOrDefault(index + 1) ?? endLocation;
-                await MoveTo((index == 0) ? startLocation : location, nextLocation, cancellationToken);
+                await MoveTo(_drone.Location, location, cancellationToken);
             }
         }
 
@@ -72,7 +69,7 @@ namespace DroneSimulator.API.Services
             var endLocation = endPoint;
             var distanceBetweenPoints = CalculateDistanceBetweenLocations(startLocation, endLocation) * 1000; // multiply by 1000 to get in meters
             var timeRequired = distanceBetweenPoints / _drone.Velocity;
-            Console.WriteLine($"estimated time: {timeRequired}");
+
             for (int i = 0; i < timeRequired; i++)
             {
                 if (cancellationToken.IsCancellationRequested)
