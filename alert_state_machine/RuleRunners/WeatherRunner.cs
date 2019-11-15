@@ -38,10 +38,6 @@ namespace alert_state_machine.RuleRunners
                     cachedProcess = new State();
                 }
 
-                // For getting the weather descriptions, incase precipitation dont work...
-                // var precipitationList = new List<Description>(weatherResponse.weather); 
-                Console.WriteLine(weatherResponse?.rain.precipitation);
-
                 if ((weatherResponse.main.temp < -15 || weatherResponse?.rain.precipitation > 7 ) && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive))
                 {
                     process.MoveNext();
