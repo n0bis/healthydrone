@@ -36,34 +36,41 @@ namespace DroneSimulator.API.Services
             );
         }
 
-        public async Task SendOnMission(List<Location> locations)
+        public async Task SendOnMission(List<Location> locations, CancellationToken cancellationToken)
         {
             await TakeOffNotification();
             var startLocation = this._drone.Location;
             var endLocation = locations.LastOrDefault();
             var distanceBetweenPoints = CalculateDistanceBetweenLocations(startLocation, endLocation) * 1000; // multiply by 1000 to get in meters
             var timeRequired = distanceBetweenPoints / this._drone.Velocity;
+            this._drone.mission = new Mission { TimeEstimated = TimeSpan.FromSeconds(timeRequired), Waypoints = locations };
 
             foreach (var (location, index) in locations.WithIndex())
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Console.WriteLine("Eh stop");
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                    
                 var nextLocation = locations.ElementAtOrDefault(index + 1) ?? endLocation;
-                await MoveTo((index == 0) ? startLocation : location, nextLocation);
+                await MoveTo((index == 0) ? startLocation : location, nextLocation, cancellationToken);
             }
         }
 
-        public async Task SendHome()
+        public async Task SendHome(CancellationToken cancellationToken)
         {
-            await MoveTo(this._drone.Location, this._drone.HomeLocation);
+            await MoveTo(this._drone.Location, this._drone.HomeLocation, cancellationToken);
             await LandNotification();
         }
 
-        public async Task LandAtLocation(Location location)
+        public async Task LandAtLocation(Location location, CancellationToken cancellationToken)
         {
-            await MoveTo(this._drone.Location, location);
+            await MoveTo(this._drone.Location, location, cancellationToken);
             await LandNotification();
         }
 
-        private async Task MoveTo(Location startPoint, Location endPoint)
+        private async Task MoveTo(Location startPoint, Location endPoint, CancellationToken cancellationToken)
         {
             var startLocation = startPoint;
             var endLocation = endPoint;
@@ -72,13 +79,20 @@ namespace DroneSimulator.API.Services
 
             for (int i = 0; i < timeRequired; i++)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Console.WriteLine("HALT");
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
                 var bearing = CalculateBearing(startLocation, endLocation);
                 var distanceInKm = this._drone.Velocity / 1000;
                 var intermediaryLocation = CalculateDestinationLocation(startLocation, bearing, distanceInKm);
 
                 var coordinates = new Coordinates { latitude = intermediaryLocation.latitude, longitude = intermediaryLocation.longitude };
                 var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
-                var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
+                Thread.Sleep(1000);
+                /*var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
                     this._drone.OperationId, track);
                 if (response)
                 {
@@ -88,9 +102,31 @@ namespace DroneSimulator.API.Services
                 else
                 {
                     Console.WriteLine("Error");
-                }
+                }*/
 
                 startLocation = intermediaryLocation;
+            }
+        }
+
+        public async Task Hover(CancellationToken cancellationToken)
+        {
+            while(true)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                var coordinates = new Coordinates { latitude = this._drone.Location.latitude, longitude = this._drone.Location.longitude };
+                var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
+                /*var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
+                    this._drone.OperationId, track);
+                if (response)
+                {
+                    Console.WriteLine($"operation: {this._drone.OperationId} drone: {this._drone.Id} latitude: {track.location.latitude} longitude: {track.location.longitude}");
+                }
+                else
+                {
+                    Console.WriteLine("Error");
+                }*/
             }
         }
 

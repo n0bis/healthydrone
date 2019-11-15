@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using DroneSimulator.API.Domain.Models;
 using DroneSimulator.API.Domain.Services;
@@ -9,32 +12,80 @@ namespace DroneSimulator.API.Controllers
     [Route("api/[controller]")]
     public class DroneController : Controller
     {
-        private IDroneSim _droneSim;
+        private readonly IDroneSim _droneSim;
+        private static object _lock = new object();
+        private static CancellationToken _cancellationToken;
+        private static CancellationTokenSource _cancellationTokenSource;
+        private static Task task;
 
         public DroneController(IDroneSim droneSim)
         {
+            _cancellationTokenSource = new CancellationTokenSource();
             this._droneSim = droneSim;
         }
 
         [HttpGet]
-        [Route("/sendHome")]
-        public async Task SendHome()
+        [Route("/stop")]
+        public IActionResult Stop()
         {
-            await this._droneSim.SendHome();
+            CheckTask();
+
+            task = Task.Run(async () => {
+                await this._droneSim.Hover(_cancellationTokenSource.Token);
+            }, _cancellationTokenSource.Token);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("/sendHome")]
+        public IActionResult SendHome()
+        {
+            CheckTask();
+            
+            task = Task.Run(async () => {
+                await this._droneSim.SendHome(_cancellationTokenSource.Token);
+            }, _cancellationTokenSource.Token);
+
+            return Ok();
         }
 
         [HttpPost]
         [Route("/sendOnMission")]
-        public async Task SendOnMission([FromBody] List<Location> locations)
+        public IActionResult SendOnMission([FromBody] List<Location> locations)
         {
-            await this._droneSim.SendOnMission(locations);
+            CheckTask();
+
+            task = Task.Run(async () => {
+                if (_cancellationToken.IsCancellationRequested)
+                    _cancellationToken.ThrowIfCancellationRequested();
+
+                await this._droneSim.SendOnMission(locations, _cancellationTokenSource.Token);
+            }, _cancellationTokenSource.Token);
+
+            return Ok();
         }
 
         [HttpPost]
         [Route("/landAtLocation")]
-        public async Task LandAtLocation([FromBody] Location location)
+        public IActionResult LandAtLocation([FromBody] Location location)
         {
-            await this._droneSim.LandAtLocation(location);
+            CheckTask();
+
+            task = Task.Run(async () => {
+                await this._droneSim.LandAtLocation(location, _cancellationTokenSource.Token);
+            }, _cancellationTokenSource.Token);
+
+            return Ok();
+        }
+
+        private void CheckTask()
+        {
+            if (task != null) {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Token.WaitHandle.WaitOne();
+                //_cancellationTokenSource = new CancellationTokenSource();
+            }
         }
     }
 }
