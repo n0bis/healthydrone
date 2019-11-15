@@ -16,11 +16,9 @@ namespace DroneSimulator.API.Controllers
         private static object _lock = new object();
         private static CancellationToken _cancellationToken;
         private static CancellationTokenSource _cancellationTokenSource;
-        private static Task task;
 
         public DroneController(IDroneSim droneSim)
         {
-            _cancellationTokenSource = new CancellationTokenSource();
             this._droneSim = droneSim;
         }
 
@@ -30,9 +28,10 @@ namespace DroneSimulator.API.Controllers
         {
             CheckTask();
 
-            task = Task.Run(async () => {
+            var task = Task.Run(async () => {
                 await this._droneSim.Hover(_cancellationTokenSource.Token);
             }, _cancellationTokenSource.Token);
+            task.ContinueWith(Cleanup);
 
             return Ok();
         }
@@ -43,9 +42,10 @@ namespace DroneSimulator.API.Controllers
         {
             CheckTask();
             
-            task = Task.Run(async () => {
+            var task = Task.Run(async () => {
                 await this._droneSim.SendHome(_cancellationTokenSource.Token);
             }, _cancellationTokenSource.Token);
+            task.ContinueWith(Cleanup);
 
             return Ok();
         }
@@ -56,12 +56,13 @@ namespace DroneSimulator.API.Controllers
         {
             CheckTask();
 
-            task = Task.Run(async () => {
+            var task = Task.Run(async () => {
                 if (_cancellationToken.IsCancellationRequested)
                     _cancellationToken.ThrowIfCancellationRequested();
 
                 await this._droneSim.SendOnMission(locations, _cancellationTokenSource.Token);
             }, _cancellationTokenSource.Token);
+            task.ContinueWith(Cleanup);
 
             return Ok();
         }
@@ -72,19 +73,42 @@ namespace DroneSimulator.API.Controllers
         {
             CheckTask();
 
-            task = Task.Run(async () => {
+            var task = Task.Run(async () => {
                 await this._droneSim.LandAtLocation(location, _cancellationTokenSource.Token);
             }, _cancellationTokenSource.Token);
+            task.ContinueWith(Cleanup);
 
             return Ok();
         }
 
         private void CheckTask()
         {
-            if (task != null) {
-                _cancellationTokenSource.Cancel();
-                _cancellationTokenSource.Token.WaitHandle.WaitOne();
-                //_cancellationTokenSource = new CancellationTokenSource();
+            lock(_lock)
+            {
+                if (_cancellationTokenSource != null)
+                {
+                    _cancellationTokenSource.Cancel();
+                    _cancellationTokenSource.Token.WaitHandle.WaitOne();
+                }
+
+                _cancellationTokenSource = new CancellationTokenSource();
+            }
+        }
+
+        private static void Cleanup(Task task)
+        {
+            if (task != null)
+            {
+                System.Console.WriteLine(task.Exception.GetBaseException().Message);
+            }
+
+            lock (_lock)
+            {
+                if (_cancellationTokenSource != null)
+                {
+                    _cancellationTokenSource.Dispose();
+                }
+                _cancellationTokenSource = null;
             }
         }
     }

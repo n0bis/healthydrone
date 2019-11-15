@@ -16,12 +16,12 @@ namespace DroneSimulator.API.Services
     public class DroneSim : IDroneSim
     {
         private readonly double _earthRadius = 6371; // radius in km
-        private readonly Drone _drone;
+        private static Drone _drone;
         private readonly UTMService _utmService;
 
         public DroneSim(IOptions<DroneOpts> droneOpts, IOptions<UTMOpts> utmOpts)
         {
-            this._drone = new Drone {
+            _drone = new Drone {
                 Id = droneOpts.Value.id,
                 OperationId = droneOpts.Value.operationid,
                 Velocity = droneOpts.Value.velocity,
@@ -39,20 +39,16 @@ namespace DroneSimulator.API.Services
         public async Task SendOnMission(List<Location> locations, CancellationToken cancellationToken)
         {
             await TakeOffNotification();
-            var startLocation = this._drone.Location;
+            var startLocation = _drone.Location;
             var endLocation = locations.LastOrDefault();
-            var distanceBetweenPoints = CalculateDistanceBetweenLocations(startLocation, endLocation) * 1000; // multiply by 1000 to get in meters
-            var timeRequired = distanceBetweenPoints / this._drone.Velocity;
-            this._drone.mission = new Mission { TimeEstimated = TimeSpan.FromSeconds(timeRequired), Waypoints = locations };
 
             foreach (var (location, index) in locations.WithIndex())
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    Console.WriteLine("Eh stop");
                     cancellationToken.ThrowIfCancellationRequested();
                 }
-                    
+
                 var nextLocation = locations.ElementAtOrDefault(index + 1) ?? endLocation;
                 await MoveTo((index == 0) ? startLocation : location, nextLocation, cancellationToken);
             }
@@ -60,13 +56,13 @@ namespace DroneSimulator.API.Services
 
         public async Task SendHome(CancellationToken cancellationToken)
         {
-            await MoveTo(this._drone.Location, this._drone.HomeLocation, cancellationToken);
+            await MoveTo(_drone.Location, _drone.HomeLocation, cancellationToken);
             await LandNotification();
         }
 
         public async Task LandAtLocation(Location location, CancellationToken cancellationToken)
         {
-            await MoveTo(this._drone.Location, location, cancellationToken);
+            await MoveTo(_drone.Location, location, cancellationToken);
             await LandNotification();
         }
 
@@ -75,28 +71,27 @@ namespace DroneSimulator.API.Services
             var startLocation = startPoint;
             var endLocation = endPoint;
             var distanceBetweenPoints = CalculateDistanceBetweenLocations(startLocation, endLocation) * 1000; // multiply by 1000 to get in meters
-            var timeRequired = distanceBetweenPoints / this._drone.Velocity;
-
+            var timeRequired = distanceBetweenPoints / _drone.Velocity;
+            Console.WriteLine($"estimated time: {timeRequired}");
             for (int i = 0; i < timeRequired; i++)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    Console.WriteLine("HALT");
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
                 var bearing = CalculateBearing(startLocation, endLocation);
-                var distanceInKm = this._drone.Velocity / 1000;
+                var distanceInKm = _drone.Velocity / 1000;
                 var intermediaryLocation = CalculateDestinationLocation(startLocation, bearing, distanceInKm);
 
                 var coordinates = new Coordinates { latitude = intermediaryLocation.latitude, longitude = intermediaryLocation.longitude };
                 var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
-                var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
-                    this._drone.OperationId, track);
+                var response = await this._utmService.Tracking.FlightTrack(_drone.Id,
+                    _drone.OperationId, track);
                 if (response)
                 {
-                    this._drone.Location = intermediaryLocation;
-                    Console.WriteLine($"operation: {this._drone.OperationId} drone: {this._drone.Id} latitude: {track.location.latitude} longitude: {track.location.longitude}");
+                    _drone.Location = intermediaryLocation;
+                    Console.WriteLine($"operation: {_drone.OperationId} drone: {_drone.Id} latitude: {track.location.latitude} longitude: {track.location.longitude}");
                 }
                 else
                 {
@@ -114,13 +109,14 @@ namespace DroneSimulator.API.Services
                 if (cancellationToken.IsCancellationRequested)
                     cancellationToken.ThrowIfCancellationRequested();
 
-                var coordinates = new Coordinates { latitude = this._drone.Location.latitude, longitude = this._drone.Location.longitude };
+                var coordinates = new Coordinates { latitude = _drone.Location.latitude, longitude = _drone.Location.longitude };
                 var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
-                var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
-                    this._drone.OperationId, track);
+                var response = await this._utmService.Tracking.FlightTrack(_drone.Id,
+                    _drone.OperationId, track);
                 if (response)
                 {
-                    Console.WriteLine($"operation: {this._drone.OperationId} drone: {this._drone.Id} latitude: {track.location.latitude} longitude: {track.location.longitude}");
+                    _drone.Location = new Location { latitude = coordinates.latitude, longitude = coordinates.longitude };
+                    Console.WriteLine($"hover - operation: {_drone.OperationId} drone: {_drone.Id} latitude: {track.location.latitude} longitude: {track.location.longitude}");
                 }
                 else
                 {
@@ -131,12 +127,12 @@ namespace DroneSimulator.API.Services
 
         private async Task TakeOffNotification()
         {
-            await this._utmService.Tracking.TakeOff(this._drone.Id, this._drone.OperationId);
+            await this._utmService.Tracking.TakeOff(_drone.Id, _drone.OperationId);
         }
 
         private async Task LandNotification()
         {
-            await this._utmService.Tracking.Land(this._drone.Id, this._drone.OperationId);
+            await this._utmService.Tracking.Land(_drone.Id, _drone.OperationId);
         }
 
         private double DegreeToRadian(double degree)
