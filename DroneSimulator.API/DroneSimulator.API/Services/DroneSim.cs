@@ -92,7 +92,7 @@ namespace DroneSimulator.API.Services
                 var coordinates = new Coordinates { latitude = intermediaryLocation.latitude, longitude = intermediaryLocation.longitude };
                 var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
                 Thread.Sleep(1000);
-                /*var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
+                var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
                     this._drone.OperationId, track);
                 if (response)
                 {
@@ -102,7 +102,7 @@ namespace DroneSimulator.API.Services
                 else
                 {
                     Console.WriteLine("Error");
-                }*/
+                }
 
                 startLocation = intermediaryLocation;
             }
@@ -117,7 +117,7 @@ namespace DroneSimulator.API.Services
 
                 var coordinates = new Coordinates { latitude = this._drone.Location.latitude, longitude = this._drone.Location.longitude };
                 var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
-                /*var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
+                var response = await this._utmService.Tracking.FlightTrack(this._drone.Id,
                     this._drone.OperationId, track);
                 if (response)
                 {
@@ -126,7 +126,7 @@ namespace DroneSimulator.API.Services
                 else
                 {
                     Console.WriteLine("Error");
-                }*/
+                }
             }
         }
 
