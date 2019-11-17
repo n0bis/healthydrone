@@ -1,10 +1,45 @@
 import React, { Component } from "react";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import { inject, observer } from "mobx-react";
+import socketCluster from "socketcluster-client";
 
 @inject("droneStore")
 @observer
 class DronesList extends Component {
+  componentWillMount() {
+    // Initiate the connection to the server
+    try {
+      const token =
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmZcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOmU2MzMzZmM0LThhNzAtNDkwNi1hYzY4LTY3ZjNhMWFiN2QyZjoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmY6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwOFwiOltcInN1YnNjcmliZVwiXSIsIlwib3BlcmF0b3I6MzhkYzNjN2EtOTE1ZS00NDA5LWI2ZDktYTBkYzQwOWQ4ODA4OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODp1YXM6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiZmxpZ2h0XCI6W1wic3Vic2NyaWJlXCJdIiwiXCJuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYjpuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYlwiOltcInN1YnNjcmliZVwiXSJdLCJ1c2VyX25hbWUiOiJGUkhFTDE4QFNUVURFTlQuU0RVLkRLIiwic2NvcGUiOlsicmVhZCJdLCJleHAiOjE1NzM4NDY1OTEsImp0aSI6ImUwYTZiZDkyLTUzYjMtNDU1NC04ZTk2LWI0ZGRiZjE4MTM2YyIsImNsaWVudF9pZCI6InNkdUhlYWx0aERyb25lQ29ubmVjdCIsInVzaWQiOiJmMGUyMTRiNS0xMTdiLTRmNTItYTI1My04YmM4NGFhNTBkZjgifQ.1IjJuZgu0_m-YQPyNjjNeJhXoXhBudKOFJL5Fmbba7I";
+
+      let socketClusterOptions = {
+        secure: true,
+        hostname: "healthdrone.unifly.tech",
+        path: "/socketcluster/",
+        autoReconnectOptions: { initialDelay: 500, maxDelay: 2000 }
+      };
+      let subscription;
+      let socket = socketCluster.create(socketClusterOptions);
+      socket.authenticate(token, error => {
+        if (error)
+          console.error(`Socket cluster authentication failed : ${error}`);
+      });
+      socket.on("connect", () => {
+        subscription = socket.subscribe("adsb", { waitForAuth: true });
+        subscription.watch(msg => {
+          console.info(
+            `Received event: ${msg.name}with data: ${JSON.stringify(msg.data)}`
+          );
+        });
+      });
+      socket.on("error", error => {
+        console.log(error);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   onClick = event => {
     console.log(event.target.offsetTop);
   };

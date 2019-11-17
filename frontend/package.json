@@ -40,7 +40,8 @@
     "react-mapbox-gl": "^4.7.2",
     "react-mapbox-gl-draw": "^2.0.3",
     "react-native-typescript-transformer": "^1.2.13",
-    "react-router-dom": "^5.1.2"
+    "react-router-dom": "^5.1.2",
+    "socketcluster-client": "^14.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
