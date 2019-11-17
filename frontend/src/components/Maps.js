@@ -1,50 +1,97 @@
 import React, { Component } from "react";
-import ReactMapboxGl from "react-map-gl";
-import { fromJS } from "immutable";
-//import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-
-import DrawControl from "react-mapbox-gl-draw";
-
-//import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import MapGL from "@urbica/react-map-gl";
+import Draw from "@urbica/react-map-gl-draw";
+import { inject, observer } from "mobx-react";
+import "mapbox-gl/dist/mapbox-gl.css";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 /*
 const Map = ReactMapboxGl({
   accessToken:
-    "pk.eyJ1IjoiYXNkaW9qYXNvZGoiLCJhIjoiY2syMzNrYW40MDZwYjNicmVzd2lmN3RsNiJ9.iwnj30EcPWFknoJfWczWJg"
-});*/
+    "pk.eyJ1IjoiYXNkaW9qYXNvZGoiLCJhIjoiY2syMzNrYW40MDZwYjNicmVzd2lmN3RsNiJ9.iwnj30EcPWFknoJfWczWJg",
+  center: [-77.04, 38.907]
+});
+*/
 
-class Maps extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      viewport: {
-        width: "100%",
-        height: "100%",
-        latitude: 55.297879,
-        longitude: 10.517822,
-        zoom: 8,
-        center: [-122.486052, 37.830348],
-        mapboxApiAccessToken:
-          "pk.eyJ1IjoiYXNkaW9qYXNvZGoiLCJhIjoiY2syMzNrYW40MDZwYjNicmVzd2lmN3RsNiJ9.iwnj30EcPWFknoJfWczWJg"
+@inject("mapStore")
+@observer
+class Maps extends Component {
+  componentDidMount() {}
+
+  onDrawCreate = ({ features }) => {
+    console.log(features);
+  };
+
+  onDrawUpdate = ({ features }) => {
+    console.log(features);
+  };
+
+  createFlight = () => {
+    alert(1);
+    this.setState({
+      data: {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              coordinates: [
+                [55.676098, 12.568337],
+                [-122.36777130126949, 37.76914513791027]
+              ],
+              type: "LineString"
+            }
+          }
+        ]
       }
-    };
-  }
-
-  componentDidMount() {
-    /*const map = this.reactMap.getMap();
-
-    map.on("load", () => {
-      map.on("mousemove", () => {
-        alert(1);
-      });
-    });*/
-  }
+    });
+  };
 
   render() {
+    const { data, isLoading, onChange, createFlight } = this.props.mapStore;
+    console.log(data);
+    const test = data;
+    const tests = [
+      {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          coordinates: [
+            [50.676098, 12.568337],
+            [-2.36777130126949, 37.76914513791027]
+          ],
+          type: "LineString"
+        }
+      }
+    ];
     return (
-      <ReactMapboxGl
-        viewport={this.state.viewport}
-        mapboxApiAccessToken="pk.eyJ1IjoiYXNkaW9qYXNvZGoiLCJhIjoiY2syMzNrYW40MDZwYjNicmVzd2lmN3RsNiJ9.iwnj30EcPWFknoJfWczWJg"
-      ></ReactMapboxGl>
+      <div style={{ height: "100%" }}>
+        <MapGL
+          style={{ width: "100%", height: "90%" }}
+          mapStyle="mapbox://styles/mapbox/light-v9"
+          accessToken={
+            "pk.eyJ1IjoiYXNkaW9qYXNvZGoiLCJhIjoiY2syMzNrYW40MDZwYjNicmVzd2lmN3RsNiJ9.iwnj30EcPWFknoJfWczWJg"
+          }
+          latitude={55.676098}
+          longitude={12.568337}
+          zoom={1}
+        >
+          {!isLoading && (
+            <Draw
+              data={test}
+              features={test}
+              onChange={onChange}
+              onDrawCreate={this.onDrawCreate}
+              onDrawUpdate={this.onDrawUpdate}
+            />
+          )}
+        </MapGL>
+
+        <div>
+          <p>{JSON.stringify(test)}</p>
+          <button onClick={createFlight}>Create fligth</button>
+        </div>
+      </div>
     );
   }
 }

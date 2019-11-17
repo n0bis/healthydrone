@@ -1,39 +1,16 @@
 import React, { Component } from "react";
 import ChevronRight from "@material-ui/icons/ChevronRight";
+import { inject, observer } from "mobx-react";
 
-const drones = [
-  {
-    group_name: "Aktive",
-    group_status: "active",
-    drones: [
-      {
-        name: "test"
-      },
-      {
-        name: "test"
-      }
-    ]
-  },
-  {
-    group_name: "Parkeret",
-    group_status: "parked",
-    drones: [
-      {
-        name: "test"
-      },
-      {
-        name: "test"
-      }
-    ]
-  }
-];
-
+@inject("droneStore")
+@observer
 class DronesList extends Component {
   onClick = event => {
     console.log(event.target.offsetTop);
   };
 
   render() {
+    const { drones, onClick } = this.props.droneStore;
     return (
       <div className="drones">
         {drones.map(group => (
@@ -41,7 +18,7 @@ class DronesList extends Component {
             <p className="group-name">{group.group_name}</p>
             <div className="group">
               {group.drones.map(drone => (
-                <div className="drone" onClick={this.onClick}>
+                <div className="drone" onClick={onClick}>
                   <p>
                     <b>Status:</b> <span className="text-green">Flyvende</span>
                   </p>
