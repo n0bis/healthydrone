@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DroneManager.API.Configuration;
 using DroneManager.API.Domain.Repositories;
 using DroneManager.API.Domain.Services;
 using DroneManager.API.Persistence.Contexts;
@@ -37,6 +38,7 @@ namespace DroneManager.API
 
             services.AddScoped<IDroneRepository, DroneRepository>();
             services.AddScoped<IDroneService, DroneService>();
+            services.Configure<UTMOpts>(Configuration.GetSection("UTM"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
