@@ -29,7 +29,4 @@
       <HintPath>..\..\utm-service\utm-service\bin\Debug\netcoreapp3.0\utm-service.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Services\DroneSim.cs" />
-  </ItemGroup>
 </Project>
