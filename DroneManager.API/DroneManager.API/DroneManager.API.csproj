@@ -25,5 +25,7 @@
     <Folder Include="Services\" />
     <Folder Include="Resources\" />
     <Folder Include="Mapping\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Domain\Services\Communication\" />
   </ItemGroup>
 </Project>
