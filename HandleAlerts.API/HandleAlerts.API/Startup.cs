@@ -69,7 +69,7 @@ namespace HandleAlerts.API
             });
 
             app.ApplicationServices.GetService<AlertRelay>();
-            Task.Run(() => app.ApplicationServices.GetService<IAlertConsumer>().ConsumeMessages());
+            Task.Run(() => app.ApplicationServices.GetService<IAlertConsumer>().Listen());
         }
     }
 }
