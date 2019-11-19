@@ -76,7 +76,7 @@ namespace alert_state_machine.RuleRunners
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {
-                await producer.ProduceAsync("test", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
+                await producer.ProduceAsync("weather-alert", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
             }
         }
     }
