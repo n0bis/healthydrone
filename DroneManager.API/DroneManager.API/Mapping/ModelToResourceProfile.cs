@@ -9,7 +9,8 @@ namespace DroneManager.API.Mapping
     {
         public ModelToResourceProfile()
         {
-            CreateMap<SaveDroneResource, Drone>();
+            CreateMap<Drone, DroneResource>();
+            CreateMap<DockerContainer, DockerContainerResource>();
         }
     }
 }

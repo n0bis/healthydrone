@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using DroneManager.API.Domain.Models;
+using DroneManager.API.Domain.Services;
 using DroneManager.API.Extensions;
 using DroneManager.API.Resources;
 using Microsoft.AspNetCore.Mvc;
@@ -12,39 +15,37 @@ namespace DroneManager.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ManagerController : Controller
+    public class ManagerController : ControllerBase
     {
-        // GET: api/values
+        private readonly IDroneService _droneService;
+        private readonly IMapper _mapper;
+
+        public ManagerController(IDroneService droneService, IMapper mapper)
+        {
+            _droneService = droneService;
+            _mapper = mapper;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<DockerContainer>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _droneService.ListAsync();
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
         [HttpPost]
-        public Task<IActionResult> PostAsync([FromBody] SaveDroneResource resource)
+        public async Task<IActionResult> PostAsync([FromBody] SaveDroneResource resource)
         {
-            return Ok();
-        }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+            var drone = _mapper.Map<SaveDroneResource, Drone>(resource);
+            var result = await _droneService.CreateAndStartContainer(drone);
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var dockerContainerResource = _mapper.Map<DockerContainer, DockerContainerResource>(result.DockerContainer);
+            return Ok(dockerContainerResource);
         }
     }
 }

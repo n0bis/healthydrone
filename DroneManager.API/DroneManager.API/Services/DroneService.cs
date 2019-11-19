@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -8,6 +9,7 @@ using Docker.DotNet;
 using Docker.DotNet.Models;
 using DroneManager.API.Configuration;
 using DroneManager.API.Domain.Models;
+using DroneManager.API.Domain.Repositories;
 using DroneManager.API.Domain.Services;
 using DroneManager.API.Domain.Services.Communication;
 using Microsoft.Extensions.Options;
@@ -18,34 +20,48 @@ namespace DroneManager.API.Services
     {
         private readonly DockerClient _dockerClient;
         private readonly IOptions<UTMOpts> _utmOpts;
+        private readonly IDroneRepository _droneRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DroneService(IOptions<UTMOpts> utmOptions)
+        public DroneService(IOptions<UTMOpts> utmOptions, IDroneRepository droneRepository, IUnitOfWork unitOfWork)
         {
-            _dockerClient = new DockerClientConfiguration(new Uri(DockerApiUri()))
+            _dockerClient = new DockerClientConfiguration(DockerApiUri())
                 .CreateClient();
             _utmOpts = utmOptions;
+            _droneRepository = droneRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        private string DockerApiUri()
+        private Uri DockerApiUri()
         {
             var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             var isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            var isMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 
             if (isWindows)
             {
-                return "npipe://./pipe/docker_engine";
+                return new Uri("npipe://./pipe/docker_engine");
             }
 
-            if (isLinux)
+            if (isLinux || isMac)
             {
-                return "unix:/var/run/docker.sock";
+                return new Uri("unix:/var/run/docker.sock");
             }
 
             throw new Exception("Was unable to determine what OS this is running");
         }
 
-        public async Task SpinUpContainer(Drone drone)
+        public async Task<IEnumerable<DockerContainer>> ListAsync()
         {
+            return await _droneRepository.ListAsync();
+        }
+
+        public async Task<SaveDockerResponse> CreateAndStartContainer(Drone drone)
+        {
+            if (await _droneRepository.FindByDroneIdAsync(drone.Id) != null)
+                return new SaveDockerResponse($"Drone: {drone.Id} already exsits");
+
+            var port = GetAvailablePort();
             var container = await _dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters {
                 Image = "dronesimulator:latest",
                 ExposedPorts = new Dictionary<string, EmptyStruct>
@@ -56,7 +72,7 @@ namespace DroneManager.API.Services
                 {
                     PortBindings = new Dictionary<string, IList<PortBinding>>
                     {
-                        { "80", new List<PortBinding> { new PortBinding { HostPort = GetAvailablePort().ToString() } } }
+                        { "80", new List<PortBinding> { new PortBinding { HostPort = port.ToString() } } }
                     },
                     PublishAllPorts = true
                 },
@@ -76,6 +92,14 @@ namespace DroneManager.API.Services
                 }
             });
             await _dockerClient.Containers.StartContainerAsync(container.ID, null);
+            var dockerContainer = new DockerContainer { Id = container.ID, port = port, droneId = drone.Id };
+            var response = await SaveAsync(dockerContainer);
+            return response;
+        }
+
+        public async Task SpinUpContainer(string id)
+        {
+            await _dockerClient.Containers.StartContainerAsync(id, null);
         }
 
         private int GetAvailablePort()
@@ -88,9 +112,19 @@ namespace DroneManager.API.Services
             }
         }
 
-        public Task<SaveDroneResponse> SaveAsync(Drone drone)
+        public async Task<SaveDockerResponse> SaveAsync(DockerContainer dockerContainer)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _droneRepository.AddAsync(dockerContainer);
+                await _unitOfWork.CompleteAsync();
+
+                return new SaveDockerResponse(dockerContainer);
+            }
+            catch (Exception ex)
+            {
+                return new SaveDockerResponse($"An error occurred when saving the docker container: {ex.Message}");
+            }
         }
     }
 }
