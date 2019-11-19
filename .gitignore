@@ -803,3 +803,4 @@ Temporary Items
 # End of https://www.gitignore.io/api/macos
 
 alert_state_machine/appsettings.json
+DroneManager.API/DroneManager.API/appsettings.Development.json
