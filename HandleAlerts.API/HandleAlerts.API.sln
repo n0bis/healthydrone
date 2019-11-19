@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandleAlerts.API", "HandleAlerts.API\HandleAlerts.API.csproj", "{19742C5C-F628-47B4-B148-2961E43B9504}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19742C5C-F628-47B4-B148-2961E43B9504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19742C5C-F628-47B4-B148-2961E43B9504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19742C5C-F628-47B4-B148-2961E43B9504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19742C5C-F628-47B4-B148-2961E43B9504}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
