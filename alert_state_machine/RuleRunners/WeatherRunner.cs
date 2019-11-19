@@ -70,7 +70,7 @@ namespace alert_state_machine.RuleRunners
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {
-                producer.Produce("test", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
+                producer.Produce("weather-alert", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
 
                 producer.Flush(TimeSpan.FromMilliseconds(100));
             }
