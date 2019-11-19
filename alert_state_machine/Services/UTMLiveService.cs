@@ -22,9 +22,9 @@ namespace alert_state_machine.Services
             this.utm = new PureSocketClusterSocket("wss://healthdrone.unifly.tech/socketcluster/", opts);
         }
 
-        public async Task Connect(IConfiguration config)
+        public async Task Connect(string token)
         {
-            this.utm.SetAuthToken(config["UTM:token"]);
+            this.utm.SetAuthToken(token);
             var channel = await this.utm.CreateChannel("adsb").SubscribeAsync();
             channel.OnMessage(OnMessage);
             await this.utm.ConnectAsync();

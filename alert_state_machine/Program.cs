@@ -27,10 +27,19 @@ namespace alert_state_machine
             var utmService = new UTMService(config["UTM:clientid"], config["UTM:clientsecret"],
                 config["UTM:username"], config["UTM:password"]);
 
-            Scheduler.IntervalInMinutes(0.5, async () =>
+            var token = await utmService.Tokens.Auth();
+
+            /*Scheduler.IntervalInMinutes(1, async () =>
             {
                 Console.WriteLine(DateTime.Now);
                 await serviceProvider.GetService<IWeatherRunner>().WeatherCheck(utmService);
+                Console.WriteLine(DateTime.Now);
+            });*/
+
+            Scheduler.IntervalInMinutes(0.5, async () =>
+            {
+                Console.WriteLine(DateTime.Now);
+                await serviceProvider.GetService<ICollisionAndNoFlyZoneRunner>().ZonesCheck(token);
                 Console.WriteLine(DateTime.Now);
             });
 
@@ -53,6 +62,7 @@ namespace alert_state_machine
             services.AddSingleton<IRedisService, RedisService>();
             services.AddScoped<IWeatherService, WeatherService>();
             services.AddScoped<IWeatherRunner, WeatherRunner>();
+            services.AddScoped<ICollisionAndNoFlyZoneRunner, CollisionAndNoFlyZoneRunner>();
         }
     }
 
