@@ -6,14 +6,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0-preview1.19506.1" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.0-preview1.19506.1" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0-preview1.19506.1" />
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.0" />
       <PackageReference Include="PureSocketCluster" Version="4.0.1" />
       <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
       <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
       <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
       <PackageReference Include="Confluent.Kafka" Version="1.2.1" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.0.0" />
     </ItemGroup>
 <ItemGroup>
     <Content Include="appsettings.json">
@@ -25,6 +27,7 @@
   <Folder Include="Models\" />
   <Folder Include="Helpers\" />
   <Folder Include="RuleRunners\" />
+  <Folder Include="Settings\" />
 </ItemGroup>
 <ItemGroup>
   <Reference Include="utm-service">

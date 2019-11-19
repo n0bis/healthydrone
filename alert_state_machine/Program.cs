@@ -5,6 +5,9 @@ using alert_state_machine.Services;
 using Microsoft.Extensions.Configuration;
 using alert_state_machine.RuleRunners;
 using utm_service;
+using Microsoft.Extensions.DependencyInjection;
+using alert_state_machine.Persistence;
+using alert_state_machine.Settings;
 
 namespace alert_state_machine
 {
@@ -12,22 +15,43 @@ namespace alert_state_machine
     {
         static async Task Main(string[] args)
         {
-            var builder = new ConfigurationBuilder()
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+            var serviceProvider = services.BuildServiceProvider();
+
+            var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
-            var config = builder.Build();
+                .AddJsonFile("appsettings.json", false)
+                .Build();
 
             var utmService = new UTMService(config["UTM:clientid"], config["UTM:clientsecret"],
                 config["UTM:username"], config["UTM:password"]);
 
-            Scheduler.IntervalInMinutes(1, async () =>
+            Scheduler.IntervalInMinutes(0.5, async () =>
             {
                 Console.WriteLine(DateTime.Now);
-                await WeatherRunner.WeatherCheck(config, utmService);
+                await serviceProvider.GetService<IWeatherRunner>().WeatherCheck(utmService);
                 Console.WriteLine(DateTime.Now);
             });
 
             Console.ReadKey(true);
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            // build config
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", false)
+                .Build();
+
+            services.AddOptions();
+            services.Configure<RedisOpts>(configuration.GetSection("Redis"));
+
+            // add services:
+            services.AddSingleton<IRedisService, RedisService>();
+            services.AddScoped<IWeatherService, WeatherService>();
+            services.AddScoped<IWeatherRunner, WeatherRunner>();
         }
     }
 

@@ -1,21 +1,23 @@
 using System;
 using System.Threading.Tasks;
+using alert_state_machine.Settings;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace alert_state_machine.Persistence
 {
-    public class RedisService
+    public class RedisService : IRedisService
     {
         private readonly string host;
         private readonly int port;
         private ConnectionMultiplexer redis;
 
-        public RedisService(IConfiguration config)
+        public RedisService(IOptions<RedisOpts> options)
         {
-            this.host = config["Redis:Host"] ?? "localhost";
-            this.port = Convert.ToInt32(config["Redis:Port"] ?? "6379");
+            this.host = options.Value.Host;
+            this.port = options.Value.Port;
         }
 
         public void Connect()
@@ -47,7 +49,7 @@ namespace alert_state_machine.Persistence
                 {
                     return JsonConvert.DeserializeObject<T>(value);
                 } else {
-                    return default(T);
+                    return default;
                 }
             } catch(Exception)
             {
