@@ -5,5 +5,6 @@ namespace utm_service.Models
     {
         public double longitude { get; set; }
         public double latitude { get; set; }
+        public double altitude { get; set; }
     }
 }
