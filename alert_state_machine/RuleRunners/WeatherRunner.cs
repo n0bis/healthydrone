@@ -1,9 +1,11 @@
 ﻿using alert_state_machine.Models;
 using alert_state_machine.Persistence;
 using alert_state_machine.Services;
+using alert_state_machine.Settings;
 using alert_state_machine.States;
 using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,18 +20,21 @@ namespace alert_state_machine.RuleRunners
     {
         private readonly IRedisService _redisService;
         private readonly IWeatherService _weatherService;
+        private readonly WeatherRule _weatherRule;
 
-        public WeatherRunner(IRedisService redisService, IWeatherService weatherService)
+        public WeatherRunner(IRedisService redisService, IWeatherService weatherService, IOptions<WeatherRuleOpts> weatherOpts)
         {
             _redisService = redisService;
             _weatherService = weatherService;
             _redisService.Connect();
+            _weatherRule = new WeatherRule { MaxTemp = weatherOpts.Value.MaxTemp, MinTemp = weatherOpts.Value.MinTemp, RainPrecipitation = weatherOpts.Value.RainPrecipitation, WindSpeed = weatherOpts.Value.WindSpeed };
         }
 
         public async Task WeatherCheck(UTMService utmService)
         {
             List<Flight> flights = await utmService.Operation.GetFlightsInAllOperationsAsync();
-            flights?.ForEach(async flight =>
+            var distinctFlights = flights?.GroupBy(flight => flight.uas.uniqueIdentifier).Select(uas => uas.First()).ToList();
+            distinctFlights?.ForEach(async flight =>
             {
                 var flightCoordinates = flight.coordinate;
                 var weatherResponse = await _weatherService.GetWeatherAtCoord(latitude: flightCoordinates.latitude.ToString(), longitude: flightCoordinates.longitude.ToString());
@@ -45,7 +50,8 @@ namespace alert_state_machine.RuleRunners
                     cachedProcess = new State();
                 }
 
-                if ((weatherResponse.main.temp < -15 || weatherResponse?.rain?.precipitation > 7 ) && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive))
+                var validatedRule = _weatherRule.ValidateRule(weatherResponse);
+                if (!validatedRule.Success && (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive))
                 {
                     process.MoveNext();
                 } else {
@@ -54,7 +60,7 @@ namespace alert_state_machine.RuleRunners
                 
                 if (process.CurrentState == ProcessState.Raised && !cachedProcess.Triggered && !cachedProcess.Handled) {
                     cachedProcess.Triggered = true;
-                    SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "weather-alert" });
+                    await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "weather-alert", reason = validatedRule.Message });
                 }
                 cachedProcess.CurrentState = process.CurrentState;
                 await _redisService.Set(key, cachedProcess);
@@ -63,16 +69,14 @@ namespace alert_state_machine.RuleRunners
 
 
 		// localhost:9092
-		private void SendAlert(object value)
+		private async Task SendAlert(object value)
 		{
-            Console.WriteLine("ALERT");
+            Console.WriteLine($"ALERT: {JsonConvert.SerializeObject(value)}");
             var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {
-                producer.Produce("weather-alert", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
-
-                producer.Flush(TimeSpan.FromMilliseconds(100));
+                await producer.ProduceAsync("test", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
             }
         }
     }

@@ -47,6 +47,7 @@ namespace alert_state_machine
 
             services.AddOptions();
             services.Configure<RedisOpts>(configuration.GetSection("Redis"));
+            services.Configure<WeatherRuleOpts>(configuration.GetSection("WeatherRule"));
 
             // add services:
             services.AddSingleton<IRedisService, RedisService>();
