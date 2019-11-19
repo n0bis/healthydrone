@@ -32,7 +32,7 @@ namespace DroneSimulator.API
             services.AddOptions();
             services.Configure<DroneOpts>(Configuration.GetSection("Drone"));
             services.Configure<UTMOpts>(Configuration.GetSection("UTM"));
-            services.AddScoped<IDroneSim, DroneSim>();
+            services.AddSingleton<IDroneSim, DroneSim>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
