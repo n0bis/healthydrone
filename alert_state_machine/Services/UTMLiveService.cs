@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using PureSocketCluster;
 using PureWebSockets;
+
 
 namespace alert_state_machine.Services
 {
@@ -32,7 +34,9 @@ namespace alert_state_machine.Services
 
         private static void OnMessage(object sender, string name, object data)
         {
-            Console.WriteLine($"{((PureSocketClusterSocket)sender).InstanceName} {name} : {data} \r\n", ConsoleColor.Green);
+            //Console.WriteLine($"{((PureSocketClusterSocket)sender).InstanceName} {name} : {data} \r\n", ConsoleColor.Green);
+            var obj = JsonConvert.DeserializeObject<Message>(data.ToString());
+            Console.WriteLine(obj);
         }
     }
 }
