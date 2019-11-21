@@ -13,10 +13,24 @@ namespace reportIncident.API.Persistence.Contexts
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        protected override void onModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-    
+            base.OnModelCreating(builder);
+
+            builder.Entity<Incidents>().ToTable("Incidents");
+            builder.Entity<Incidents>().HasKey(p => p.Id);
+            builder.Entity<Incidents>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<Incidents>().Property(p => p.Date).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<Incidents>().Property(p => p.Drone).IsRequired();
+            builder.Entity<Incidents>().Property(p => p.Details).IsRequired();
+            builder.Entity<Incidents>().Property(p => p.Damage).IsRequired();
+            builder.Entity<Incidents>().Property(p => p.Actions).IsRequired();
+            builder.Entity<Incidents>().Property(p => p.Notes).IsRequired();
+            builder.Entity<Incidents>().Property(p => p.File);
+
+           
+              
         }
     }
-
-}   
+   
+}
