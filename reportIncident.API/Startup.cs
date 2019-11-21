@@ -10,6 +10,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using reportIncident.API.Domain.Repositories;
+using reportIncident.API.Domain.Services;
+using reportIncident.API.Persistence.Contexts;
+using reportIncident.API.Persistence.Reposetories;
+using reportIncident.API.Services;
+using Microsoft.EntityFrameworkCore;
+
+    
 
 namespace reportIncident.API
 {
@@ -22,29 +30,37 @@ namespace reportIncident.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+       
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.AddDbContext<AppDbContext>(options =>{ options.UseInMemoryDatabase("Incidents-api-in-memory");
+            });
+
+            services.AddScoped<IIncidentsRepository, IncidentsRepository>();
+            services.AddScoped<IIncidentsService, IncidentsService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHsts();
+            }
 
             app.UseHttpsRedirection();
+            app.UseMvc();
+           
 
-            app.UseRouting();
+            
 
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
+            
             });
         }
     }
