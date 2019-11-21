@@ -14,8 +14,6 @@ import stores from "./stores/";
 import { Auth0Provider } from "./react-auth0-spa";
 import config from "./auth_config.json";
 
-import * as serviceWorker from "./serviceWorker";
-
 // A function that routes the user to the right place
 // after login
 const onRedirectCallback = appState => {
@@ -62,8 +60,6 @@ renderApp(App);
 if (module.hot) {
   module.hot.accept(() => renderApp(App));
 }
-
-serviceWorker.register();
 
 /*import React from "react";
 import ReactDOM from "react-dom";
