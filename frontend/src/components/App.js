@@ -22,6 +22,12 @@ import DroneOptions from "./Layout/DroneOptions";
 import Report from "./Layout/Report";
 import "../styles/main.scss";
 
+
+//auth0 imports
+import Login from "./Login";
+import { useAuth0 } from "../react-auth0-spa";
+
+
 const drawerWidth = 320;
 
 const useStyles = makeStyles(theme => ({
@@ -105,6 +111,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function App() {
+  const { loading } = useAuth0();
   const classes = useStyles();
   //const [open, setOpen] = React.useState(true);
   const open = true;
@@ -145,7 +152,10 @@ export default function App() {
           >
             Dashboard
           </Typography>
+          <Login />
+         
           <IconButton color="inherit">
+          
             <ReportIcon />
           </IconButton>
         </Toolbar>
@@ -172,6 +182,7 @@ export default function App() {
         <DroneOptions />
       </Drawer>
       <main className={classes.content}>
+      
         <Maps />
       </main>
       <Report />
