@@ -31,12 +31,7 @@ namespace reportIncident.API.Controllers
 
 
 
-        // GET: api/Incidents
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+ 
 
         // GET: api/Incidents/5
         [HttpGet("{id}", Name = "Get")]

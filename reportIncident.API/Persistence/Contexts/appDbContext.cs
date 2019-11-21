@@ -22,8 +22,8 @@ namespace reportIncident.API.Persistence.Contexts
             builder.Entity<Incident>().HasKey(p => p.Id);
             builder.Entity<Incident>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Entity<Incident>().Property(p => p.Date).IsRequired().ValueGeneratedOnAdd();
-            builder.Entity<Incident>().Property(p => p.Drone).IsRequired();
-            builder.Entity<Incident>().Property(p => p.Operation).IsRequired();
+            builder.Entity<Incident>().Property(p => p.DroneId).IsRequired();
+            builder.Entity<Incident>().Property(p => p.OperationId).IsRequired();
             builder.Entity<Incident>().Property(p => p.Details).IsRequired();
             builder.Entity<Incident>().Property(p => p.Damage).IsRequired();
             builder.Entity<Incident>().Property(p => p.Actions).IsRequired();
@@ -32,7 +32,7 @@ namespace reportIncident.API.Persistence.Contexts
             _ = builder.Entity<Incident>().HasData
 
                 (
-                new Incident { Id = 100, Date = DateTime.Now, Operation = "", Drone = "DJI", Details = "crashed", Damage = "2 propels down", Actions = "fetch drone from tree", Notes = "dont hit a tree" }
+                new Incident { Id = Guid.NewGuid(), Date = DateTime.Now, OperationId = Guid.NewGuid(), DroneId = Guid.NewGuid(), Details = "crashed", Damage = "2 propels down", Actions = "fetch drone from tree", Notes = "dont hit a tree" }
                 );
            
               
