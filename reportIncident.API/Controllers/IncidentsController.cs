@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using reportIncident.API.Domain.Models;
+using reportIncident.API.Domain.Services;
 
 namespace reportIncident.API.Controllers
 {
@@ -11,6 +13,16 @@ namespace reportIncident.API.Controllers
     [ApiController]
     public class IncidentsController : ControllerBase
     {
+
+        private readonly IIncidentsService _incidentsService;
+
+        public IncidentsController(IIncidentsService incidentsService)
+        {
+            _incidentsService = incidentsService;
+        }
+
+
+
         // GET: api/Incidents
         [HttpGet]
         public IEnumerable<string> Get()
