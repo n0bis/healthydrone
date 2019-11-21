@@ -55,7 +55,7 @@ namespace LandingPoints.API.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Landing Points");
+                    b.ToTable("Landingpoints");
 
                     b.HasData(
                         new
