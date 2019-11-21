@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using DroneManager.API.Configuration;
+using DroneManager.API.Controllers.Config;
 using DroneManager.API.Domain.Repositories;
 using DroneManager.API.Domain.Services;
 using DroneManager.API.Mapping;
@@ -36,6 +37,11 @@ namespace DroneManager.API
         {
             services.AddControllers();
 
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = InvalidModelStateResponseFactory.ProduceErrorResponse;
+            });
+
             services.AddEntityFrameworkNpgsql().AddDbContext<AppDbContext>(
                 opt => opt.UseNpgsql(Configuration.GetConnectionString("AppDbContext")));
 
@@ -44,14 +50,8 @@ namespace DroneManager.API
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.Configure<UTMOpts>(Configuration.GetSection("UTM"));
 
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new ModelToResourceProfile());
-                mc.AddProfile(new ResourceToModelProfile());
-            });
-
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            services.AddAutoMapper(typeof(Startup));
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
