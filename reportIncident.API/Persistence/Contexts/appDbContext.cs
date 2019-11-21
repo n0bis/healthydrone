@@ -22,12 +22,18 @@ namespace reportIncident.API.Persistence.Contexts
             builder.Entity<Incidents>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Entity<Incidents>().Property(p => p.Date).IsRequired().ValueGeneratedOnAdd();
             builder.Entity<Incidents>().Property(p => p.Drone).IsRequired();
+            builder.Entity<Incidents>().Property(p => p.Operation).IsRequired();
             builder.Entity<Incidents>().Property(p => p.Details).IsRequired();
             builder.Entity<Incidents>().Property(p => p.Damage).IsRequired();
             builder.Entity<Incidents>().Property(p => p.Actions).IsRequired();
             builder.Entity<Incidents>().Property(p => p.Notes).IsRequired();
             builder.Entity<Incidents>().Property(p => p.File);
+            
+            builder.Entity<Incidents>().HasData
 
+                (
+                new Incidents { Id = 100, Date = DateTime.Now, Operation = "", Drone = "DJI", Details = "crashed", Damage = "2 propels down", Actions = "fetch drone from tree", Notes = "dont hit a tree", File = null }
+                )
            
               
         }
