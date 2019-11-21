@@ -17,7 +17,7 @@ namespace reportIncident.API.Services
         {
             this._incidentsRepository = incidentsRepository;
         }
-        public async Task<IEnumerable<Incidents>> ListAsync()
+        public async Task<IEnumerable<Incident>> ListAsync()
         {
             return await _incidentsRepository.ListAsync();
         }

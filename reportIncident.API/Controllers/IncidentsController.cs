@@ -23,7 +23,7 @@ namespace reportIncident.API.Controllers
 
 
         [HttpGet]
-        public async Task<IEnumerable<Incidents>> GetAllAsync()
+        public async Task<IEnumerable<Incident>> GetAllAsync()
         {
             var incidents = await _incidentsService.ListAsync();
             return incidents;

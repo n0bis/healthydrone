@@ -8,6 +8,6 @@ namespace reportIncident.API.Domain.Services
 {
     public interface IIncidentsService
     {
-        Task<IEnumerable<Incidents>> ListAsync();
+        Task<IEnumerable<Incident>> ListAsync();
     }
 }

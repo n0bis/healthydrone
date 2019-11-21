@@ -9,31 +9,31 @@ namespace reportIncident.API.Persistence.Contexts
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Incidents> Incidents { get; set; }
+        public DbSet<Incident> Incidents { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Incidents>().ToTable("Incidents");
-            builder.Entity<Incidents>().HasKey(p => p.Id);
-            builder.Entity<Incidents>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
-            builder.Entity<Incidents>().Property(p => p.Date).IsRequired().ValueGeneratedOnAdd();
-            builder.Entity<Incidents>().Property(p => p.Drone).IsRequired();
-            builder.Entity<Incidents>().Property(p => p.Operation).IsRequired();
-            builder.Entity<Incidents>().Property(p => p.Details).IsRequired();
-            builder.Entity<Incidents>().Property(p => p.Damage).IsRequired();
-            builder.Entity<Incidents>().Property(p => p.Actions).IsRequired();
-            builder.Entity<Incidents>().Property(p => p.Notes).IsRequired();
-            builder.Entity<Incidents>().Property(p => p.File);
-            
-            builder.Entity<Incidents>().HasData
+            builder.Entity<Incident>().ToTable("Incidents");
+            builder.Entity<Incident>().HasKey(p => p.Id);
+            builder.Entity<Incident>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<Incident>().Property(p => p.Date).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<Incident>().Property(p => p.Drone).IsRequired();
+            builder.Entity<Incident>().Property(p => p.Operation).IsRequired();
+            builder.Entity<Incident>().Property(p => p.Details).IsRequired();
+            builder.Entity<Incident>().Property(p => p.Damage).IsRequired();
+            builder.Entity<Incident>().Property(p => p.Actions).IsRequired();
+            builder.Entity<Incident>().Property(p => p.Notes).IsRequired();
+
+            _ = builder.Entity<Incident>().HasData
 
                 (
-                new Incidents { Id = 100, Date = DateTime.Now, Operation = "", Drone = "DJI", Details = "crashed", Damage = "2 propels down", Actions = "fetch drone from tree", Notes = "dont hit a tree", File = null }
-                )
+                new Incident { Id = 100, Date = DateTime.Now, Operation = "", Drone = "DJI", Details = "crashed", Damage = "2 propels down", Actions = "fetch drone from tree", Notes = "dont hit a tree" }
+                );
            
               
         }

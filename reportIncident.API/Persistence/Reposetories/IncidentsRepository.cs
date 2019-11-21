@@ -16,7 +16,7 @@ namespace reportIncident.API.Persistence.Reposetories
 
         }
 
-        public async Task<IEnumerable<Incidents>> ListAsync()
+        public async Task<IEnumerable<Incident>> ListAsync()
         {
             return await _context.Incidents.ToListAsync();
         }

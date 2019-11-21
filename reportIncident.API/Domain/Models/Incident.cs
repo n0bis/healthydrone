@@ -2,7 +2,7 @@
 
 namespace reportIncident.API.Domain.Models
 {
-    public class Incidents
+    public class Incident
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -12,7 +12,7 @@ namespace reportIncident.API.Domain.Models
         public string Damage { get; set; }
         public string Actions { get; set; }
         public string Notes { get; set; }
-        public FileStyleUriParser File { get; set; }
+        //public FileStyleUriParser File { get; set; }
         
 
     }
