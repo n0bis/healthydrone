@@ -19,39 +19,34 @@ export default function FormDialog() {
   };
 
   return (
-    <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open form dialog
-      </Button>
-      <Dialog
-        open={false}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">Rapporter fejl</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Beskriv venligst den fejl der opstod. Fejlen vil herefter blive
-            gennemgået.
-          </DialogContentText>
-          <TextField
-            id="standard-multiline-static"
-            label="Skriv report"
-            placeholder="Fortæl hvad der skete"
-            multiline
-            rowsMax="10"
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Anullere
-          </Button>
-          <Button onClick={handleClose} color="primary">
-            Send
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+    <Dialog
+      open={false}
+      onClose={handleClose}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Rapporter fejl</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Beskriv venligst den fejl der opstod. Fejlen vil herefter blive
+          gennemgået.
+        </DialogContentText>
+        <TextField
+          id="standard-multiline-static"
+          label="Skriv report"
+          placeholder="Fortæl hvad der skete"
+          multiline
+          rowsMax="10"
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Anullere
+        </Button>
+        <Button onClick={handleClose} color="primary">
+          Send
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
