@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Threading.Tasks;
 using alert_state_machine.Models;
 using AutoMapper;
@@ -45,21 +46,28 @@ namespace alert_state_machine.Services
             //Console.WriteLine(data);
 
             var test = (Dictionary<string, object>)(data);
+            var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
+            if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK")
+                return;
 
-            String result = JsonConvert.SerializeObject(DictionaryToObject(test), Formatting.Indented);
+            var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
+            var obj = JsonConvert.DeserializeObject<Models.Message>(result);        
 
-//          DataOuter obj = _mapper.Map<object, DataOuter>(data);            
-
-            Console.WriteLine(result);
+            Console.WriteLine(obj);
         }
-        private static dynamic DictionaryToObject(IDictionary<String, Object> dictionary)
+
+        private static dynamic DictionaryToObject(IEnumerable<object> dictionary)
         {
             var expandoObj = new ExpandoObject();
             var expandoObjCollection = (ICollection<KeyValuePair<String, Object>>)expandoObj;
 
             foreach (var keyValuePair in dictionary)
             {
-                expandoObjCollection.Add(keyValuePair);
+                var test = (Dictionary<string, object>)keyValuePair;
+                foreach (var v in test)
+                {
+                    expandoObjCollection.Add(v);
+                }
             }
             dynamic eoDynamic = expandoObj;
             return eoDynamic;
