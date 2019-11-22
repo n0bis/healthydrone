@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import MapGL from "@urbica/react-map-gl";
+import MapGL, { NavigationControl } from "@urbica/react-map-gl";
 import Draw from "@urbica/react-map-gl-draw";
 import { inject, observer } from "mobx-react";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -74,8 +74,9 @@ class Maps extends Component {
           }
           latitude={55.676098}
           longitude={12.568337}
-          zoom={1}
+          zoom={8}
         >
+          <NavigationControl showCompass showZoom position="top-right" />
           {!isLoading && (
             <Draw
               data={test}

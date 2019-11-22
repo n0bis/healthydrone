@@ -47,6 +47,7 @@ class DroneOptions extends Component {
             <b>Til</b>
           </p>
           <select onChange={e => setLanding(e)}>
+            <option default>Vælg lokation</option>
             {landingSpots.map(item => (
               <option value={item.id}>{item.name}</option>
             ))}

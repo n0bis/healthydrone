@@ -49,6 +49,8 @@ class MapStore {
 
     var data = toJS(this.data);
 
+    return console.log(data);
+
     data.features.push({
       type: "Feature",
       properties: {},
