@@ -44,6 +44,8 @@ namespace reportIncident.API
             services.AddScoped<IIncidentsRepository, IncidentsRepository>();
             services.AddScoped<IIncidentsService, IncidentsService>();
 
+            services.AddAutoMapper();
+
            /* var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new ModelToResourceProfile());

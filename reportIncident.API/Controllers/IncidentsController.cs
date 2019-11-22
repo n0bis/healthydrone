@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using reportIncident.API.Domain.Models;
 using reportIncident.API.Domain.Services;
 using reportIncident.API.Resources;
+using AutoMapper;
 
 namespace reportIncident.API.Controllers
 {
@@ -16,6 +17,7 @@ namespace reportIncident.API.Controllers
     {
 
         private readonly IIncidentsService _incidentsService;
+        private readonly IMapper _mapper;
 
         public IncidentsController(IIncidentsService incidentsService)
         {
@@ -26,11 +28,16 @@ namespace reportIncident.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<Incident>> GetAllAsync()
         {
-            var incidents = await _incidentsService.ListAsync();
-            return incidents;
+            var incident = await _incidentsService.ListAsync();
+            var resources = _mapper.Map<IEnumerable<Incident>, IEnumerable<IncidentResource>>(incident);
+            return incident;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> PostAsync([FromBody] SaveIncidentResource resource)
+        { 
 
+        }
 
  
 
