@@ -20,5 +20,10 @@ namespace reportIncident.API.Persistence.Reposetories
         {
             return await _context.Incidents.ToListAsync();
         }
+
+        public async Task AddAsync(Incident incident)
+        {
+            await _context.Incidents.AddAsync(incident);
+        }
     }
 }

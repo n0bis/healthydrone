@@ -9,5 +9,6 @@ namespace reportIncident.API.Domain.Repositories
     public interface IIncidentsRepository
     {
         Task<IEnumerable<Incident>> ListAsync();
+        Task AddAsync(Incident incident);
     }
 }

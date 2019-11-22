@@ -38,7 +38,16 @@ namespace reportIncident.API.Controllers
         public async Task<IActionResult> PostAsync([FromBody] SaveIncidentResource resource)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState.getErrorMessage());
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var incident = _mapper.Map<SaveIncidentResource, Incident>(resource);
+            var result = await _incidentsService.SaveAsync(incident);
+
+            if (!result.Succes)
+                return BadRequest(result.Message);
+
+            var incidentResource = _mapper.Map<Incident, IncidentResource>(result.Incident);
+            return Ok(incidentResource);
         }
 
  
