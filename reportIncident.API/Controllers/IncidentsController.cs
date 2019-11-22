@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using reportIncident.API.Domain.Models;
 using reportIncident.API.Domain.Services;
+using reportIncident.API.Resources;
 
 namespace reportIncident.API.Controllers
 {
