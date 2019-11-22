@@ -8,6 +8,7 @@ using reportIncident.API.Domain.Models;
 using reportIncident.API.Domain.Services;
 using reportIncident.API.Resources;
 using AutoMapper;
+using reportIncident.API.Extensions;
 
 namespace reportIncident.API.Controllers
 {
@@ -35,8 +36,9 @@ namespace reportIncident.API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] SaveIncidentResource resource)
-        { 
-
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.getErrorMessage());
         }
 
  
