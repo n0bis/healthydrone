@@ -11,11 +11,13 @@ namespace alert_state_machine.RuleRunners
     {
         private readonly IRedisService _redisService;
         private Boolean isConnected = false;
+        private readonly IUTMLiveService _UTMLiveService;
 
-        public CollisionAndNoFlyZoneRunner(IRedisService redisService)
+        public CollisionAndNoFlyZoneRunner(IRedisService redisService, IUTMLiveService utmLiveService)
         {
             _redisService = redisService;
             _redisService.Connect();
+            _UTMLiveService = utmLiveService;
 
         }
 
@@ -23,8 +25,7 @@ namespace alert_state_machine.RuleRunners
         {
             if (isConnected == false)
             {
-                var utmLiveService = new UTMLiveService();
-                await utmLiveService.Connect(token?.access_token);
+                await _UTMLiveService.Connect(token?.access_token);
                 isConnected = true;
             }
 

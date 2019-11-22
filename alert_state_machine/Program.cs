@@ -8,6 +8,7 @@ using utm_service;
 using Microsoft.Extensions.DependencyInjection;
 using alert_state_machine.Persistence;
 using alert_state_machine.Settings;
+using AutoMapper;
 
 namespace alert_state_machine
 {
@@ -63,6 +64,10 @@ namespace alert_state_machine
             services.AddScoped<IWeatherService, WeatherService>();
             services.AddScoped<IWeatherRunner, WeatherRunner>();
             services.AddScoped<ICollisionAndNoFlyZoneRunner, CollisionAndNoFlyZoneRunner>();
+            services.AddSingleton<IUTMLiveService, UTMLiveService>();
+
+            var mapper = new MapperConfiguration(mc => { }).CreateMapper();
+            services.AddSingleton(mapper);
         }
     }
 
