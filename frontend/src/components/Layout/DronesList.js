@@ -3,10 +3,44 @@ import ChevronRight from "@material-ui/icons/ChevronRight";
 import { inject, observer } from "mobx-react";
 import socketCluster from "socketcluster-client";
 
+var groups = {
+  alert: [],
+  IN_FLIGTH: [],
+  LANDED: []
+};
+
+const DronesComponent = ({ drone }) => {
+  return (
+    <div className="drone">
+      <p>
+        <b>Status:</b> <span className="text-green">Flyvende</span>
+      </p>
+      <p>
+        <b>Batteri:</b> <span className="text-green">94%</span>
+      </p>
+      <p>
+        <b>Lokation</b> <u>Svendbord</u>
+      </p>
+      <div className="arrow">
+        <p>
+          <ChevronRight />
+        </p>
+      </div>
+    </div>
+  );
+};
+
 @inject("droneStore")
 @observer
 class DronesList extends Component {
-  componentWillMount() {
+  async componentDidMount() {
+    const {
+      fetchDrones,
+      setDroneStatus,
+      getFlightStatus
+    } = this.props.droneStore;
+    await fetchDrones();
+
     // Initiate the connection to the server
     try {
       const token =
@@ -28,9 +62,16 @@ class DronesList extends Component {
       socket.on("connect", () => {
         subscription = socket.subscribe("adsb", { waitForAuth: true });
         subscription.watch(msg => {
-          console.info(
+          if (msg.data.source === "simulator") {
+          }
+          const droneID = msg.data.UASFLIGHT;
+
+          if (getFlightStatus(droneID) !== "IN_FLIGTH")
+            setDroneStatus(droneID, "IN_FLIGHT");
+
+          /*console.info(
             `Received event: ${msg.name}with data: ${JSON.stringify(msg.data)}`
-          );
+          );*/
         });
       });
       socket.on("error", error => {
@@ -47,36 +88,61 @@ class DronesList extends Component {
 
   render() {
     const { drones, onClick } = this.props.droneStore;
+
+    const inFligth = drones.filter(drone => drone.flightStatus === "IN_FLIGHT");
+    const parked = drones.filter(drone => drone.flightStatus === "LANDED");
+
+    console.log(parked);
+
     return (
       <div className="drones">
-        {drones.map(group => (
+        <div className="group">
+          <p className="group-name">IN FLIGTH</p>
           <div className="group">
-            <p className="group-name">{group.group_name}</p>
-            <div className="group">
-              {group.drones.map(drone => (
-                <div className="drone" onClick={onClick}>
-                  <p>
-                    <b>Status:</b> <span className="text-green">Flyvende</span>
-                  </p>
-                  <p>
-                    <b>Batteri:</b> <span className="text-green">94%</span>
-                  </p>
-                  <p>
-                    <b>Lokation</b> <u>Svendbord</u>
-                  </p>
-                  <div className="arrow">
-                    <p>
-                      <ChevronRight />
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {inFligth.map(drone => (
+              <DronesComponent />
+            ))}
           </div>
-        ))}
+        </div>
+        <div className="group">
+          <p className="group-name">PARKED</p>
+          <div className="group">
+            {parked.map(drone => (
+              <DronesComponent />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 }
 
 export default DronesList;
+/*
+<div className="drones">
+  {drones.map(group => (
+    <div className="group">
+      <p className="group-name">{group.group_name}</p>
+      <div className="group">
+        {group.drones.map(drone => (
+          <div className="drone" onClick={onClick}>
+            <p>
+              <b>Status:</b> <span className="text-green">Flyvende</span>
+            </p>
+            <p>
+              <b>Batteri:</b> <span className="text-green">94%</span>
+            </p>
+            <p>
+              <b>Lokation</b> <u>Svendbord</u>
+            </p>
+            <div className="arrow">
+              <p>
+                <ChevronRight />
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>;*/

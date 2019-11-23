@@ -1,6 +1,7 @@
 import { get, action, observable, toJS } from "mobx";
 import axios from "axios";
 import { observer } from "mobx-react-lite";
+import { FormControlLabel } from "@material-ui/core";
 
 class MapStore {
   @observable isLoading = false;
@@ -9,8 +10,22 @@ class MapStore {
   @observable b;
   @observable data = {
     type: "FeatureCollection",
-    features: []
+    features: [
+      {
+        id: "test",
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [-77.032, 38.913]
+        },
+        properties: {
+          title: "Mapbox",
+          description: "Washington, D.C."
+        }
+      }
+    ]
   };
+
   @observable landingSpots = [
     {
       id: 1,
@@ -26,6 +41,16 @@ class MapStore {
 
   @action onChange = data => {
     this.data = data;
+  };
+
+  setDroneLocation = id => {
+    const drones = this.data.features.filter(
+      drone => drone.geometry.type === "Point"
+    );
+
+    drones.map(drone => {
+      // ?
+    });
   };
 
   @action setLanding = e => {

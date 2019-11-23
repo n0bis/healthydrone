@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import MapGL, { NavigationControl } from "@urbica/react-map-gl";
+import MapGL, { NavigationControl, Layer, Feature } from "@urbica/react-map-gl";
 import Draw from "@urbica/react-map-gl-draw";
 import { inject, observer } from "mobx-react";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -15,7 +15,10 @@ const Map = ReactMapboxGl({
 @inject("mapStore")
 @observer
 class Maps extends Component {
-  componentDidMount() {}
+  componentDidMount() {
+    const { setDroneLocation } = this.props.mapStore;
+    setDroneLocation(1);
+  }
 
   onDrawCreate = ({ features }) => {
     console.log(features);
