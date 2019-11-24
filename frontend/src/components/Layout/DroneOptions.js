@@ -48,7 +48,9 @@ class DroneOptions extends Component {
             </div>
             <div className="actions">
               {drone.flightStatus === "IN_FLIGHT" ? (
-                <p>Denne drone er ude og flyve..</p>
+                <p>
+                  Her kommer der handlinger til hvis en drone er ude og flyve.
+                </p>
               ) : (
                 <>
                   <p>

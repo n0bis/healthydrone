@@ -49,6 +49,7 @@ class DroneStore {
   setDroneStatus = (drone_id, status) => {
     this.drones.map((drone, key) => {
       if (drone.uniqueIdentifier === drone_id) {
+        console.log("ASOIDJSA");
         this.drones[key].flightStatus = status;
       }
     });

@@ -32,6 +32,9 @@ class DronesList extends Component {
     const { setDroneLocation } = this.props.mapStore;
     await fetchDrones();
 
+    /*setTimeout(function() {
+      setDroneStatus("f7785735-5700-4e1c-a766-5ae7cbb4a4e3", "LANDED");
+    }, 5000);*/
     // Initiate the connection to the server
     try {
       const token =
@@ -56,7 +59,7 @@ class DronesList extends Component {
         subscription = socket.subscribe("adsb", { waitForAuth: true });
         subscription.watch(msg => {
           if (msg.data[0].source == "simulator") {
-            setDroneStatus(msg.data[0].UASOPERATION, "IN_FLIGHT");
+            setDroneStatus(msg.data[0].uas, "IN_FLIGHT");
             setDroneLocation(
               msg.data[0].UASOPERATION,
               msg.data[0].xy.longitude,
