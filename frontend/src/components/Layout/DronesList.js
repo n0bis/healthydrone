@@ -9,9 +9,9 @@ var groups = {
   LANDED: []
 };
 
-const DronesComponent = ({ drone }) => {
+const DronesComponent = ({ drone, onClick }) => {
   return (
-    <div className="drone">
+    <div className="drone" onClick={onClick}>
       <p>
         <b>Status:</b> <span className="text-green">Flyvende</span>
       </p>
@@ -30,7 +30,7 @@ const DronesComponent = ({ drone }) => {
   );
 };
 
-@inject("droneStore")
+@inject("droneStore", "mapStore")
 @observer
 class DronesList extends Component {
   async componentDidMount() {
@@ -39,12 +39,13 @@ class DronesList extends Component {
       setDroneStatus,
       getFlightStatus
     } = this.props.droneStore;
+    const { setDroneLocation } = this.props.mapStore;
     await fetchDrones();
 
     // Initiate the connection to the server
     try {
       const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmZcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOmU2MzMzZmM0LThhNzAtNDkwNi1hYzY4LTY3ZjNhMWFiN2QyZjoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmY6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwOFwiOltcInN1YnNjcmliZVwiXSIsIlwib3BlcmF0b3I6MzhkYzNjN2EtOTE1ZS00NDA5LWI2ZDktYTBkYzQwOWQ4ODA4OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODp1YXM6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiZmxpZ2h0XCI6W1wic3Vic2NyaWJlXCJdIiwiXCJuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYjpuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYlwiOltcInN1YnNjcmliZVwiXSJdLCJ1c2VyX25hbWUiOiJGUkhFTDE4QFNUVURFTlQuU0RVLkRLIiwic2NvcGUiOlsicmVhZCJdLCJleHAiOjE1NzQ0NTcwOTgsImp0aSI6IjFkMzg2ZWM1LWRiNmQtNDMwNS1hZmM2LWU0NTczYjI0NDVkZSIsImNsaWVudF9pZCI6InNkdUhlYWx0aERyb25lQ29ubmVjdCIsInVzaWQiOiIwNGRjNzAzNS1kMzI2LTRkM2UtOTJjMy1hZjA3MmYxNmYyYTgifQ.6pcMEzX7UXNTUypNOPDCB_OuJjj82HOI3MAWrXUyzIQ";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmZcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOmU2MzMzZmM0LThhNzAtNDkwNi1hYzY4LTY3ZjNhMWFiN2QyZjoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmY6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwOFwiOltcInN1YnNjcmliZVwiXSIsIlwib3BlcmF0b3I6MzhkYzNjN2EtOTE1ZS00NDA5LWI2ZDktYTBkYzQwOWQ4ODA4OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODp1YXM6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiZmxpZ2h0XCI6W1wic3Vic2NyaWJlXCJdIiwiXCJuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYjpuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYlwiOltcInN1YnNjcmliZVwiXSJdLCJ1c2VyX25hbWUiOiJGUkhFTDE4QFNUVURFTlQuU0RVLkRLIiwic2NvcGUiOlsicmVhZCJdLCJleHAiOjE1NzQ2MzQ4MTcsImp0aSI6ImQ2ZjgyZTg0LWM4ZTEtNDhkZS04NDMxLTA4ZjIwMGU4Yzc0ZCIsImNsaWVudF9pZCI6InNkdUhlYWx0aERyb25lQ29ubmVjdCIsInVzaWQiOiI1NTViNWRmNi1jY2VlLTQwMTEtYWMzOC01NGM4ZGVkNTZiOWUifQ.pMNxh55Gly8jA_V798eRPIHESK92ife0lAQVixqEZhY";
       let socketClusterOptions = {
         port: 443,
         secure: true,
@@ -52,26 +53,25 @@ class DronesList extends Component {
         path: "/socketcluster/",
         autoReconnectOptions: { initialDelay: 500, maxDelay: 2000 }
       };
+
       let subscription;
-      let test;
+
       let socket = socketCluster.create(socketClusterOptions);
       socket.authenticate(token, error => {
         if (error)
           console.error(`Socket cluster authentication failed : ${error}`);
       });
+
       socket.on("connect", () => {
         subscription = socket.subscribe("adsb", { waitForAuth: true });
         subscription.watch(msg => {
-          if (msg.data.source === "simulator") {
+          if (msg.data[0].source == "simulator") {
+            setDroneLocation(
+              msg.data[0].UASOPERATION,
+              msg.data[0].xy.longitude,
+              msg.data[0].xy.latitude
+            );
           }
-          const droneID = msg.data.UASFLIGHT;
-
-          if (getFlightStatus(droneID) !== "IN_FLIGTH")
-            setDroneStatus(droneID, "IN_FLIGHT");
-
-          /*console.info(
-            `Received event: ${msg.name}with data: ${JSON.stringify(msg.data)}`
-          );*/
         });
       });
       socket.on("error", error => {
@@ -82,17 +82,11 @@ class DronesList extends Component {
     }
   }
 
-  onClick = event => {
-    console.log(event.target.offsetTop);
-  };
-
   render() {
     const { drones, onClick } = this.props.droneStore;
 
     const inFligth = drones.filter(drone => drone.flightStatus === "IN_FLIGHT");
     const parked = drones.filter(drone => drone.flightStatus === "LANDED");
-
-    console.log(parked);
 
     return (
       <div className="drones">
@@ -100,7 +94,9 @@ class DronesList extends Component {
           <p className="group-name">IN FLIGTH</p>
           <div className="group">
             {inFligth.map(drone => (
-              <DronesComponent />
+              <DronesComponent
+                onClick={() => onClick(drone.uniqueIdentifier)}
+              />
             ))}
           </div>
         </div>
@@ -108,7 +104,7 @@ class DronesList extends Component {
           <p className="group-name">PARKED</p>
           <div className="group">
             {parked.map(drone => (
-              <DronesComponent />
+              <DronesComponent onClick={() => onClick(uniqueIdentifier)} />
             ))}
           </div>
         </div>

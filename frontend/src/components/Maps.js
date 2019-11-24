@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import MapGL, { NavigationControl, Layer, Feature } from "@urbica/react-map-gl";
+import MapGL, {
+  NavigationControl,
+  Layer,
+  Feature,
+  Marker,
+  Source
+} from "@urbica/react-map-gl";
 import Draw from "@urbica/react-map-gl-draw";
 import { inject, observer } from "mobx-react";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -12,12 +18,22 @@ const Map = ReactMapboxGl({
 });
 */
 
+const style = {
+  padding: "10%",
+  width: "100px",
+  height: "100px",
+  color: "#fff",
+  cursor: "pointer",
+  background: "#1978c8",
+  borderRadius: "6px"
+};
+
 @inject("mapStore")
 @observer
 class Maps extends Component {
   componentDidMount() {
     const { setDroneLocation } = this.props.mapStore;
-    setDroneLocation(1);
+    //setDroneLocation(1);
   }
 
   onDrawCreate = ({ features }) => {
@@ -51,22 +67,28 @@ class Maps extends Component {
   };
 
   render() {
-    const { data, isLoading, onChange, createFlight } = this.props.mapStore;
-    console.log(data);
-    const test = data;
-    const tests = [
-      {
-        type: "Feature",
-        properties: {},
-        geometry: {
-          coordinates: [
-            [50.676098, 12.568337],
-            [-2.36777130126949, 37.76914513791027]
-          ],
-          type: "LineString"
-        }
+    const {
+      data,
+      isLoading,
+      onChange,
+      createFlight,
+      dronesData,
+      setDroneLocation
+    } = this.props.mapStore;
+
+    const test = {
+      id: 1,
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [-77.032, 38.913]
+      },
+      properties: {
+        title: "Mapbox",
+        description: "Washington, D.C."
       }
-    ];
+    };
+
     return (
       <div style={{ height: "100%" }}>
         <MapGL
@@ -77,13 +99,23 @@ class Maps extends Component {
           }
           latitude={55.676098}
           longitude={12.568337}
-          zoom={8}
+          zoom={1}
         >
           <NavigationControl showCompass showZoom position="top-right" />
+          {dronesData.map(drone => (
+            <Marker
+              style={style}
+              longitude={drone.location[0]}
+              latitude={drone.location[1]}
+            >
+              <h1>DRONE</h1>
+            </Marker>
+          ))}
+          ;
           {!isLoading && (
             <Draw
-              data={test}
-              features={test}
+              data={data}
+              features={data}
               onChange={onChange}
               onDrawCreate={this.onDrawCreate}
               onDrawUpdate={this.onDrawUpdate}
@@ -92,7 +124,7 @@ class Maps extends Component {
         </MapGL>
 
         <div>
-          <p>{JSON.stringify(test)}</p>
+          <p>{JSON.stringify(data)}</p>
           <button onClick={createFlight}>Create fligth</button>
         </div>
       </div>

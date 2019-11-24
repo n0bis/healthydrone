@@ -24,8 +24,10 @@ class DroneOptions extends Component {
     const { landingSpots, startFligth, setLanding } = this.props.mapStore;
     const { showDroneOptions, closeDroneOptions } = this.props.droneStore;
     const display = showDroneOptions ? "block" : "none";
+    const drone = getDrone();
     return (
       <div className="drone-options fadeIn" style={{ display: display }}>
+        {drone}
         <div className="title">
           <p>Drone ID: #31231345</p>
           <div className="close-options" onClick={closeDroneOptions}>

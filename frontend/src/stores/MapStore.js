@@ -10,9 +10,16 @@ class MapStore {
   @observable b;
   @observable data = {
     type: "FeatureCollection",
+    features: []
+  };
+  @observable dronesData = [];
+
+  /*
+  @observable data = {
+    type: "FeatureCollection",
     features: [
       {
-        id: "test",
+        id: 1,
         type: "Feature",
         geometry: {
           type: "Point",
@@ -25,6 +32,7 @@ class MapStore {
       }
     ]
   };
+  */
 
   @observable landingSpots = [
     {
@@ -43,14 +51,30 @@ class MapStore {
     this.data = data;
   };
 
-  setDroneLocation = id => {
-    const drones = this.data.features.filter(
-      drone => drone.geometry.type === "Point"
-    );
+  /*
+   ** Drones logic
+   */
 
-    drones.map(drone => {
-      // ?
+  setDroneLocation = (drone_id, lan, lon) => {
+    // Check if drones is in array, then update the location
+    var exists;
+    this.dronesData.map((drone, key) => {
+      if (drone.drone_id == drone_id) {
+        this.dronesData[key].location = [lan, lon];
+        exists = true;
+      }
     });
+
+    if (exists) return;
+
+    // Drone is not yet created in the map, so we create it here
+    this.dronesData = [
+      ...this.dronesData,
+      {
+        drone_id: drone_id,
+        location: [-77.032, 38.913]
+      }
+    ];
   };
 
   @action setLanding = e => {
