@@ -108,7 +108,7 @@ body {
   }
 }
 
-.reports {
+.reports-list {
   .report {
     padding: 10px 20px;
     border-bottom: $border;
@@ -118,6 +118,20 @@ body {
     }
     .location {
       font-weight: bold;
+    }
+    p {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.hospitals-list {
+  .item {
+    padding: 10px 20px;
+    border-bottom: $border;
+    background-color: #fff;
+    &:first-of-type {
+      border-top: $border;
     }
     p {
       margin-bottom: 0;

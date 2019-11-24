@@ -11,16 +11,13 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ReportIcon from "@material-ui/icons/Report";
 
 import "antd/dist/antd.css";
-import { Tabs } from "antd";
 import Maps from "../Maps";
-import DronesList from "./DronesList";
 import DroneOptions from "./DroneOptions";
 import Report from "./Report";
 import "../../styles/main.scss";
+import Sidebar from "./Sidebar";
 
 const drawerWidth = 320;
-
-const { TabPane } = Tabs;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -155,26 +152,7 @@ export default function Dashboard() {
         }}
         open={true}
       >
-        <Tabs defaultActiveKey="1" type="card" style={{ marginTop: 70 }}>
-          <TabPane tab="Droner" key="1">
-            <DronesList />
-          </TabPane>
-          <TabPane tab="Hospitaler" key="2">
-            Liste med Hospitaler
-          </TabPane>
-          <TabPane tab="Anmodninger" key="3">
-            <div className="reports">
-              <div className="report">
-                <p className="location">Odense</p>
-                <p className="message">Vi skal bruge en drone</p>
-              </div>
-              <div className="report">
-                <p className="location">Svendborg</p>
-                <p className="message">Vi skal bruge en drone</p>
-              </div>
-            </div>
-          </TabPane>
-        </Tabs>
+        <Sidebar />
       </Drawer>
       <main className={classes.content}>
         <Maps />
