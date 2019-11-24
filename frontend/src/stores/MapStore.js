@@ -2,6 +2,7 @@ import { get, action, observable, toJS } from "mobx";
 import axios from "axios";
 import { observer } from "mobx-react-lite";
 import { FormControlLabel } from "@material-ui/core";
+var qs = require("qs");
 
 class MapStore {
   @observable isLoading = false;
@@ -13,6 +14,7 @@ class MapStore {
     features: []
   };
   @observable dronesData = [];
+  @observable landingPoints = [];
 
   /*
   @observable data = {
@@ -34,21 +36,21 @@ class MapStore {
   };
   */
 
-  @observable landingSpots = [
-    {
-      id: 1,
-      name: "Svendbord",
-      value: [-55.676098, 12.568337]
-    },
-    {
-      id: 2,
-      name: "København",
-      value: [55.676098, 2.568337]
-    }
-  ];
-
   @action onChange = data => {
     this.data = data;
+  };
+
+  fetchLandingPoints = () => {
+    this.landingPoints = [
+      {
+        name: "Odense",
+        location: [10.40237, 55.403756]
+      },
+      {
+        name: "Svendbord",
+        location: [10.607282, 55.067434]
+      }
+    ];
   };
 
   /*
@@ -77,6 +79,7 @@ class MapStore {
     ];
   };
 
+  /*
   @action setLanding = e => {
     const landing = this.landingSpots.filter(item => {
       return e.target.value == item.id;
@@ -87,46 +90,32 @@ class MapStore {
     this.landing = landing[0].value;
     console.log(this.landing);
   };
+  */
 
   @action startFligth = () => {
     alert("Flight started");
   };
 
-  @action createFlight = (a, b) => {
-    /**/
-    this.isLoading = true;
-
-    var data = toJS(this.data);
-
-    return console.log(data);
-
-    data.features.push({
-      type: "Feature",
-      properties: {},
-      geometry: {
-        coordinates: [this.landing, [-122.36777130126949, 37.76914513791027]],
-        type: "LineString"
-      }
+  @action createFlight = () => {
+    axios.post("http://localhost:8001/sendOnMission", {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify([
+        {
+          latitude: 55.474558,
+          longitude: 10.325687
+        },
+        {
+          latitude: 55.149776,
+          longitude: 9.608144
+        },
+        {
+          latitude: 55.261088,
+          longitude: 9.162151
+        }
+      ])
     });
-
-    this.data = data;
-    this.isLoading = false;
-
-    //this.data.features = test;
-
-    /*
-    this.data.features.push({
-      type: "Feature",
-      properties: {},
-      geometry: {
-        coordinates: [
-          [55.676098, 12.568337],
-          [-122.36777130126949, 37.76914513791027]
-        ],
-        type: "LineString"
-      }
-    });*/
-    //console.log(toJS(this.data));
   };
 }
 

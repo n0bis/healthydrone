@@ -10,10 +10,8 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import ReportIcon from "@material-ui/icons/Report";
 
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-
+import "antd/dist/antd.css";
+import { Tabs } from "antd";
 import Maps from "../Maps";
 import DronesList from "./DronesList";
 import DroneOptions from "./DroneOptions";
@@ -21,6 +19,8 @@ import Report from "./Report";
 import "../../styles/main.scss";
 
 const drawerWidth = 320;
+
+const { TabPane } = Tabs;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -155,18 +155,17 @@ export default function Dashboard() {
         }}
         open={true}
       >
-        <Paper square className="tabs">
-          <Tabs
-            value={1}
-            indicatorColor="primary"
-            textColor="primary"
-            aria-label="disabled tabs example"
-          >
-            <Tab label="Anmodninger" />
-            <Tab label="Droner" />
-          </Tabs>
-        </Paper>
-        <DronesList />
+        <Tabs defaultActiveKey="1" type="card" style={{ marginTop: 70 }}>
+          <TabPane tab="Droner" key="1">
+            <DronesList />
+          </TabPane>
+          <TabPane tab="Hospitaler" key="2">
+            Liste med Hospitaler
+          </TabPane>
+          <TabPane tab="Anmodninger" key="3">
+            <p>Ingen Anmodninger</p>
+          </TabPane>
+        </Tabs>
       </Drawer>
       <main className={classes.content}>
         <Maps />

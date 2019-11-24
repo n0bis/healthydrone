@@ -4,7 +4,7 @@ import axios from "axios";
 class DroneStore {
   @observable showDroneOptions = false;
   @observable drones = [];
-  @observable currentDrone = null;
+  @observable drone = {};
 
   fetchDrones = () => {
     axios
@@ -25,10 +25,16 @@ class DroneStore {
       });
   };
 
-  getDrone = drone_id => {
+  getDrone = () => {
     const drone_id = this.currentDrone;
-    drones = this.drones.filter(drone => drone.uniqueIdentifier === drone_id);
+    const drones = this.drones.filter(
+      drone => drone.uniqueIdentifier === drone_id
+    );
+
     const drone = drones[0];
+    console.log(drone);
+    if (typeof drone === "undefined") return false;
+
     return drone;
   };
 
@@ -43,14 +49,13 @@ class DroneStore {
   setDroneStatus = (drone_id, status) => {
     this.drones.map((drone, key) => {
       if (drone.uniqueIdentifier === drone_id) {
-        console.log("sadas");
         this.drones[key].flightStatus = status;
       }
     });
   };
 
-  @action onClick = drone_id => {
-    this.currentDrone = drone_id;
+  @action onClick = drone => {
+    this.drone = drone;
     this.showDroneOptions = true;
   };
   @action closeDroneOptions = () => {

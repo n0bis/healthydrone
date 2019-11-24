@@ -3,15 +3,9 @@ import ChevronRight from "@material-ui/icons/ChevronRight";
 import { inject, observer } from "mobx-react";
 import socketCluster from "socketcluster-client";
 
-var groups = {
-  alert: [],
-  IN_FLIGTH: [],
-  LANDED: []
-};
-
 const DronesComponent = ({ drone, onClick }) => {
   return (
-    <div className="drone" onClick={onClick}>
+    <div className="drone" onClick={() => onClick(drone)}>
       <p>
         <b>Status:</b> <span className="text-green">Flyvende</span>
       </p>
@@ -34,11 +28,7 @@ const DronesComponent = ({ drone, onClick }) => {
 @observer
 class DronesList extends Component {
   async componentDidMount() {
-    const {
-      fetchDrones,
-      setDroneStatus,
-      getFlightStatus
-    } = this.props.droneStore;
+    const { fetchDrones, setDroneStatus } = this.props.droneStore;
     const { setDroneLocation } = this.props.mapStore;
     await fetchDrones();
 
@@ -66,6 +56,7 @@ class DronesList extends Component {
         subscription = socket.subscribe("adsb", { waitForAuth: true });
         subscription.watch(msg => {
           if (msg.data[0].source == "simulator") {
+            setDroneStatus(msg.data[0].UASOPERATION, "IN_FLIGHT");
             setDroneLocation(
               msg.data[0].UASOPERATION,
               msg.data[0].xy.longitude,
@@ -94,9 +85,7 @@ class DronesList extends Component {
           <p className="group-name">IN FLIGTH</p>
           <div className="group">
             {inFligth.map(drone => (
-              <DronesComponent
-                onClick={() => onClick(drone.uniqueIdentifier)}
-              />
+              <DronesComponent drone={drone} onClick={onClick} />
             ))}
           </div>
         </div>
@@ -104,7 +93,7 @@ class DronesList extends Component {
           <p className="group-name">PARKED</p>
           <div className="group">
             {parked.map(drone => (
-              <DronesComponent onClick={() => onClick(uniqueIdentifier)} />
+              <DronesComponent drone={drone} onClick={onClick} />
             ))}
           </div>
         </div>

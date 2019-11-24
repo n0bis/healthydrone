@@ -32,8 +32,8 @@ const style = {
 @observer
 class Maps extends Component {
   componentDidMount() {
-    const { setDroneLocation } = this.props.mapStore;
-    //setDroneLocation(1);
+    const { fetchLandingPoints } = this.props.mapStore;
+    fetchLandingPoints();
   }
 
   onDrawCreate = ({ features }) => {
@@ -73,21 +73,8 @@ class Maps extends Component {
       onChange,
       createFlight,
       dronesData,
-      setDroneLocation
+      landingPoints
     } = this.props.mapStore;
-
-    const test = {
-      id: 1,
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-77.032, 38.913]
-      },
-      properties: {
-        title: "Mapbox",
-        description: "Washington, D.C."
-      }
-    };
 
     return (
       <div style={{ height: "100%" }}>
@@ -99,7 +86,7 @@ class Maps extends Component {
           }
           latitude={55.676098}
           longitude={12.568337}
-          zoom={1}
+          zoom={3}
         >
           <NavigationControl showCompass showZoom position="top-right" />
           {dronesData.map(drone => (
@@ -111,7 +98,17 @@ class Maps extends Component {
               <h1>DRONE</h1>
             </Marker>
           ))}
-          ;
+
+          {landingPoints.map(point => (
+            <Marker
+              style={style}
+              longitude={point.location[0]}
+              latitude={point.location[1]}
+            >
+              <h1>{point.name}</h1>
+            </Marker>
+          ))}
+
           {!isLoading && (
             <Draw
               data={data}
@@ -133,3 +130,53 @@ class Maps extends Component {
 }
 
 export default Maps;
+
+/*
+Draw a path 
+
+<Source id="route" type="geojson" data={test} />
+          <Layer
+            id="route"
+            type="line"
+            source="route"
+            layout={{
+              "line-join": "round",
+              "line-cap": "round"
+            }}
+            paint={{
+              "line-color": "#888",
+              "line-width": 2
+            }}
+          />
+
+
+              const test = {
+      type: "Feature",
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [55.676098, 12.568337],
+          [-122.48348236083984, 37.83317489144141],
+          [-122.48339653015138, 37.83270036637107],
+          [-122.48356819152832, 37.832056363179625],
+          [-122.48404026031496, 37.83114119107971],
+          [-122.48404026031496, 37.83049717427869],
+          [-122.48348236083984, 37.829920943955045],
+          [-122.48356819152832, 37.82954808664175],
+          [-122.48507022857666, 37.82944639795659],
+          [-122.48610019683838, 37.82880236636284],
+          [-122.48695850372314, 37.82931081282506],
+          [-122.48700141906738, 37.83080223556934],
+          [-122.48751640319824, 37.83168351665737],
+          [-122.48803138732912, 37.832158048267786],
+          [-122.48888969421387, 37.83297152392784],
+          [-122.48987674713133, 37.83263257682617],
+          [-122.49043464660643, 37.832937629287755],
+          [-122.49125003814696, 37.832429207817725],
+          [-122.49163627624512, 37.832564787218985],
+          [-122.49223709106445, 37.83337825839438],
+          [-122.49378204345702, 37.83368330777276]
+        ]
+      }
+    };
+    */
