@@ -163,7 +163,16 @@ export default function Dashboard() {
             Liste med Hospitaler
           </TabPane>
           <TabPane tab="Anmodninger" key="3">
-            <p>Ingen Anmodninger</p>
+            <div className="reports">
+              <div className="report">
+                <p className="location">Odense</p>
+                <p className="message">Vi skal bruge en drone</p>
+              </div>
+              <div className="report">
+                <p className="location">Svendborg</p>
+                <p className="message">Vi skal bruge en drone</p>
+              </div>
+            </div>
           </TabPane>
         </Tabs>
       </Drawer>
