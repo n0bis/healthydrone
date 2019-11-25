@@ -38,5 +38,6 @@
     <Folder Include="Extensions\" />
     <Folder Include="Domain\Services\Communication\" />
     <Folder Include="Configuration\" />
+    <Folder Include="Controllers\Config\" />
   </ItemGroup>
 </Project>

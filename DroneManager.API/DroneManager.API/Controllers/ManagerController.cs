@@ -35,16 +35,13 @@ namespace DroneManager.API.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] SaveDroneResource resource)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
-
             var drone = _mapper.Map<SaveDroneResource, Drone>(resource);
             var result = await _droneService.CreateAndStartContainer(drone);
 
             if (!result.Success)
-                return BadRequest(result.Message);
+                return BadRequest(new ErrorResource(result.Message));
 
-            var dockerContainerResource = _mapper.Map<DockerContainer, DockerContainerResource>(result.DockerContainer);
+            var dockerContainerResource = _mapper.Map<DockerContainer, DockerContainerResource>(result.Resource);
             return Ok(dockerContainerResource);
         }
     }
