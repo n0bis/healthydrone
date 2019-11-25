@@ -7,7 +7,7 @@ namespace alert_state_machine.Models
     public class Subject
     {
         public string reference { get; set; }
-        public string uniqueIdentifier { get; set; }
+        public Guid uniqueIdentifier { get; set; }
 
     }
 }

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using alert_state_machine.Models;
 using alert_state_machine.Persistence;
 using alert_state_machine.Services;
 using AutoMapper;
+using Confluent.Kafka;
 using Newtonsoft.Json;
 using utm_service;
 using utm_service.Models;
@@ -17,7 +20,8 @@ namespace alert_state_machine.RuleRunners
         private readonly IRedisService _redisService;
         private Boolean isConnected = false;
         private readonly IUTMLiveService _UTMLiveService;
-        private object _ObjectData;
+        private Models.Message _ObjectData;
+        private UTMService _utmService; 
 
         public CollisionAndNoFlyZoneRunner(IRedisService redisService, IUTMLiveService utmLiveService)
         {
@@ -35,18 +39,16 @@ namespace alert_state_machine.RuleRunners
                 await _UTMLiveService.Connect(token?.access_token, action);
                 isConnected = true;
 
-                
             }
-
-
-
         }
 
-        private object OnMessage(object sender, string name, object data)
+        private async void OnMessage(object sender, string name, object data)
         {
             //Console.WriteLine($"{((PureSocketClusterSocket)sender).InstanceName} {name} : {data} \r\n", ConsoleColor.Green);
             //Console.WriteLine(data);
 
+            List<Flight> flights = await _utmService.Operation.GetFlightsInAllOperationsAsync();
+            var distinctFlights = flights?.GroupBy(flight => flight.uas.uniqueIdentifier).Select(uas => uas.First()).ToList();
 
             var test = (Dictionary<string, object>)(data);
             if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK")
@@ -61,12 +63,39 @@ namespace alert_state_machine.RuleRunners
                 var obj = JsonConvert.DeserializeObject<Models.Message>(result);
 
                 Console.WriteLine(obj);
+
+                _ObjectData = obj;
+
+                if (_ObjectData.alertType.Equals("UAS_COLLISION") || _ObjectData.alertType.Equals("UAS_NOFLYZONE"))
+                {
+                    distinctFlights?.ForEach(async flight =>
+                    {
+                        if (_ObjectData.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
+                        {
+                            await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Out of Bounds" });
+                        }
+
+                    });
+                }
+
+
             }
             catch (Exception e)
             {
 
             }
 
+        }
+
+        private async Task SendAlert(object value)
+        {
+            Console.WriteLine($"ALERT: {JsonConvert.SerializeObject(value)}");
+            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+
+            using (var producer = new ProducerBuilder<Null, string>(config).Build())
+            {
+                await producer.ProduceAsync("collision-alert", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
+            }
         }
 
         private static dynamic DictionaryToObject(IEnumerable<object> dictionary)
