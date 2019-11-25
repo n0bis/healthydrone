@@ -7,7 +7,7 @@ namespace alert_state_machine.Services
 {
     public interface IUTMLiveService
     {
-        Task Connect(string token);
+        Task Connect(string token, Action<object, string, object> action);
 
     }
 }
