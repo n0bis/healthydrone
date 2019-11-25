@@ -1,0 +1,60 @@
+version: "3.3"
+
+services:
+  traefik:
+    image: traefik:v2.0
+    ports:
+      - 80:80
+      - 8080:8080
+    networks:
+      - traefik-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    configs:
+      - source: traefik-config
+        target: /etc/traefik/traefik.toml
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "3000:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - traefik-net
+
+  utmService:
+    build:
+      context: /utm-service/utm-service
+      dockerfile: /utm-service/utm-service/Dockerfile
+
+  manager:
+    build:
+      context: DroneManager.API/DroneManager.API/
+      dockerfile: /DroneManager.API/DroneManager.API/Dockerfile
+    environment:
+      - ConnectionStrings__AppDbContext = "User ID=;Password=;Server=localhost;Port=5432;Database=dockercontainers;Integrated Security=true;Pooling=true;"
+    networks:
+      - traefik-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.port=5000"
+        - "traefik.backend=manager"
+        - "traefik.frontend.rule=Path:/manager"
+
+networks:
+  traefik-net:
+    driver: overlay
+
+configs:
+  traefik-config:
+    file: config.toml
