@@ -11,5 +11,7 @@ namespace reportIncident.API.Domain.Services
     {
         Task<IEnumerable<Incident>> ListAsync();
         Task<SaveIncidentResponse> SaveAsync(Incident incident);
+
+
     }
 }

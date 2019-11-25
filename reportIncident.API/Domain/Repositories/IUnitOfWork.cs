@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace reportIncident.API.Domain.Repositories
 {
-    interface IUnitOfWork
+    public interface IUnitOfWork 
     {
+         Task CompleteAsync();
     }
 }
