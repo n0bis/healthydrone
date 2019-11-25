@@ -17,9 +17,7 @@ using reportIncident.API.Persistence.Contexts;
 using reportIncident.API.Persistence.Reposetories;
 using reportIncident.API.Services;
 using AutoMapper;
-
-
-
+using reportIncident.API.Mapping;
 
 namespace reportIncident.API
 {
@@ -44,16 +42,16 @@ namespace reportIncident.API
             services.AddScoped<IIncidentsRepository, IncidentsRepository>();
             services.AddScoped<IIncidentsService, IncidentsService>();
 
-            services.AddAutoMapper();
-
-           /* var mappingConfig = new MapperConfiguration(mc =>
+            var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new ModelToResourceProfile());
                 mc.AddProfile(new ResourceToModelProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
-            */
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         }
 
 
