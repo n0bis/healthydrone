@@ -17,6 +17,7 @@ namespace alert_state_machine.RuleRunners
         private readonly IRedisService _redisService;
         private Boolean isConnected = false;
         private readonly IUTMLiveService _UTMLiveService;
+        private object _ObjectData;
 
         public CollisionAndNoFlyZoneRunner(IRedisService redisService, IUTMLiveService utmLiveService)
         {
@@ -37,9 +38,11 @@ namespace alert_state_machine.RuleRunners
                 
             }
 
+
+
         }
 
-        private void OnMessage(object sender, string name, object data)
+        private object OnMessage(object sender, string name, object data)
         {
             //Console.WriteLine($"{((PureSocketClusterSocket)sender).InstanceName} {name} : {data} \r\n", ConsoleColor.Green);
             //Console.WriteLine(data);
@@ -63,11 +66,6 @@ namespace alert_state_machine.RuleRunners
             {
 
             }
-
-           
-            
-
-
 
         }
 
