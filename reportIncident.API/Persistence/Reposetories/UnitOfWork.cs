@@ -16,7 +16,7 @@ namespace reportIncident.API.Persistence.Reposetories
             _context = context;
         }
 
-        public async Task CompleteTask()
+        public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();
         }

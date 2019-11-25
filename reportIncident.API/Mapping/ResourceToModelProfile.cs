@@ -8,8 +8,11 @@ using reportIncident.API.Resources;
 
 namespace reportIncident.API.Mapping
 {
-    public class ResourceToModelProfile
+    public class ResourceToModelProfile : Profile
     {
-
+        public ResourceToModelProfile()
+        {
+            CreateMap<SaveIncidentResource, Incident>();
+        }
     }
 }
