@@ -29,13 +29,15 @@ services:
     networks:
       - traefik-net
 
-  utmService:
+  utm-service:
+    container_name: utm-service
     build:
       context: ./utm-service/utm-service
       dockerfile: ./Dockerfile
     image: localhost:5000/utm-service
 
   manager:
+    container_name: manager
     build:
       context: ./DroneManager.API/DroneManager.API/
       dockerfile: ./Dockerfile
