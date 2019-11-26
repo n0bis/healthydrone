@@ -69,9 +69,9 @@ namespace alert_state_machine.RuleRunners
                 {
                     distinctFlights?.ForEach(async flight =>
                     {
-                        if (_ObjectData.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
+                        if (obj.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
                         {
-                            await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Out of Bounds" });
+                            await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
                             Console.WriteLine("ALEEEEERT!");
                         }
 
@@ -82,9 +82,9 @@ namespace alert_state_machine.RuleRunners
                 {
                     distinctFlights?.ForEach(async flight =>
                     {
-                        if (_ObjectData.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
+                        if (obj.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
                         {
-                            await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Out of Bounds" });
+                            await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
                             Console.WriteLine("ALEEEEERT!");
                         }
 
