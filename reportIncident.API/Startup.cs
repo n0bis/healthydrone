@@ -35,8 +35,8 @@ namespace reportIncident.API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddDbContext<AppDbContext>(options => {
-                options.UseInMemoryDatabase("reportIncident-api-in-memory");
+            services.AddEntityFrameworkNpgsql().AddDbContext<AppDbContext>(options => {
+                options.UseNpgsql(Configuration.GetConnectionString("AppDbContext"));
             });
 
             services.AddScoped<IIncidentsRepository, IncidentsRepository>();
