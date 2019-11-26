@@ -58,7 +58,6 @@ namespace alert_state_machine.RuleRunners
 
             try
             {
-
                 var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
 
                 var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
@@ -66,9 +65,7 @@ namespace alert_state_machine.RuleRunners
 
                 Console.WriteLine(obj);
 
-                _ObjectData = obj;
-
-                if (_ObjectData.alertType.Equals("UAS_COLLISION") || _ObjectData.alertType.Equals("UAS_NOFLYZONE"))
+                if (obj.alertType == "UAS_COLLISION" )
                 {
                     distinctFlights?.ForEach(async flight =>
                     {
@@ -81,6 +78,18 @@ namespace alert_state_machine.RuleRunners
                     });
                 }
 
+                if (obj.alertType == "UAS_NOFLYZONE")
+                {
+                    distinctFlights?.ForEach(async flight =>
+                    {
+                        if (_ObjectData.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
+                        {
+                            await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Out of Bounds" });
+                            Console.WriteLine("ALEEEEERT!");
+                        }
+
+                    });
+                }
 
             }
             catch (Exception e)
