@@ -9,7 +9,7 @@ namespace reportIncident.API.Resources
     public class SaveIncidentResource
     {
 
-        //  public Guid Id { get; set; }
+       
         public DateTime Date { get; private set; } = DateTime.UtcNow;
         public Guid OperationId { get; set; }
         public Guid DroneId { get; set; }
