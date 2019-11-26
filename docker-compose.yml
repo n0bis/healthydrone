@@ -31,15 +31,17 @@ services:
 
   utmService:
     build:
-      context: /utm-service/utm-service
-      dockerfile: /utm-service/utm-service/Dockerfile
+      context: ./utm-service/utm-service
+      dockerfile: ./Dockerfile
+    image: localhost:5000/utm-service
 
   manager:
     build:
-      context: DroneManager.API/DroneManager.API/
-      dockerfile: /DroneManager.API/DroneManager.API/Dockerfile
+      context: ./DroneManager.API/DroneManager.API/
+      dockerfile: ./Dockerfile
+    image: localhost:5000/manager
     environment:
-      - ConnectionStrings__AppDbContext = "User ID=;Password=;Server=localhost;Port=5432;Database=dockercontainers;Integrated Security=true;Pooling=true;"
+      - ConnectionStrings__AppDbContext="User ID=;Password=;Server=localhost;Port=5432;Database=dockercontainers;Integrated Security=true;Pooling=true;"
     networks:
       - traefik-net
     deploy:
