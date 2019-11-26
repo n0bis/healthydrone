@@ -47,7 +47,7 @@ namespace alert_state_machine.RuleRunners
             //Console.WriteLine($"{((PureSocketClusterSocket)sender).InstanceName} {name} : {data} \r\n", ConsoleColor.Green);
             //Console.WriteLine(data);
 
-            List<Flight> flights = await _utmService.Operation.GetFlightsInAllOperationsAsync();
+            List<Flight> flights = await _utmService?.Operation?.GetFlightsInAllOperationsAsync();
             var distinctFlights = flights?.GroupBy(flight => flight.uas.uniqueIdentifier).Select(uas => uas.First()).ToList();
 
             var test = (Dictionary<string, object>)(data);
@@ -73,6 +73,7 @@ namespace alert_state_machine.RuleRunners
                         if (_ObjectData.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
                         {
                             await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Out of Bounds" });
+                            Console.WriteLine("ALEEEEERT!")
                         }
 
                     });
