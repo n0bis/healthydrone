@@ -8,8 +8,14 @@ namespace reportIncident.API.Resources
 {
     public class SaveIncidentResource
     {
-        [Required]
-        [MaxLength(30)]
-        public string Id { get; set; }
+
+        //  public Guid Id { get; set; }
+        public DateTime Date { get; private set; } = DateTime.UtcNow;
+        public Guid OperationId { get; set; }
+        public Guid DroneId { get; set; }
+        public string Details { get; set; }
+        public string Damage { get; set; }
+        public string Actions { get; set; }
+        public string Notes { get; set; }
     }
 }

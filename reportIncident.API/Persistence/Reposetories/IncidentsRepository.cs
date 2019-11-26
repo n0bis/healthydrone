@@ -25,5 +25,15 @@ namespace reportIncident.API.Persistence.Reposetories
         {
             await _context.Incidents.AddAsync(incident);
         }
+
+        public async Task<Incident> FindByIdAsync(Guid id)
+        {
+            return await _context.Incidents.FindAsync(id);
+        }
+
+        public void Update(Incident incident)
+        {
+            _context.Incidents.Update(incident);
+        }
     }
 }

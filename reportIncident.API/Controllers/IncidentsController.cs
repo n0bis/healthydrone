@@ -20,9 +20,10 @@ namespace reportIncident.API.Controllers
         private readonly IIncidentsService _incidentsService;
         private readonly IMapper _mapper;
 
-        public IncidentsController(IIncidentsService incidentsService)
+        public IncidentsController(IIncidentsService incidentsService, IMapper mapper)
         {
             _incidentsService = incidentsService;
+            _mapper = mapper;
         }
 
 
@@ -50,31 +51,26 @@ namespace reportIncident.API.Controllers
             return Ok(incidentResource);
         }
 
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> PutAsync(Guid Id, [FromBody] SaveIncidentResource resource)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var incident = _mapper.Map<SaveIncidentResource, Incident>(resource);
+            var result = await _incidentsService.UpdateAsync(Id, incident);
+
+            if (!result.Succes)
+                return BadRequest(result.Message);
+
+            var incidentResource = _mapper.Map<Incident, IncidentResource>(result.Incident);
+            return Ok(incidentResource);
+        }
  
 
-        // GET: api/Incidents/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+        
 
-        // POST: api/Incidents
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT: api/Incidents/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
+        
     }
 }
