@@ -10,5 +10,7 @@ namespace reportIncident.API.Domain.Repositories
     {
         Task<IEnumerable<Incident>> ListAsync();
         Task AddAsync(Incident incident);
+        Task<Incident> FindByIdAsync(Guid id);
+        void Update(Incident incident);
     }
 }
