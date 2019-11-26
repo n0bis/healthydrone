@@ -40,7 +40,7 @@ namespace alert_state_machine
             Scheduler.IntervalInMinutes(0.5, async () =>
             {
                 Console.WriteLine(DateTime.Now);
-                await serviceProvider.GetService<ICollisionAndNoFlyZoneRunner>().ZonesCheck(token);
+                await serviceProvider.GetService<ICollisionAndNoFlyZoneRunner>().ZonesCheck(token, utmService);
                 Console.WriteLine(DateTime.Now);
             });
 

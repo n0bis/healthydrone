@@ -30,10 +30,12 @@ namespace alert_state_machine.RuleRunners
             _UTMLiveService = utmLiveService;
         }
 
-        public async Task ZonesCheck(Token token)
+        public async Task ZonesCheck(Token token, UTMService utmService)
         {
             if (isConnected == false)
             {
+                _utmService = utmService;
+
                 var action = new Action<object, string, object>(OnMessage);
 
                 await _UTMLiveService.Connect(token?.access_token, action);
@@ -47,7 +49,7 @@ namespace alert_state_machine.RuleRunners
             //Console.WriteLine($"{((PureSocketClusterSocket)sender).InstanceName} {name} : {data} \r\n", ConsoleColor.Green);
             //Console.WriteLine(data);
 
-            List<Flight> flights = await _utmService?.Operation?.GetFlightsInAllOperationsAsync();
+            List<Flight> flights = await _utmService.Operation.GetFlightsInAllOperationsAsync();
             var distinctFlights = flights?.GroupBy(flight => flight.uas.uniqueIdentifier).Select(uas => uas.First()).ToList();
 
             var test = (Dictionary<string, object>)(data);
@@ -73,7 +75,7 @@ namespace alert_state_machine.RuleRunners
                         if (_ObjectData.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
                         {
                             await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Out of Bounds" });
-                            Console.WriteLine("ALEEEEERT!")
+                            Console.WriteLine("ALEEEEERT!");
                         }
 
                     });
