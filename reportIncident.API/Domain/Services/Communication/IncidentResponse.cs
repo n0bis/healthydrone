@@ -6,18 +6,18 @@ using reportIncident.API.Domain.Models;
 
 namespace reportIncident.API.Domain.Services.Communication
 {
-    public class SaveIncidentResponse : BaseResponse
+    public class IncidentResponse : BaseResponse
     {
         public Incident Incident { get; private set; }
 
-        private SaveIncidentResponse(bool succes, string message, Incident incident) : base(succes, message)
+        private IncidentResponse(bool succes, string message, Incident incident) : base(succes, message)
         {
             Incident = incident;
         }
-        public SaveIncidentResponse(Incident incident) : this(true, string.Empty, incident)
+        public IncidentResponse(Incident incident) : this(true, string.Empty, incident)
         { }
 
-        public SaveIncidentResponse(string message) : this(false, message, null)
+        public IncidentResponse(string message) : this(false, message, null)
         { }
     }
 }

@@ -10,9 +10,9 @@ namespace reportIncident.API.Domain.Services
     public interface IIncidentsService
     {
         Task<IEnumerable<Incident>> ListAsync();
-        Task<SaveIncidentResponse> SaveAsync(Incident incident);
-        Task<SaveIncidentResponse> UpdateAsync(Guid id, Incident incident);
-
+        Task<IncidentResponse> SaveAsync(Incident incident);
+        Task<IncidentResponse> UpdateAsync(Guid id, Incident incident);
+        Task<IncidentResponse> DeleteAsync(Guid id); 
 
     }
 }

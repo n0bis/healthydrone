@@ -35,5 +35,10 @@ namespace reportIncident.API.Persistence.Reposetories
         {
             _context.Incidents.Update(incident);
         }
+
+        public void Remove(Incident incident)
+        {
+            _context.Incidents.Remove(incident);
+        }
     }
 }

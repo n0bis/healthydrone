@@ -66,6 +66,18 @@ namespace reportIncident.API.Controllers
             var incidentResource = _mapper.Map<Incident, IncidentResource>(result.Incident);
             return Ok(incidentResource);
         }
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteAsync(Guid id)
+        {
+            var result = await _incidentsService.DeleteAsync(id);
+
+            if (!result.Succes)
+                return BadRequest(result.Message);
+
+            var incidentsResource = _mapper.Map<Incident, IncidentResource>(result.Incident);
+            return Ok(incidentsResource);
+        }
  
 
         

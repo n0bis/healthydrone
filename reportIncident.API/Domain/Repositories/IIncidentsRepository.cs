@@ -12,5 +12,6 @@ namespace reportIncident.API.Domain.Repositories
         Task AddAsync(Incident incident);
         Task<Incident> FindByIdAsync(Guid id);
         void Update(Incident incident);
+        void Remove(Incident incident);
     }
 }

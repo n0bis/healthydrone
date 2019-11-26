@@ -26,22 +26,65 @@ namespace reportIncident.API.Services
             return await _incidentsRepository.ListAsync();
         }
 
-        public async Task<SaveIncidentResponse> SaveAsync(Incident incident)
+        public async Task<IncidentResponse> SaveAsync(Incident incident)
         {
             try
             {
                 await _incidentsRepository.AddAsync(incident);
                 await _unitOfWork.CompleteAsync();
 
-                return new SaveIncidentResponse(incident);
+                return new IncidentResponse(incident);
             }
             catch (Exception ex)
             {
-                return new SaveIncidentResponse($"daaaaaaaaaaaaaamn : {ex.Message}");
+                return new IncidentResponse($"daaaaaaaaaaaaaamn : {ex.Message}");
             }
         }
 
-        
-        
+        public async Task<IncidentResponse> UpdateAsync(Guid id, Incident incident)
+        {
+            var existingIncident = await _incidentsRepository.FindByIdAsync(id);
+
+            if (existingIncident == null)
+                return new IncidentResponse("Doesnt exist");
+
+            existingIncident.Date = incident.Date;
+            existingIncident.Actions = incident.Actions;
+            existingIncident.Damage = incident.Damage;
+            existingIncident.Details = incident.Details;
+            existingIncident.Notes = incident.Notes;
+            
+            try
+            {
+                _incidentsRepository.Update(existingIncident);
+                await _unitOfWork.CompleteAsync();
+
+                return new IncidentResponse(existingIncident);
+            }
+            catch(Exception ex)
+            {
+                return new IncidentResponse($"cant update : {ex.Message}");
+            }
+        }
+
+        public async Task<IncidentResponse> DeleteAsync(Guid id)
+        {
+            var existingIncident = await _incidentsRepository.FindByIdAsync(id);
+
+            if (existingIncident == null)
+                return new IncidentResponse("incident not found");
+
+            try
+            {
+                _incidentsRepository.Remove(existingIncident);
+                await _unitOfWork.CompleteAsync();
+
+                return new IncidentResponse(existingIncident);
+            }
+            catch(Exception ex)
+            {
+                return new IncidentResponse($"An error occurred when deleting the category: {ex.Message}");
+            }
+        }
     }
 }
