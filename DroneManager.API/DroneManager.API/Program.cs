@@ -19,7 +19,7 @@ namespace DroneManager.API
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            /*var dockerClient = new DockerClientConfiguration(DockerApiUri())
+            var dockerClient = new DockerClientConfiguration(DockerApiUri())
                 .CreateClient();
 
             using (var scope = host.Services.CreateScope())
@@ -28,7 +28,7 @@ namespace DroneManager.API
                 context.Database.EnsureCreated();
                 var containers = context.DockerContainers.ToList();
                 containers.ForEach(async container => await dockerClient.Containers.StartContainerAsync(container.Id, null));
-            }*/
+            }
 
             host.Run();
         }
