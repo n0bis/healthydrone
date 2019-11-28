@@ -31,17 +31,11 @@ services:
 
   utm-service:
     container_name: utm-service
-    build:
-      context: ./utm-service/utm-service
-      dockerfile: ./Dockerfile
-    image: 127.0.0.1:5000/utm-service
+    image: n0bis/utmservice
 
   manager:
     container_name: manager
-    build:
-      context: ./DroneManager.API/DroneManager.API/
-      dockerfile: ./Dockerfile
-    image: 127.0.0.1:5000/manager
+    image: n0bis/dronemanager
     environment:
       - ConnectionStrings__AppDbContext="Host=database;Port=5432;Username=madsfalken;Password=2cool4school;Database=healthydrone;"
     networks:
@@ -52,7 +46,7 @@ services:
         constraints:
           - node.role == worker
       labels:
-        - "traefik.port=5000"
+        - "traefik.port=80"
         - "traefik.backend=manager"
         - "traefik.frontend.rule=Path:/manager"
     depends_on:
