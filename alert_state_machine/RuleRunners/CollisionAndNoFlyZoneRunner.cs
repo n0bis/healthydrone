@@ -56,45 +56,36 @@ namespace alert_state_machine.RuleRunners
             if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK")
                 return;
 
-            try
+ 
+            var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
+
+            var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
+            var obj = JsonConvert.DeserializeObject<Models.Message>(result);
+
+            Console.WriteLine(obj);
+
+            if (obj.alertType.ToString() == "UAS_COLLISION" )
             {
-                var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
-
-                var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
-                var obj = JsonConvert.DeserializeObject<Models.Message>(result);
-
-                Console.WriteLine(obj);
-
-                if (obj.alertType == "UAS_COLLISION" )
+                distinctFlights?.ForEach(async flight =>
                 {
-                    distinctFlights?.ForEach(async flight =>
+                    if (obj.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
                     {
-                        if (obj.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
-                        {
-                            await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
-                            Console.WriteLine("ALEEEEERT!");
-                        }
+                        await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
+                    }
 
-                    });
-                }
-
-                if (obj.alertType == "UAS_NOFLYZONE")
-                {
-                    distinctFlights?.ForEach(async flight =>
-                    {
-                        if (obj.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
-                        {
-                            await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
-                            Console.WriteLine("ALEEEEERT!");
-                        }
-
-                    });
-                }
-
+                });
             }
-            catch (Exception e)
-            {
 
+            if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+            {
+                distinctFlights?.ForEach(async flight =>
+                {
+                    if (obj.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
+                    {
+                        await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
+                    }
+
+                });
             }
 
         }
