@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using alert_state_machine.Models;
+﻿using alert_state_machine.Models;
 using alert_state_machine.Persistence;
 using alert_state_machine.Services;
-using AutoMapper;
+using alert_state_machine.Settings;
+using alert_state_machine.States;
 using Confluent.Kafka;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using utm_service;
 using utm_service.Models;
 
@@ -61,33 +62,48 @@ namespace alert_state_machine.RuleRunners
 
             var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
             var obj = JsonConvert.DeserializeObject<Models.Message>(result);
+            var key = $"{obj.uasOperation}-{obj.subject.uniqueIdentifier}-alert";
+            var cachedProcess = await _redisService.Get<State>(key);
+            var process = new Process();
 
             Console.WriteLine(obj);
 
-            if (obj.alertType.ToString() == "UAS_COLLISION" )
+            if (cachedProcess != null)
             {
-                distinctFlights?.ForEach(async flight =>
-                {
-                    if (obj.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
-                    {
-                        await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
-                    }
-
-                });
+                process.CurrentState = cachedProcess.CurrentState;
+            }
+            else
+            {
+                cachedProcess = new State();
             }
 
-            if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+            if (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive)
             {
-                distinctFlights?.ForEach(async flight =>
-                {
-                    if (obj.subject.uniqueIdentifier == flight.uas.uniqueIdentifier)
-                    {
-                        await SendAlert(new Alert { droneId = flight.uas.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
-                    }
-
-                });
+                process.MoveNext();
+            }
+            else
+            {
+                process.MovePrev();
             }
 
+            if (process.CurrentState == ProcessState.Raised && !cachedProcess.Triggered && !cachedProcess.Handled)
+            {
+
+                if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                {
+                    await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
+                    cachedProcess.Triggered = true;
+                }
+
+                if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                {
+                    await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
+                    cachedProcess.Triggered = true;
+                }
+            }
+            cachedProcess.CurrentState = process.CurrentState;
+            await _redisService.Set(key, cachedProcess);
+            
         }
 
         private async Task SendAlert(object value)
