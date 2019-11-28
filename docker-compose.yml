@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   traefik:
-    image: traefik:v2.0
+    image: traefik:1.4
     ports:
       - 80:80
       - 8080:8080
@@ -34,18 +34,19 @@ services:
     build:
       context: ./utm-service/utm-service
       dockerfile: ./Dockerfile
-    image: localhost:5000/utm-service
+    image: 127.0.0.1:5000/utm-service
 
   manager:
     container_name: manager
     build:
       context: ./DroneManager.API/DroneManager.API/
       dockerfile: ./Dockerfile
-    image: localhost:5000/manager
+    image: 127.0.0.1:5000/manager
     environment:
-      - ConnectionStrings__AppDbContext="User ID=;Password=;Server=localhost;Port=5432;Database=dockercontainers;Integrated Security=true;Pooling=true;"
+      - ConnectionStrings__AppDbContext="Host=database;Port=5432;Username=madsfalken;Password=2cool4school;Database=healthydrone;"
     networks:
       - traefik-net
+      - database-net
     deploy:
       placement:
         constraints:
@@ -54,10 +55,29 @@ services:
         - "traefik.port=5000"
         - "traefik.backend=manager"
         - "traefik.frontend.rule=Path:/manager"
+    depends_on:
+      - database
+
+  database:
+    image: postgres:latest
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+      - ./database/seed.sql :/docker-entrypoint-initdb.d/seed.sql
+    environment:
+      POSTGRES_USER: "madsfalken"
+      POSTGRES_PASSWORD: "2cool4school"
+      POSTGRES_DB: "healthydrone"
+    networks:
+      - database-net
+
+volumes:
+  db_volume:
 
 networks:
   traefik-net:
     driver: overlay
+  database-net:
 
 configs:
   traefik-config:
