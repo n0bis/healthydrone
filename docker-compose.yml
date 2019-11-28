@@ -59,9 +59,9 @@ services:
       - db_volume:/var/lib/postgresql/data
       - ./database/seed.sql :/docker-entrypoint-initdb.d/seed.sql
     environment:
-      POSTGRES_USER: "root"
-      POSTGRES_PASSWORD: "secret"
-      POSTGRES_DB: "healthydrone"
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: healthydrone
     networks:
       - database-net
 
