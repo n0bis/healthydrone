@@ -47,9 +47,6 @@ namespace alert_state_machine.RuleRunners
 
         private async void OnMessage(object sender, string name, object data)
         {
-            //Console.WriteLine($"{((PureSocketClusterSocket)sender).InstanceName} {name} : {data} \r\n", ConsoleColor.Green);
-            //Console.WriteLine(data);
-
             List<Flight> flights = await _utmService.Operation.GetFlightsInAllOperationsAsync();
             var distinctFlights = flights?.GroupBy(flight => flight.uas.uniqueIdentifier).Select(uas => uas.First()).ToList();
 
