@@ -41,8 +41,32 @@ class FormDialog extends Component {
         </DialogContentText>
         <TextField
           id="standard-multiline-static"
-          label="Skriv report"
+          label="Detaljer"
           placeholder="Fortæl hvad der skete"
+          multiline
+          rowsMax="10"
+          fullWidth
+        />
+        <TextField
+          id="standard-multiline-static"
+          label="Skade"
+          placeholder="Beskriv skaden"
+          multiline
+          rowsMax="10"
+          fullWidth
+        />
+        <TextField
+          id="standard-multiline-static"
+          label="Handling"
+          placeholder="Handling"
+          multiline
+          rowsMax="10"
+          fullWidth
+        />
+        <TextField
+          id="standard-multiline-static"
+          label="Noter"
+          placeholder="Noter"
           multiline
           rowsMax="10"
           fullWidth
