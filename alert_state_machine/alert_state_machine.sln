@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "alert_state_machine", "alert_state_machine.csproj", "{41A6D38E-7D9F-4CDD-93EE-462875D262B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utm-service", "..\utm-service\utm-service\utm-service.csproj", "{EE9336ED-F7BD-4862-AEFA-F377F7969BE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{41A6D38E-7D9F-4CDD-93EE-462875D262B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41A6D38E-7D9F-4CDD-93EE-462875D262B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41A6D38E-7D9F-4CDD-93EE-462875D262B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41A6D38E-7D9F-4CDD-93EE-462875D262B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE9336ED-F7BD-4862-AEFA-F377F7969BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE9336ED-F7BD-4862-AEFA-F377F7969BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE9336ED-F7BD-4862-AEFA-F377F7969BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE9336ED-F7BD-4862-AEFA-F377F7969BE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
