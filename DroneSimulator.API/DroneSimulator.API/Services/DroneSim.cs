@@ -49,6 +49,8 @@ namespace DroneSimulator.API.Services
 
                 await MoveTo(_drone.Location, location, cancellationToken);
             }
+
+            await LandNotification();
         }
 
         public async Task SendHome(CancellationToken cancellationToken)
