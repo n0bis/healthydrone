@@ -48,9 +48,6 @@ namespace alert_state_machine.RuleRunners
 
         private async void OnMessage(object sender, string name, object data)
         {
-            List<Flight> flights = await _utmService.Operation.GetFlightsInAllOperationsAsync();
-            var distinctFlights = flights?.GroupBy(flight => flight.uas.uniqueIdentifier).Select(uas => uas.First()).ToList();
-
             var test = (Dictionary<string, object>)(data);
             if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK")
                 return;
@@ -64,8 +61,6 @@ namespace alert_state_machine.RuleRunners
             var cachedProcess = await _redisService.Get<State>(key);
             var process = new Process();
 
-            Console.WriteLine(obj);
-
             if (cachedProcess != null)
             {
                 process.CurrentState = cachedProcess.CurrentState;
@@ -75,16 +70,7 @@ namespace alert_state_machine.RuleRunners
                 cachedProcess = new State();
             }
 
-            if (process.CurrentState == ProcessState.Active || process.CurrentState == ProcessState.Inactive)
-            {
-                process.MoveNext();
-            }
-            else
-            {
-                process.MovePrev();
-            }
-
-            if (process.CurrentState == ProcessState.Raised && !cachedProcess.Triggered && !cachedProcess.Handled)
+            if (!cachedProcess.Triggered && !cachedProcess.Handled)
             {
 
                 if (obj.alertType.ToString() == "UAS_NOFLYZONE")
