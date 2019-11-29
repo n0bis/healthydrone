@@ -25,7 +25,7 @@ export var OpenModal = inject("reportStore")(observer((props) => {
 class FormDialog extends Component {
 
   render(){
-    const {isModalOpen, onCloseModal} = this.props.reportStore;
+    const {isModalOpen, onCloseModal, onSendModal} = this.props.reportStore;
     console.log(this.props.reportStore);
   return (
     <Dialog
@@ -50,7 +50,7 @@ class FormDialog extends Component {
       </DialogContent>
       <DialogActions>
         <Button  color="primary" onClick={onCloseModal}>
-          Anullered
+          Anullere
         </Button>
         <Button  color="primary" onClick={onSendModal}>
           Send
