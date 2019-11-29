@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Persistence\" />
     <Folder Include="Services\" />
     <Folder Include="Domain\" />
     <Folder Include="Domain\Services\" />
