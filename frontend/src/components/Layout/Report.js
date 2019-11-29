@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -6,22 +6,31 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { observer, inject } from "mobx-react";
+import IconButton from "@material-ui/core/IconButton";
+import ReportIcon from "@material-ui/icons/Report";
+import { Descriptions } from 'antd';
 
-export default function FormDialog() {
-  const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+export var OpenModal = inject("reportStore")(observer((props) => {
+ const {onOpenModal} = props.reportStore;
+  return <p onClick={onOpenModal}> REPORT </p>
+ }));
 
+
+
+@inject("reportStore")
+@observer 
+class FormDialog extends Component {
+
+  render(){
+    const {isModalOpen, onCloseModal} = this.props.reportStore;
+    console.log(this.props.reportStore);
   return (
     <Dialog
-      open={false}
-      onClose={handleClose}
+      open={isModalOpen}
+      
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">Rapporter fejl</DialogTitle>
@@ -40,13 +49,16 @@ export default function FormDialog() {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Anullere
+        <Button  color="primary" onClick={onCloseModal}>
+          Anullered
         </Button>
-        <Button onClick={handleClose} color="primary">
+        <Button  color="primary" onClick={onSendModal}>
           Send
         </Button>
       </DialogActions>
     </Dialog>
   );
+  }
 }
+
+export default FormDialog;
