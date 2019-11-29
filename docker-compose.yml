@@ -53,6 +53,27 @@ services:
     depends_on:
       - database
 
+  landingpoints:
+    container_name: landingpoints
+    image: n0bis/landingpoints
+    environment:
+      - ConnectionStrings__AppDbContext=Host=database;Database=healthydrone;Username=pguser;Password=secret;
+    networks:
+      - traefik-net
+      - database-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.port=80"
+        - "traefik.backend=landingpoints"
+        - "traefik.frontend.rule=Path:/landingpoints"
+        - "traefik.docker.network=traefik-net"
+    depends_on:
+      - database
+    
+
   database:
     image: postgres:latest
     restart: always
