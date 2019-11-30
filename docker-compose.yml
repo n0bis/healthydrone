@@ -29,10 +29,6 @@ services:
     networks:
       - traefik-net
 
-  utm-service:
-    container_name: utm-service
-    image: n0bis/utmservice
-
   manager:
     container_name: manager
     image: n0bis/dronemanager
@@ -72,7 +68,107 @@ services:
         - "traefik.docker.network=traefik-net"
     depends_on:
       - database
-    
+
+  pathfinding:
+    container_name: pathfinding
+    image: n0bis/pathfinding
+    networks:
+      - traefik-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.port=80"
+        - "traefik.backend=pathfinding"
+        - "traefik.frontend.rule=Path:/pathfinding"
+        - "traefik.docker.network=traefik-net"
+
+  reportincidents:
+    container_name: reportincidents
+    image: n0bis/reportincidents
+    environment:
+      - ConnectionStrings__AppDbContext=Host=database;Database=healthydrone;Username=pguser;Password=secret;
+    networks:
+      - traefik-net
+      - database-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.port=80"
+        - "traefik.backend=reportincidents"
+        - "traefik.frontend.rule=Path:/reportincidents"
+        - "traefik.docker.network=traefik-net"
+    depends_on:
+      - database
+
+  alert_state_machine:
+    container_name: alert_state_machine
+    image: n0bis/alert_state_machine
+    environment:
+      UTM__clientid: "sduHealthDroneConnect"
+      UTM__clientsecre: "sdu201903HealthDrone"
+      UTM__username: "mafal17@student.sdu.dk"
+      UTM__password: "dfYSByw9vHCR3E7"
+      Redis__Host: "redis"
+      Redis__Port: 6379
+      WeatherRule__minTemp: -15.0
+      WeatherRule__maxTemp: 15.0
+      WeatherRule__rainPrecipitation: 7
+      WeatherRule__windSpeed: 20
+    networks:
+      - traefik-net
+      - redis-net
+      - kafka-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.docker.network=traefik-net"
+    depends_on:
+      - redis
+      - kafka
+      - utm-service
+
+  redis:
+    image: redis
+    container_name: redis
+    networks: 
+      - redis-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+
+  kafka:
+    image: wurstmeister/kafka
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "weather-alert,collision-alert"
+    networks:
+      - kafka-net
+    depends_on:
+      - zookeeper
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    networks: 
+      - kafka-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
 
   database:
     image: postgres:latest
@@ -86,6 +182,10 @@ services:
       POSTGRES_DB: healthydrone
     networks:
       - database-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
 
 volumes:
   db_volume:
@@ -93,6 +193,8 @@ volumes:
 networks:
   traefik-net:
     driver: overlay
+  redis-net:
+  kafka-net:
   database-net:
 
 configs:
