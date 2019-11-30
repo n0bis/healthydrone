@@ -805,3 +805,4 @@ Temporary Items
 
 alert_state_machine/appsettings.json
 DroneManager.API/DroneManager.API/appsettings.Development.json
+DroneManager.API/DroneManager.API/Program.cs

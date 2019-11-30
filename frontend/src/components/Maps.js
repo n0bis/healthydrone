@@ -44,6 +44,12 @@ class Maps extends Component {
     console.log(features);
   };
 
+  onClick = event => {
+    console.log(test.lngLat);
+    const lng = event.lngLat.lng;
+    const lat = event.lngLat.lat;
+  };
+
   createFlight = () => {
     alert(1);
     this.setState({
@@ -76,6 +82,8 @@ class Maps extends Component {
       landingPoints
     } = this.props.mapStore;
 
+    console.log(Draw);
+
     return (
       <div style={{ height: "100%" }}>
         <MapGL
@@ -87,6 +95,7 @@ class Maps extends Component {
           latitude={55.676098}
           longitude={12.568337}
           zoom={3}
+          onClick={this.onClick}
         >
           <NavigationControl showCompass showZoom position="top-right" />
           {dronesData.map(drone => (
