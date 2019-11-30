@@ -10,15 +10,12 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import ReportIcon from "@material-ui/icons/Report";
 
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-
+import "antd/dist/antd.css";
 import Maps from "../Maps";
-import DronesList from "./DronesList";
 import DroneOptions from "./DroneOptions";
 import Report from "./Report";
 import "../../styles/main.scss";
+import Sidebar from "./Sidebar";
 
 const drawerWidth = 320;
 
@@ -155,18 +152,7 @@ export default function Dashboard() {
         }}
         open={true}
       >
-        <Paper square className="tabs">
-          <Tabs
-            value={1}
-            indicatorColor="primary"
-            textColor="primary"
-            aria-label="disabled tabs example"
-          >
-            <Tab label="Anmodninger" />
-            <Tab label="Droner" />
-          </Tabs>
-        </Paper>
-        <DronesList />
+        <Sidebar />
       </Drawer>
       <main className={classes.content}>
         <Maps />

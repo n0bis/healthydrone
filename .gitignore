@@ -1,4 +1,5 @@
 
+
 # Created by https://www.gitignore.io/api/macos,rider,csharp,windows,visualstudio
 # Edit at https://www.gitignore.io/?templates=macos,rider,csharp,windows,visualstudio
 
@@ -804,3 +805,4 @@ Temporary Items
 
 alert_state_machine/appsettings.json
 DroneManager.API/DroneManager.API/appsettings.Development.json
+DroneManager.API/DroneManager.API/Program.cs
