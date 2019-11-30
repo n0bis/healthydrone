@@ -3,13 +3,13 @@ WORKDIR /app
 
 # Copy csproj and restore
 WORKDIR /
-COPY alert_state_machine/alert_state_machine.csproj ./alert_state_machine
+COPY alert_state_machine/alert_state_machine.csproj ./alert-state-machine
 COPY utm-service/utm-service/utm-service.csproj ./utm-service/utm-service/
 
 WORKDIR /utm-service/utm-service
 RUN dotnet restore
 
-WORKDIR /alert_state_machine
+WORKDIR /alert-state-machine
 RUN dotnet restore
 
 WORKDIR /
@@ -17,12 +17,12 @@ WORKDIR /
 COPY . ./
 
 WORKDIR /utm-service/utm-service
-RUN dotnet build -c Release -o /alert_state_machine
+RUN dotnet build -c Release -o /alert-state-machine
 
-WORKDIR /alert_state_machine
+WORKDIR /alert-state-machine
 RUN dotnet build -c Release -o /app
 
-WORKDIR /alert_state_machine
+WORKDIR /alert-state-machine
 RUN dotnet publish -c Release -o /app
 
 # Build runtime image
