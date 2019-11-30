@@ -1,10 +1,12 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /app
 
+RUN mkdir alert-state-machine
+
 # Copy csproj and restore
 WORKDIR /
-COPY alert_state_machine/alert_state_machine.csproj ./alert-state-machine
-COPY utm-service/utm-service/utm-service.csproj ./utm-service/utm-service/
+COPY alert_state_machine/alert_state_machine.csproj /alert-state-machine
+COPY utm-service/utm-service/utm-service.csproj /utm-service/utm-service/
 
 WORKDIR /utm-service/utm-service
 RUN dotnet restore
