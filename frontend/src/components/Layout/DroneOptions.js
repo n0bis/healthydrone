@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
+import { toJS } from "mobx";
 
 @inject("mapStore", "droneStore")
 @observer
@@ -48,9 +49,14 @@ class DroneOptions extends Component {
     const {
       showDroneOptions,
       closeDroneOptions,
-      drone
+      drone,
+      droneManagers,
+      droneLocations
     } = this.props.droneStore;
     const display = showDroneOptions ? "block" : "none";
+
+    //console.log(toJS(drone), toJS(droneManagers), toJS(droneLocations));
+
     return (
       <div className="drone-options fadeIn" style={{ display: display }}>
         {drone == false ? (

@@ -82,7 +82,25 @@ class Maps extends Component {
       landingPoints
     } = this.props.mapStore;
 
-    console.log(Draw);
+    //console.log(Draw);
+
+    const test = {
+      type: "FeatureCollection",
+      features: [
+        {
+          id: "e2019d6761d6b0bc44ff385774df2bcc",
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: [
+              [-122.44342900322752, 37.825117399686334],
+              [-122.45571857990264, 37.81844328268188]
+            ],
+            type: "LineString"
+          }
+        }
+      ]
+    };
 
     return (
       <div style={{ height: "100%" }}>

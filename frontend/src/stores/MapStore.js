@@ -40,6 +40,23 @@ class MapStore {
     this.data = data;
   };
 
+  setFligthPath = coordinates => {
+    this.data = {
+      type: "FeatureCollection",
+      features: [
+        {
+          id: "f1c87cb952f0e836713dba229070e1cb",
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: coordinates,
+            type: "LineString"
+          }
+        }
+      ]
+    };
+  };
+
   fetchLandingPoints = () => {
     this.landingPoints = [
       {
