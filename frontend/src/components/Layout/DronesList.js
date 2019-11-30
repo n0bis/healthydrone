@@ -33,27 +33,13 @@ class DronesList extends Component {
       fetchDrones,
       setDroneStatus,
       fetchManagers,
-      drones,
-      setLocation
+      updateDroneLocation
     } = this.props.droneStore;
-    const { dronesData, setDroneLocation } = this.props.mapStore;
+    const { setDroneLocation } = this.props.mapStore;
 
     await fetchDrones();
     await fetchManagers();
 
-    window.setInterval(function() {
-      console.log(1);
-      dronesData.map(drone => {
-        /*setLocation(
-          drone.uniqueIdentifier,
-          drone.location[0],
-          drone.location[1]
-        );*/
-        console.log(drone);
-      });
-    }, 5000);
-
-    //clearInterval(interval);
     // Initiate the connection to the server
     try {
       const token =
@@ -74,6 +60,8 @@ class DronesList extends Component {
           console.error(`Socket cluster authentication failed : ${error}`);
       });
 
+      var i = 0;
+
       socket.on("connect", () => {
         subscription = socket.subscribe("adsb", { waitForAuth: true });
         subscription.watch(msg => {
@@ -85,8 +73,19 @@ class DronesList extends Component {
                 data.xy.longitude,
                 data.xy.latitude
               );
+
+              if (i == 50) {
+                updateDroneLocation(
+                  data.uas,
+                  data.xy.longitude,
+                  data.xy.latitude
+                );
+                console.log(1);
+              }
             }
           });
+          if (i == 50) i = 0;
+          i++;
         });
       });
       socket.on("error", error => {

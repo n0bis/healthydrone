@@ -57,7 +57,7 @@ class DroneStore {
     var port;
 
     this.droneManagers.map(drone => {
-      console.log(drone.droneId);
+      //console.log(drone.droneId);
       if (drone.droneId == drone_id) {
         port = drone.port;
       }
@@ -117,7 +117,7 @@ class DroneStore {
     );
 
     const drone = drones[0];
-    console.log(drone);
+    //console.log(drone);
     if (typeof drone === "undefined") return false;
 
     return drone;
@@ -135,10 +135,32 @@ class DroneStore {
     return this.dronesLocation[drone_id].name;
   };
 
+  updateDroneLocation = (drone_id, longitude, latitude) => {
+    axios
+      .get(
+        `https://healthdrone.unifly.tech/api/map/locations?query=${latitude},${longitude}`,
+        {
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmZcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOmU2MzMzZmM0LThhNzAtNDkwNi1hYzY4LTY3ZjNhMWFiN2QyZjoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmY6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwOFwiOltcInN1YnNjcmliZVwiXSIsIlwib3BlcmF0b3I6MzhkYzNjN2EtOTE1ZS00NDA5LWI2ZDktYTBkYzQwOWQ4ODA4OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODp1YXM6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiZmxpZ2h0XCI6W1wic3Vic2NyaWJlXCJdIiwiXCJuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYjpuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYlwiOltcInN1YnNjcmliZVwiXSJdLCJ1c2VyX25hbWUiOiJGUkhFTDE4QFNUVURFTlQuU0RVLkRLIiwic2NvcGUiOlsicmVhZCJdLCJleHAiOjE1NzUxODUxOTEsImp0aSI6IjMxMzg4MzM2LWRkNzYtNDhmNy05OWJkLWE3ZWQwNTg3ZmFlOSIsImNsaWVudF9pZCI6InNkdUhlYWx0aERyb25lQ29ubmVjdCIsInVzaWQiOiI5ZGUzZGM5ZS0wYzIyLTRhMTgtOGE2NS1jN2Q0YjdkOWY0NzUifQ.T4ZzgmZM4EWsZC23iDTw3BuKXqRnT-xM75vPweeX4wM"
+          }
+        }
+      )
+      .then(res => {
+        console.log(res.data);
+
+        this.dronesLocation[drone_id].name = res.data[0].name;
+        this.dronesLocation[drone_id].latitude = latitude;
+        this.dronesLocation[drone_id].longitude = longitude;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   setLocation = drone => {
     const latitude = this.dronesLocation[drone.uniqueIdentifier].latitude;
     const longitude = this.dronesLocation[drone.uniqueIdentifier].longitude;
-    //console.log(latitude, longitude);
     axios
       .get(
         `https://healthdrone.unifly.tech/api/map/locations?query=${latitude},${longitude}`,
@@ -160,7 +182,6 @@ class DroneStore {
   setDroneStatus = (drone_id, status) => {
     this.drones.map((drone, key) => {
       if (drone.uniqueIdentifier === drone_id) {
-        console.log("ASOIDJSA");
         this.drones[key].flightStatus = status;
       }
     });
