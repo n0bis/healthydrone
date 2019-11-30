@@ -1,3 +1,4 @@
+import("./utils/axiosConfig.js")
 import React from "react";
 
 import { render } from "react-dom";
@@ -10,9 +11,6 @@ import { createBrowserHistory } from "history";
 
 import App from "./components/App";
 import stores from "./stores/";
-
-import { Auth0Provider } from "./react-auth0-spa";
-import config from "./auth_config.json";
 
 // A function that routes the user to the right place
 // after login
@@ -37,16 +35,7 @@ const renderApp = Component => {
     <AppContainer>
       <Router history={history}>
         <Provider {...stores} routing={routeStore}>
-        <Auth0Provider
-    domain={config.domain}
-    client_id={config.clientId}
-    redirect_uri={window.location.origin}
-    onRedirectCallback={onRedirectCallback}
-    >
-    <App />
-  
-          
-          </Auth0Provider>
+          <App />
         </Provider>
         
       </Router>
@@ -60,41 +49,3 @@ renderApp(App);
 if (module.hot) {
   module.hot.accept(() => renderApp(App));
 }
-
-/*import React from "react";
-import ReactDOM from "react-dom";
-import ReactMapboxGl from "react-mapbox-gl";
-import DrawControl from "react-mapbox-gl-draw";
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-
-const Map = ReactMapboxGl({
-  accessToken:
-    "pk.eyJ1IjoiZmFrZXVzZXJnaXRodWIiLCJhIjoiY2pwOGlneGI4MDNnaDN1c2J0eW5zb2ZiNyJ9.mALv0tCpbYUPtzT7YysA2g"
-});
-
-function App() {
-  const onDrawCreate = ({ features }) => {
-    console.log(features);
-  };
-
-  const onDrawUpdate = ({ features }) => {
-    console.log(features);
-  };
-
-  return (
-    <div>
-      <h2>Welcome to react-mapbox-gl-draw</h2>
-      <Map
-        style="mapbox://styles/mapbox/streets-v9" // eslint-disable-line
-        containerStyle={{
-          height: "600px",
-          width: "100vw"
-        }}
-      >
-        <DrawControl onDrawCreate={onDrawCreate} onDrawUpdate={onDrawUpdate} />
-      </Map>
-    </div>
-  );
-}
-
-ReactDOM.render(<App />, document.getElementById("root"));*/
