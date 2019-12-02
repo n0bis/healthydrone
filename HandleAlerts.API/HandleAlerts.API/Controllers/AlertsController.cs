@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using alert_state_machine.Models;
+using alert_state_machine.States;
 using HandleAlerts.API.Domain.Models;
 using HandleAlerts.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +24,23 @@ namespace HandleAlerts.API.Controllers
         }
 
         [HttpPost]
-        public Alert Post(Guid uasOperation, Guid droneID, string alertType )
+        public async Task<IActionResult> PostAsync(Guid uasOperation, Guid droneID, string alertType )
         {
+            var process = new Process();
+
             var key = $"{uasOperation}-{droneID}-{alertType}";
-            _redisService.Set(key, alertType);
+
+            var cachedProcess = await _redisService.Get<State>(key);
+
+
+            process.CurrentState = cachedProcess.CurrentState;
+            cachedProcess.Triggered = false;
+            cachedProcess.Handled = true;
+
+
+            await _redisService.Set(key, cachedProcess);
+
+            return Ok();
         }
     }
 
