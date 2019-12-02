@@ -10,6 +10,9 @@ import { observer, inject } from "mobx-react";
 import IconButton from "@material-ui/core/IconButton";
 import ReportIcon from "@material-ui/icons/Report";
 import { Descriptions } from 'antd';
+import { Select } from "antd";
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 
 
@@ -17,7 +20,16 @@ export var OpenModal = inject("reportStore")(observer((props) => {
  const {onOpenModal} = props.reportStore;
   return <p onClick={onOpenModal}> REPORT </p>
  }));
+ function SimpleMenu() {
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
 
 @inject("reportStore")
@@ -30,7 +42,6 @@ class FormDialog extends Component {
   return (
     <Dialog
       open={isModalOpen}
-      
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">Rapporter fejl</DialogTitle>
@@ -39,6 +50,22 @@ class FormDialog extends Component {
           Beskriv venligst den fejl der opstod. Fejlen vil herefter blive
           gennemgået.
         </DialogContentText>
+        <div>
+      <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+        Open Menu
+      </Button>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={handleClose}>Logout</MenuItem>
+      </Menu>
+    </div>
         <TextField
           id="standard-multiline-static"
           label="Detaljer"
