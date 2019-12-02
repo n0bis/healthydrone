@@ -11,25 +11,32 @@ import IconButton from "@material-ui/core/IconButton";
 import ReportIcon from "@material-ui/icons/Report";
 import { Descriptions } from 'antd';
 import { Select } from "antd";
-import Menu from '@material-ui/core/Menu';
+//import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import { Menu, Dropdown, Icon } from "antd";
 
 
 export var OpenModal = inject("reportStore")(observer((props) => {
  const {onOpenModal} = props.reportStore;
   return <p onClick={onOpenModal}> REPORT </p>
  }));
- function SimpleMenu() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+ const menu = (
+  <Menu selectable>
+    <Menu.Item key="0">
+      <a href="http://www.alipay.com/">1st menu item</a>
+    </Menu.Item>
+    <Menu.Item key="1">
+      <a href="http://www.taobao.com/">2nd menu item</a>
+    </Menu.Item>
+    <Menu.Item key="3">3rd menu item</Menu.Item>
+    <Menu.Item key="4">3rd menu item</Menu.Item>
+    <Menu.Item key="5">3rd menu item</Menu.Item>
+    <Menu.Item key="6">3rd menu item</Menu.Item>
+    <Menu.Item key="7">3rd menu item</Menu.Item>
+    <Menu.Item key="8">3rd menu item</Menu.Item>
+    <Menu.Item key="9">3rd menu item</Menu.Item>
+  </Menu>
+);
 
 
 @inject("reportStore")
@@ -50,22 +57,13 @@ class FormDialog extends Component {
           Beskriv venligst den fejl der opstod. Fejlen vil herefter blive
           gennemgået.
         </DialogContentText>
-        <div>
-      <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-        Open Menu
-      </Button>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
-      </Menu>
-    </div>
+        
+        <Dropdown overlay={menu} trigger={["click"]} >
+    <a className="ant-dropdown-link" href="#">
+      Vælg drone <Icon type="down" />
+    </a>
+  </Dropdown>
+    
         <TextField
           id="standard-multiline-static"
           label="Detaljer"
@@ -109,7 +107,9 @@ class FormDialog extends Component {
       </DialogActions>
     </Dialog>
   );
-  }
+  
 }
+}
+ 
 
 export default FormDialog;
