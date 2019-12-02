@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.Rider2019.2/system/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_alert_state_machine.-1990019711.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeRecursive">
+      <e p="Commands" t="Include">
+        <e p="Command.cs" t="Include" />
+      </e>
+      <e p="Persistence" t="Include">
+        <e p="RedisService.cs" t="Include" />
+      </e>
+      <e p="Process.cs" t="Include" />
+      <e p="Program.cs" t="Include" />
+      <e p="Services" t="Include">
+        <e p="Scheduler.cs" t="Include" />
+        <e p="SchedulerService.cs" t="Include" />
+        <e p="UTMService.cs" t="Include" />
+      </e>
+      <e p="States" t="Include">
+        <e p="ProcessState.cs" t="Include" />
+      </e>
+      <e p="alert_state_machine.csproj" t="IncludeRecursive" />
+      <e p="alert_state_machine.sln" t="IncludeFlat" />
+      <e p="appsettings.json" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.0" t="Include">
+            <e p="alert_state_machine.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
