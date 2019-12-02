@@ -30,12 +30,12 @@ namespace alert_state_machine
 
             var token = await utmService.Tokens.Auth();
 
-            /*Scheduler.IntervalInMinutes(1, async () =>
+            Scheduler.IntervalInMinutes(1, async () =>
             {
                 Console.WriteLine(DateTime.Now);
                 await serviceProvider.GetService<IWeatherRunner>().WeatherCheck(utmService);
                 Console.WriteLine(DateTime.Now);
-            });*/
+            });
 
             Scheduler.IntervalInMinutes(0.5, async () =>
             {
