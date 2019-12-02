@@ -1,5 +1,15 @@
+$border: 1px solid rgba(0, 0, 0, 0.1);
+
 body {
   margin: 0;
+}
+
+/*
+** Ant design fixes
+*/
+
+.ant-tabs-bar {
+  margin-bottom: 0;
 }
 
 .line {
@@ -95,6 +105,37 @@ body {
   }
   .actions {
     padding: 20px;
+  }
+}
+
+.reports-list {
+  .report {
+    padding: 10px 20px;
+    border-bottom: $border;
+    background-color: #fff;
+    &:first-of-type {
+      border-top: $border;
+    }
+    .location {
+      font-weight: bold;
+    }
+    p {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.hospitals-list {
+  .item {
+    padding: 10px 20px;
+    border-bottom: $border;
+    background-color: #fff;
+    &:first-of-type {
+      border-top: $border;
+    }
+    p {
+      margin-bottom: 0;
+    }
   }
 }
 
