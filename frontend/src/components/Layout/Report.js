@@ -11,32 +11,30 @@ import IconButton from "@material-ui/core/IconButton";
 import ReportIcon from "@material-ui/icons/Report";
 import { Descriptions } from 'antd';
 import { Select } from "antd";
-//import Menu from '@material-ui/core/Menu';
+
 import MenuItem from '@material-ui/core/MenuItem';
 import { Menu, Dropdown, Icon } from "antd";
 
+
+const { Option } = Select;
+
+function handleChange(value) {
+  console.log(`selected ${value}`);
+}
 
 export var OpenModal = inject("reportStore")(observer((props) => {
  const {onOpenModal} = props.reportStore;
   return <p onClick={onOpenModal}> REPORT </p>
  }));
- const menu = (
+
+ /*const menu = (
   <Menu className="mydropdown">
-    <Menu.Item key="0">
-      <a href="http://www.alipay.com/">1st menu item</a>
-    </Menu.Item>
-    <Menu.Item key="1">
-      <a href="http://www.taobao.com/">2nd menu item</a>
-    </Menu.Item>
-    <Menu.Item key="3">3rd menu item</Menu.Item>
-    <Menu.Item key="4">3rd menu item</Menu.Item>
-    <Menu.Item key="5">3rd menu item</Menu.Item>
-    <Menu.Item key="6">3rd menu item</Menu.Item>
-    <Menu.Item key="7">3rd menu item</Menu.Item>
-    <Menu.Item key="8">3rd menu item</Menu.Item>
-    <Menu.Item key="9">3rd menu item</Menu.Item>
+    <Menu.Item key="0">drone1</Menu.Item>
+    <Menu.Item key="1">drone2</Menu.Item>
+    <Menu.Item key="2">drone3</Menu.Item>
+    <Menu.Item key="3">drone4</Menu.Item>
   </Menu>
-);
+); */
 
 
 @inject("reportStore")
@@ -57,13 +55,17 @@ class FormDialog extends Component {
           Beskriv venligst den fejl der opstod. Fejlen vil herefter blive
           gennemgået.
         </DialogContentText>
-        
-        <Dropdown overlay={menu} trigger={["click"]} >
-    <a className="ant-dropdown-link" href="#">
-      Vælg drone <Icon type="down" />
-    </a>
-  </Dropdown>
-    
+        <div>
+    <Select defaultValue="choose a Drone" style={{ width: 120 }} onChange={handleChange}>
+      <Option value="drone1">drone1</Option>
+      <Option value="drone2">drone2</Option>
+      <Option value="drone3">drone3</Option>
+      <Option value="luaaaacy">Lusssscy</Option>
+      <Option value="luaaaqqqcy">Luaaacy</Option>
+      <Option value="lubbbbcy">Luvvsdfcy</Option>
+     
+    </Select>
+  </div>
         <TextField
           id="standard-multiline-static"
           label="Detaljer"
