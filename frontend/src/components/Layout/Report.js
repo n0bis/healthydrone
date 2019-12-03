@@ -21,7 +21,7 @@ export var OpenModal = inject("reportStore")(observer((props) => {
   return <p onClick={onOpenModal}> REPORT </p>
  }));
  const menu = (
-  <Menu selectable>
+  <Menu className="mydropdown">
     <Menu.Item key="0">
       <a href="http://www.alipay.com/">1st menu item</a>
     </Menu.Item>

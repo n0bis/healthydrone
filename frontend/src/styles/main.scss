@@ -34,7 +34,14 @@ body {
     text-transform: uppercase;
   }
 }
+.mydropdown{
+  position: relative;
+  z-index: 9999999999999;
+}
+.ant-dropdown{
 
+  z-index: 9999999999999999999999999;
+}
 .drones {
   .drone {
     position: relative;
