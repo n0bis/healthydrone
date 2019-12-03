@@ -43,8 +43,6 @@ namespace alert_state_machine
                 await serviceProvider.GetService<ICollisionAndNoFlyZoneRunner>().ZonesCheck(token, utmService);
                 Console.WriteLine(DateTime.Now);
             });
-
-            Console.ReadKey(true);
         }
 
         private static void ConfigureServices(IServiceCollection services)
