@@ -6,7 +6,6 @@ import { Button } from "antd";
 @observer
 class ReportIcon extends Component {
 
-    
     render(){ 
         const {onOpenModal} = this.props.reportStore;
         return(
@@ -14,8 +13,7 @@ class ReportIcon extends Component {
         <Button type="danger" onClick={ onOpenModal } >Report Incident</Button>
         </div>   
     );
-}
-
+    }
 }
 
 export default ReportIcon;

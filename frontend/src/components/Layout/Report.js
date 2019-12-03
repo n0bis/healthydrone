@@ -7,13 +7,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { observer, inject } from "mobx-react";
-import IconButton from "@material-ui/core/IconButton";
-import ReportIcon from "@material-ui/icons/Report";
-import { Descriptions } from 'antd';
 import { Select } from "antd";
 
-import MenuItem from '@material-ui/core/MenuItem';
-import { Menu, Dropdown, Icon } from "antd";
+
 
 
 const { Option } = Select;
@@ -26,16 +22,6 @@ export var OpenModal = inject("reportStore")(observer((props) => {
  const {onOpenModal} = props.reportStore;
   return <p onClick={onOpenModal}> REPORT </p>
  }));
-
- /*const menu = (
-  <Menu className="mydropdown">
-    <Menu.Item key="0">drone1</Menu.Item>
-    <Menu.Item key="1">drone2</Menu.Item>
-    <Menu.Item key="2">drone3</Menu.Item>
-    <Menu.Item key="3">drone4</Menu.Item>
-  </Menu>
-); */
-
 
 @inject("reportStore")
 @observer 
