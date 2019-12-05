@@ -1,8 +1,5 @@
 import { get, action, observable, toJS } from "mobx";
 import axios from "axios";
-import { observer } from "mobx-react-lite";
-import { FormControlLabel } from "@material-ui/core";
-var qs = require("qs");
 
 class MapStore {
   @observable isLoading = false;
@@ -16,28 +13,48 @@ class MapStore {
   @observable dronesData = [];
   @observable landingPoints = [];
 
-  /*
-  @observable data = {
-    type: "FeatureCollection",
-    features: [
-      {
-        id: 1,
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [-77.032, 38.913]
-        },
-        properties: {
-          title: "Mapbox",
-          description: "Washington, D.C."
-        }
-      }
-    ]
+  @observable drawData = {};
+
+  @observable zoom = 3;
+  @observable location = {
+    latitude: 55.676098,
+    longitude: 12.568337
   };
-  */
+
+  setZoom = () => {
+    this.zoom = 10;
+  };
+
+  setLocation = (longitude, latitude) => {
+    this.location = {
+      longitude: longitude,
+      latitude: latitude
+    };
+  };
 
   @action onChange = data => {
     this.data = data;
+  };
+
+  setDraw = (a, b) => {
+    this.data = {
+      type: "FeatureCollection",
+      features: [
+        {
+          id: "4292189fb5f95d003b31b6c31a4ba504",
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: [a, b],
+            type: "LineString"
+          }
+        }
+      ]
+    };
+  };
+
+  refreshData = () => {
+    this.data = {};
   };
 
   setFligthPath = coordinates => {
@@ -66,6 +83,10 @@ class MapStore {
       {
         name: "Svendbord",
         location: [10.607282, 55.067434]
+      },
+      {
+        name: "Falck",
+        location: [10.40494, 55.35436]
       }
     ];
   };

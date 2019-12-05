@@ -43,7 +43,8 @@ class DronesList extends Component {
     // Initiate the connection to the server
     try {
       const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmZcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOmU2MzMzZmM0LThhNzAtNDkwNi1hYzY4LTY3ZjNhMWFiN2QyZjoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmY6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwOFwiOltcInN1YnNjcmliZVwiXSIsIlwib3BlcmF0b3I6MzhkYzNjN2EtOTE1ZS00NDA5LWI2ZDktYTBkYzQwOWQ4ODA4OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODp1YXM6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiZmxpZ2h0XCI6W1wic3Vic2NyaWJlXCJdIiwiXCJuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYjpuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYlwiOltcInN1YnNjcmliZVwiXSJdLCJ1c2VyX25hbWUiOiJGUkhFTDE4QFNUVURFTlQuU0RVLkRLIiwic2NvcGUiOlsicmVhZCJdLCJleHAiOjE1NzUxODUxOTEsImp0aSI6IjMxMzg4MzM2LWRkNzYtNDhmNy05OWJkLWE3ZWQwNTg3ZmFlOSIsImNsaWVudF9pZCI6InNkdUhlYWx0aERyb25lQ29ubmVjdCIsInVzaWQiOiI5ZGUzZGM5ZS0wYzIyLTRhMTgtOGE2NS1jN2Q0YjdkOWY0NzUifQ.T4ZzgmZM4EWsZC23iDTw3BuKXqRnT-xM75vPweeX4wM";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmZcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOmU2MzMzZmM0LThhNzAtNDkwNi1hYzY4LTY3ZjNhMWFiN2QyZjoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmY6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwOFwiOltcInN1YnNjcmliZVwiXSIsIlwib3BlcmF0b3I6MzhkYzNjN2EtOTE1ZS00NDA5LWI2ZDktYTBkYzQwOWQ4ODA4OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODp1YXM6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiZmxpZ2h0XCI6W1wic3Vic2NyaWJlXCJdIiwiXCJuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYjpuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYlwiOltcInN1YnNjcmliZVwiXSJdLCJ1c2VyX25hbWUiOiJGUkhFTDE4QFNUVURFTlQuU0RVLkRLIiwic2NvcGUiOlsicmVhZCJdLCJleHAiOjE1NzU2MDEyOTMsImp0aSI6IjIyYjMxNDFhLWFiZmUtNDJmMS05ZjViLTJkZDE4YTA2N2JjNCIsImNsaWVudF9pZCI6InNkdUhlYWx0aERyb25lQ29ubmVjdCIsInVzaWQiOiJjNDI3MDMxYy04N2IyLTQzY2YtYmQ5NS0yZmQwMzJhMGMxNjYifQ.G0-ue3bDPyqsR3K8hT_FwkekiimLwZcDyZ8Ow3vZr98";
+
       let socketClusterOptions = {
         port: 443,
         secure: true,
@@ -96,8 +97,18 @@ class DronesList extends Component {
     }
   }
 
+  onClick = drone => {
+    const { onClick, getDroneLocationCords } = this.props.droneStore;
+    const { setLocation, setZoom } = this.props.mapStore;
+    const location = getDroneLocationCords(drone.uniqueIdentifier);
+    onClick(drone);
+    setZoom();
+    console.log(getDroneLocationCords(drone.uniqueIdentifier));
+    setLocation(location.longitude, location.latitude);
+  };
+
   render() {
-    const { drones, getDroneLocation, onClick } = this.props.droneStore;
+    const { drones, getDroneLocation } = this.props.droneStore;
 
     const inFligth = drones.filter(drone => drone.flightStatus == "IN_FLIGHT");
     const parked = drones.filter(drone => drone.flightStatus == "LANDED");
@@ -107,11 +118,12 @@ class DronesList extends Component {
         <div className="group">
           <p className="group-name">IN FLIGTH</p>
           <div className="group">
-            {inFligth.map(drone => (
+            {inFligth.map((drone, key) => (
               <DronesComponent
+                key={key}
                 drone={drone}
                 location={getDroneLocation(drone.uniqueIdentifier)}
-                onClick={onClick}
+                onClick={this.onClick}
               />
             ))}
           </div>
@@ -119,11 +131,12 @@ class DronesList extends Component {
         <div className="group">
           <p className="group-name">PARKED</p>
           <div className="group">
-            {parked.map(drone => (
+            {parked.map((drone, key) => (
               <DronesComponent
+                key={key}
                 drone={drone}
                 location={getDroneLocation(drone.uniqueIdentifier)}
-                onClick={onClick}
+                onClick={this.onClick}
               />
             ))}
           </div>

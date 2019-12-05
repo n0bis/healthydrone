@@ -3,6 +3,7 @@ import MapGL, {
   NavigationControl,
   Layer,
   Feature,
+  FeatureState,
   Marker,
   Source
 } from "@urbica/react-map-gl";
@@ -51,7 +52,6 @@ class Maps extends Component {
   };
 
   createFlight = () => {
-    alert(1);
     this.setState({
       data: {
         type: "FeatureCollection",
@@ -79,28 +79,13 @@ class Maps extends Component {
       onChange,
       createFlight,
       dronesData,
-      landingPoints
+      landingPoints,
+      zoom,
+      location,
+      drawData
     } = this.props.mapStore;
 
-    //console.log(Draw);
-
-    const test = {
-      type: "FeatureCollection",
-      features: [
-        {
-          id: "e2019d6761d6b0bc44ff385774df2bcc",
-          type: "Feature",
-          properties: {},
-          geometry: {
-            coordinates: [
-              [-122.44342900322752, 37.825117399686334],
-              [-122.45571857990264, 37.81844328268188]
-            ],
-            type: "LineString"
-          }
-        }
-      ]
-    };
+    console.log("asdas: ", drawData);
 
     return (
       <div style={{ height: "100%" }}>
@@ -110,9 +95,9 @@ class Maps extends Component {
           accessToken={
             "pk.eyJ1IjoiYXNkaW9qYXNvZGoiLCJhIjoiY2syMzNrYW40MDZwYjNicmVzd2lmN3RsNiJ9.iwnj30EcPWFknoJfWczWJg"
           }
-          latitude={55.676098}
-          longitude={12.568337}
-          zoom={3}
+          latitude={location.latitude}
+          longitude={location.longitude}
+          zoom={zoom}
           onClick={this.onClick}
         >
           <NavigationControl showCompass showZoom position="top-right" />

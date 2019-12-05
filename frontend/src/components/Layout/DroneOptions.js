@@ -22,8 +22,11 @@ class DroneOptions extends Component {
   };
 
   startFligth = () => {
-    const { putOnFlight } = this.props.droneStore;
-    putOnFlight();
+    const { sendOnMission } = this.props.droneStore;
+    const { data, refreshData } = this.props.mapStore;
+    const coordinates = data.features[0].geometry.coordinates;
+    sendOnMission(coordinates);
+    refreshData();
   };
 
   stop = () => {
@@ -37,21 +40,33 @@ class DroneOptions extends Component {
   };
 
   sendOnMission = () => {
-    alert("Sending home");
+    //const { sendOnMission } = this.props.droneStore;
   };
 
   landAtLocation = () => {
     alert("Land at location");
   };
 
+  onLocationChange = event => {
+    const { setDraw } = this.props.mapStore;
+    const { getDroneLocationCords, drone } = this.props.droneStore;
+    const value = event.target.value.split(",");
+
+    const location = getDroneLocationCords(drone.uniqueIdentifier);
+
+    const to = [parseFloat(value[0]), parseFloat(value[1])];
+    const from = [location.longitude, location.latitude];
+    console.log(from, to);
+    setDraw(from, to);
+  };
+
   render() {
-    const { startFligth, landingPoints } = this.props.mapStore;
+    const { setZoom, landingPoints } = this.props.mapStore;
     const {
       showDroneOptions,
       closeDroneOptions,
       drone,
-      droneManagers,
-      droneLocations
+      getDroneLocation
     } = this.props.droneStore;
     const display = showDroneOptions ? "block" : "none";
 
@@ -81,7 +96,7 @@ class DroneOptions extends Component {
                   <button onClick={this.stop}>Stop</button>
                   <button onClick={this.sendHome}>Send hjem</button>
                   <button onClick={this.sendOnMission}>Send on mission</button>
-                  <select onChange={this.landAtLocation}>
+                  <select onChange={this.onLocationChange}>
                     <option>Land på lokation</option>
                     <option>a</option>
                     <option>b</option>
@@ -93,14 +108,14 @@ class DroneOptions extends Component {
                   <p>
                     <b>Fra</b>
                   </p>
-                  <p>Svendbord</p>
+                  <p>{getDroneLocation(drone.uniqueIdentifier)}</p>
                   <p>
                     <b>Til</b>
                   </p>
-                  <select>
+                  <select onChange={this.onLocationChange}>
                     <option default>Vælg lokation</option>
                     {landingPoints.map(point => (
-                      <option>{point.name}</option>
+                      <option value={point.location}>{point.name}</option>
                     ))}
                   </select>
                   <br />
