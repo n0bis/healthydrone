@@ -1,8 +1,0 @@
-ogLevel="DEBUG"
-debug=true
-[web]
-address=":8080"
-[docker]
-endpoint="unix://var/run/docker.sock"
-watch=true
-swarmmode=true

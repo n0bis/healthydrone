@@ -65,6 +65,7 @@ services:
         - "traefik.docker.network=traefik"
         - "traefik.tcp.routers.database.rule=HostSNI(`*`)"
         - "traefik.tcp.routers.database.entryPoints=database"
+        - "traefik.tcp.services.database.loadbalancer.server.port=5432"
   
   redis:
     image: redis
@@ -80,6 +81,7 @@ services:
         - "traefik.docker.network=traefik"
         - "traefik.tcp.routers.redis.rule=HostSNI(`*`)"
         - "traefik.tcp.routers.redis.entryPoints=redis"
+        - "traefik.tcp.services.redis.loadbalancer.server.port=6379"
 
   kafka:
     image: wurstmeister/kafka
