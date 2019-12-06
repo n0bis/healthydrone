@@ -5,18 +5,96 @@ class DroneStore {
   @observable showDroneOptions = false;
   @observable drones = [];
   @observable drone = {};
+  @observable droneManagers = [];
 
   fetchDrones = () => {
     axios
       .get(
-        `https://healthdrone.unifly.tech/api/operators/38dc3c7a-915e-4409-b6d9-a0dc409d8808/uases/`,
-        {
-          headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjozOGRjM2M3YS05MTVlLTQ0MDktYjZkOS1hMGRjNDA5ZDg4MDhcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjozOGRjM2M3YS05MTVlLTQ0MDktYjZkOS1hMGRjNDA5ZDg4MDg6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iXSwidXNlcl9uYW1lIjoiSk9MVU4xOEBTVFVERU5ULlNEVS5ESyIsInNjb3BlIjpbInJlYWQiXSwiYXRpIjoiOTQ4ZDU2ZTItNmQ5Yy00ZmExLTlmMzctNGI4YTQxM2IxNTEzIiwiZXhwIjoxNTc3ODk5ODYzLCJqdGkiOiJkNDNmN2QxNC1iODhmLTQ2MWEtODFiYi1iMjA4NWQ0NDllZDEiLCJjbGllbnRfaWQiOiJzZHVIZWFsdGhEcm9uZUNvbm5lY3QiLCJ1c2lkIjoiN2NmMTZjZDgtYmFmMi00OGExLWEzNzgtOGRiOWUwYjgyNGQ4In0.gi-sQaidwSsxbMtwSg7XKbXl14V3gMuI-ktY6p-VvZk"
-          }
-        }
+        `https://healthdrone.unifly.tech/api/operators/38dc3c7a-915e-4409-b6d9-a0dc409d8808/uases/`
       )
+      .then(res => {
+        const drones = res.data;
+
+        //axios.post("http://localhost:5000", )
+
+        const url = "http://localhost:5000/manager";
+
+        drones.map(drone => {
+          console.log(drones);
+          axios.post(url, {
+            id: drone.uniqueIdentifier,
+            operationid: drone.uniqueIdentifier,
+            velocity: 10.0,
+            currentLocation: {
+              latitude: 55.355853,
+              longitude: 10.432952
+            },
+            homeLocation: {
+              latitude: 55.355853,
+              longitude: 10.432952
+            }
+          });
+        });
+
+        this.drones = drones;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  fetchManagers = () => {
+    axios
+      .get(`http://localhost:5000/manager`)
+      .then(res => {
+        const droneManagers = res.data;
+        this.droneManagers = droneManagers;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  getDronePort = () => {
+    const drone_id = this.drone.uniqueIdentifier;
+    var port;
+
+    this.droneManagers.map(drone => {
+      console.log(drone.droneId);
+      if (drone.droneId == drone_id) {
+        port = drone.port;
+      }
+    });
+
+    return port;
+  };
+
+  stopDrone = () => {
+    axios.get(`http://localhost:${this.getDronePort()}/stop`);
+  };
+
+  sendHome = () => {
+    axios.get(`http://localhost:${this.getDronePort()}/sendHome`);
+  };
+
+  putOnFlight = (drone_id, path) => {
+    const port = this.getDronePort();
+
+    axios
+      .post(`http://localhost:${port}/sendOnMission`, [
+        {
+          latitude: 55.474558,
+          longitude: 10.325687
+        },
+        {
+          latitude: 55.149776,
+          longitude: 9.608144
+        },
+        {
+          latitude: 55.261088,
+          longitude: 9.162151
+        }
+      ])
       .then(res => {
         this.drones = res.data;
       })

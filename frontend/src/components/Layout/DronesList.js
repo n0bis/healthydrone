@@ -28,17 +28,22 @@ const DronesComponent = ({ drone, onClick }) => {
 @observer
 class DronesList extends Component {
   async componentDidMount() {
-    const { fetchDrones, setDroneStatus } = this.props.droneStore;
+    const {
+      fetchDrones,
+      setDroneStatus,
+      fetchManagers
+    } = this.props.droneStore;
     const { setDroneLocation } = this.props.mapStore;
+
     await fetchDrones();
+    await fetchManagers();
 
     /*setTimeout(function() {
       setDroneStatus("f7785735-5700-4e1c-a766-5ae7cbb4a4e3", "LANDED");
     }, 5000);*/
     // Initiate the connection to the server
     try {
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjozOGRjM2M3YS05MTVlLTQ0MDktYjZkOS1hMGRjNDA5ZDg4MDhcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjozOGRjM2M3YS05MTVlLTQ0MDktYjZkOS1hMGRjNDA5ZDg4MDg6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iXSwidXNlcl9uYW1lIjoiSk9MVU4xOEBTVFVERU5ULlNEVS5ESyIsInNjb3BlIjpbInJlYWQiXSwiZXhwIjoxNTc1MzUxMDYzLCJqdGkiOiI5NDhkNTZlMi02ZDljLTRmYTEtOWYzNy00YjhhNDEzYjE1MTMiLCJjbGllbnRfaWQiOiJzZHVIZWFsdGhEcm9uZUNvbm5lY3QiLCJ1c2lkIjoiN2NmMTZjZDgtYmFmMi00OGExLWEzNzgtOGRiOWUwYjgyNGQ4In0.8ZVaFPOfvYegbh26B9jL4JGoasdCfz5Juhu4_UD0Q4s";
+      const token = localStorage.getItem("authorization")
       let socketClusterOptions = {
         port: 443,
         secure: true,
@@ -58,14 +63,16 @@ class DronesList extends Component {
       socket.on("connect", () => {
         subscription = socket.subscribe("adsb", { waitForAuth: true });
         subscription.watch(msg => {
-          if (msg.data[0].source == "simulator") {
-            setDroneStatus(msg.data[0].uas, "IN_FLIGHT");
-            setDroneLocation(
-              msg.data[0].UASOPERATION,
-              msg.data[0].xy.longitude,
-              msg.data[0].xy.latitude
-            );
-          }
+          msg.data.map(data => {
+            if (data.source == "simulator") {
+              setDroneStatus(data.uas, "IN_FLIGHT");
+              setDroneLocation(
+                data.UASOPERATION,
+                data.xy.longitude,
+                data.xy.latitude
+              );
+            }
+          });
         });
       });
       socket.on("error", error => {

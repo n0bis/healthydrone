@@ -20,6 +20,29 @@ class DroneOptions extends Component {
     );
   };
 
+  startFligth = () => {
+    const { putOnFlight } = this.props.droneStore;
+    putOnFlight();
+  };
+
+  stop = () => {
+    const { stopDrone } = this.props.droneStore;
+    stopDrone();
+  };
+
+  sendHome = () => {
+    const { sendHome } = this.props.droneStore;
+    sendHome();
+  };
+
+  sendOnMission = () => {
+    alert("Sending home");
+  };
+
+  landAtLocation = () => {
+    alert("Land at location");
+  };
+
   render() {
     const { startFligth, landingPoints } = this.props.mapStore;
     const {
@@ -48,9 +71,17 @@ class DroneOptions extends Component {
             </div>
             <div className="actions">
               {drone.flightStatus === "IN_FLIGHT" ? (
-                <p>
-                  Her kommer der handlinger til hvis en drone er ude og flyve.
-                </p>
+                <>
+                  <button onClick={this.stop}>Stop</button>
+                  <button onClick={this.sendHome}>Send hjem</button>
+                  <button onClick={this.sendOnMission}>Send on mission</button>
+                  <select onChange={this.landAtLocation}>
+                    <option>Land på lokation</option>
+                    <option>a</option>
+                    <option>b</option>
+                    <option>c</option>
+                  </select>
+                </>
               ) : (
                 <>
                   <p>
@@ -69,7 +100,7 @@ class DroneOptions extends Component {
                   <br />
                   <button onClick={this.createFligth}>Create fligth</button>
                   <br />
-                  <button onClick={startFligth}>Start fligth</button>
+                  <button onClick={this.startFligth}>Start fligth</button>
                 </>
               )}
             </div>

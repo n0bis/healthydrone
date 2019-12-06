@@ -22,7 +22,7 @@ namespace LandingPoints.API.Persistance.Contexts
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<LandingPoint>().ToTable("Landing Points");
+            builder.Entity<LandingPoint>().ToTable("Landingpoints");
             builder.Entity<LandingPoint>().HasKey(p => p.id);
             builder.Entity<LandingPoint>().Property(p => p.id).IsRequired().ValueGeneratedOnAdd();
             builder.Entity<LandingPoint>().Property(p => p.latitude).IsRequired();
