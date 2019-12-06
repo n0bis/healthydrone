@@ -26,7 +26,7 @@ class DroneOptions extends Component {
     const { data, refreshData } = this.props.mapStore;
     const coordinates = data.features[0].geometry.coordinates;
     sendOnMission(coordinates);
-    refreshData();
+    //refreshData();
   };
 
   stop = () => {
