@@ -1,0 +1,42 @@
+body {
+  background-color: #fafafa;
+}
+
+.container {
+  margin: 100px auto;
+  width: 500px;
+  .box {
+    border-radius: 3px;
+    overflow: hidden;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 7px solid #3f51b5;
+    background-color: #fff;
+    padding: 20px;
+    h2 {
+      margin-bottom: 0;
+    }
+    h3 {
+      font-weight: 300;
+    }
+    .form {
+      margin-top: 20px;
+      select,
+      input {
+        width: 100%;
+      }
+      .form-item {
+        margin-bottom: 10px;
+      }
+      .button-submit {
+        margin-top: 10px;
+        width: 100%;
+        background-color: #3f51b5;
+        border: 1px solid #3f51b5;
+        padding: 7px 15px;
+        border-radius: 2px;
+        color: #fafafa;
+      }
+    }
+  }
+}
