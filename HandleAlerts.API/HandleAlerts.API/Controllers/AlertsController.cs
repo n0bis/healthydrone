@@ -32,11 +32,8 @@ namespace HandleAlerts.API.Controllers
 
             var cachedProcess = await _redisService.Get<State>(key);
 
-
-            process.CurrentState = cachedProcess.CurrentState;
             cachedProcess.Triggered = false;
             cachedProcess.Handled = true;
-
 
             await _redisService.Set(key, cachedProcess);
 
