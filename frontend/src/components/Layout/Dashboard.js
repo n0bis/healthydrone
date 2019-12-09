@@ -8,7 +8,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import ReportIcon from "@material-ui/icons/Report";
+import ReportIcon from "./ReportIcon";
 
 import "antd/dist/antd.css";
 import Maps from "../Maps";
@@ -140,9 +140,7 @@ export default function Dashboard() {
           >
             Healthdrone
           </Typography>
-          <IconButton color="inherit">
             <ReportIcon />
-          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer
