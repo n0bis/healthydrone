@@ -13,6 +13,7 @@
     <Folder Include="Settings\" />
     <Folder Include="Hubs\" />
     <Folder Include="Domain\Models\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>
