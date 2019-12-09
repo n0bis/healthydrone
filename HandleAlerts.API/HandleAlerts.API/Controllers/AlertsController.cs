@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using alert_state_machine.Models;
-using alert_state_machine.States;
+﻿using System.Threading.Tasks;
 using HandleAlerts.API.Domain.Models;
 using HandleAlerts.API.Hubs;
 using HandleAlerts.API.Persistence;
