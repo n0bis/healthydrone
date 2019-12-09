@@ -47,7 +47,5 @@ namespace LandingPoints.API.Controllers
             var landingPointResource = _mapper.Map<LandingPoint, LandingPointResource>(result.LandingPoint);
             return Ok(landingPointResource);
         }
-
-    
     }
 }
