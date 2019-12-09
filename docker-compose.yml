@@ -186,6 +186,30 @@ services:
     depends_on:
       - database
 
+  handlealerts:
+    container_name: handlealerts
+    image: n0bis/handlealerts
+    environment:
+      Redis__Host: redis
+      Redis__Port: 6379
+      Kafka__host: kafka
+      Kafka__topic: collision-alert
+      Kafka__groupId:
+    networks:
+      - traefik-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.handlealerts.rule=PathPrefix(`/handlealerts`)"
+        - "traefik.http.routers.handlealerts.entrypoints=web"
+        - "traefik.http.services.handlealerts.loadbalancer.server.port=80"
+    depends_on:
+      - redis
+      - kafka
+
   alert_state_machine:
     container_name: alert_state_machine
     image: n0bis/alert_state_machine
