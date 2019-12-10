@@ -134,18 +134,18 @@ namespace DroneSimulator.API.Services
             await this._utmService.Tracking.Land(_drone.Id, _drone.OperationId);
         }
 
-        private double DegreeToRadian(double degree)
+        public double DegreeToRadian(double degree)
         {
             return (degree * Math.PI / 180);
         }
 
-        private double RadianToDegree(double radian)
+        public double RadianToDegree(double radian)
         {
             return (radian * 180 / Math.PI);
         }
 
         // Calculate the (initial) bearing between two points, in degrees
-        private double CalculateBearing(Location startPoint, Location endPoint)
+        public double CalculateBearing(Location startPoint, Location endPoint)
         {
             double lat1 = DegreeToRadian(startPoint.latitude);
             double lat2 = DegreeToRadian(endPoint.latitude);
@@ -160,7 +160,7 @@ namespace DroneSimulator.API.Services
         }
 
         // Calculate the destination point from given point having travelled the given distance (in km), on the given initial bearing (bearing may vary before destination is reached)
-        private Location CalculateDestinationLocation(Location point, double bearing, double distance)
+        public Location CalculateDestinationLocation(Location point, double bearing, double distance)
         {
 
             distance /= _earthRadius; // convert to angular distance in radians
@@ -177,7 +177,7 @@ namespace DroneSimulator.API.Services
         }
 
         // Calculate the distance between two points in km
-        private double CalculateDistanceBetweenLocations(Location startPoint, Location endPoint)
+        public double CalculateDistanceBetweenLocations(Location startPoint, Location endPoint)
         {
 
             double lat1 = DegreeToRadian(startPoint.latitude);
