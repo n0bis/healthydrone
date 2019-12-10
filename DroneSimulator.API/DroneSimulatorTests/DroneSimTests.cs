@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DroneSimulator;
 using DroneSimulator.API.Domain.Models;
+using System;
 
 namespace DroneSimulatorTests
 {
@@ -10,7 +11,10 @@ namespace DroneSimulatorTests
         [TestMethod]
         private double DegreeToRadian(double degree)
         {
-            return 2.2;
+            double example = (45 * Math.PI) / 180;
+           Assert.AreEqual(example, 0.7853);
+            // Assert.IsTrue(example.);
+            return 
         }
         [TestMethod]
         private double RadianToDegree(double radian)
@@ -25,7 +29,6 @@ namespace DroneSimulatorTests
         [TestMethod]
         private Location CalculateDestinationLocation(Location point, double bearing, double distance)
         {
-
             return null;
         }
         [TestMethod]
