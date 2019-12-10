@@ -36,7 +36,7 @@ namespace alert_state_machine.RuleRunners
             var distinctFlights = flights?.GroupBy(flight => flight.uas.uniqueIdentifier).Select(uas => uas.First()).ToList();
             distinctFlights?.ForEach(async flight =>
             {
-                var flightCoordinates = flight.coordinate;
+                var flightCoordinates = flight.coordinates;
                 var weatherResponse = await _weatherService.GetWeatherAtCoord(latitude: flightCoordinates.latitude.ToString(), longitude: flightCoordinates.longitude.ToString());
                 var process = new Process();
                 var key = $"{flight.uasOperation}-{flight.uas.uniqueIdentifier}-weather";
@@ -67,8 +67,6 @@ namespace alert_state_machine.RuleRunners
             });
         }
 
-
-		// localhost:9092
 		private async Task SendAlert(object value)
 		{
             Console.WriteLine($"ALERT: {JsonConvert.SerializeObject(value)}");

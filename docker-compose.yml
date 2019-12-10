@@ -86,12 +86,14 @@ services:
   kafka:
     image: wurstmeister/kafka
     environment:
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://${HOST_IP}:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_LISTENERS: INSIDE://kafka:9093,OUTSIDE://${HOST_IP}:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092
+      KAFKA_LISTENERS: INSIDE://:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "weather-alert:1:1,collision-alert:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - traefik-net
     depends_on:
@@ -193,8 +195,8 @@ services:
       Redis__Host: redis
       Redis__Port: 6379
       Kafka__host: kafka
-      Kafka__topic: collision-alert
-      Kafka__groupId:
+      Kafka__topic: collision-alert,weather-alert
+      Kafka__groupId: test-group
     networks:
       - traefik-net
     deploy:
