@@ -9,11 +9,15 @@ using Microsoft.Extensions.DependencyInjection;
 using alert_state_machine.Persistence;
 using alert_state_machine.Settings;
 using AutoMapper;
+using System.Threading;
 
 namespace alert_state_machine
 {
     class Program
     {
+        // AutoResetEvent to signal when to exit the application.
+        private static readonly AutoResetEvent waitHandle = new AutoResetEvent(false);
+
         static async Task Main(string[] args)
         {
             var services = new ServiceCollection();
@@ -44,7 +48,17 @@ namespace alert_state_machine
                 Console.WriteLine(DateTime.Now);
             });
 
-            Console.ReadKey(true);
+            // Handle Control+C or Control+Break
+            Console.CancelKeyPress += (o, e) =>
+            {
+                Console.WriteLine("Exit");
+
+                // Allow the manin thread to continue and exit...
+                waitHandle.Set();
+            };
+
+            // Wait
+            waitHandle.WaitOne();
         }
 
         private static void ConfigureServices(IServiceCollection services)
