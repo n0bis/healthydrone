@@ -22,7 +22,6 @@ namespace alert_state_machine.RuleRunners
         private readonly IRedisService _redisService;
         private Boolean isConnected = false;
         private readonly IUTMLiveService _UTMLiveService;
-        private Models.Message _ObjectData;
         private UTMService _utmService; 
 
         public CollisionAndNoFlyZoneRunner(IRedisService redisService, IUTMLiveService utmLiveService)
