@@ -21,12 +21,12 @@ class DroneOptions extends Component {
     );
   };
 
-  startFligth = () => {
+  startFligth = async () => {
     const { sendOnMission } = this.props.droneStore;
     const { data, refreshData } = this.props.mapStore;
     const coordinates = data.features[0].geometry.coordinates;
-    sendOnMission(coordinates);
-    //refreshData();
+    await sendOnMission(coordinates);
+    refreshData();
   };
 
   stop = () => {
@@ -95,13 +95,19 @@ class DroneOptions extends Component {
                 <>
                   <button onClick={this.stop}>Stop</button>
                   <button onClick={this.sendHome}>Send hjem</button>
-                  <button onClick={this.sendOnMission}>Send on mission</button>
-                  <select onChange={this.onLocationChange}>
-                    <option>Land på lokation</option>
-                    <option>a</option>
-                    <option>b</option>
-                    <option>c</option>
-                  </select>
+                  <div>
+                    <p>Send på ny mission:</p>
+                    <select onChange={this.onLocationChange}>
+                      <option default>Vælg lokation</option>
+                      {landingPoints.map(point => (
+                        <option value={point.location}>{point.name}</option>
+                      ))}
+                    </select>
+                    <br />
+                    <button onClick={this.createFligth}>Create fligth</button>
+                    <br />
+                    <button onClick={this.startFligth}>Start fligth</button>
+                  </div>
                 </>
               ) : (
                 <>

@@ -27,6 +27,19 @@ body {
 }
 
 .group {
+  &.danger {
+    .drone {
+      background-color: rgba(143, 1, 34, 0.3) !important;
+    }
+    .text-green {
+      color: #8f0122 !important;
+    }
+  }
+  &.parked {
+    .text-green {
+      color: #000 !important;
+    }
+  }
   .group-name {
     padding: 15px 20px;
     font-weight: bold;
