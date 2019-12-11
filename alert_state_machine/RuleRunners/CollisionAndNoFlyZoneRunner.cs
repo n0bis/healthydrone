@@ -51,42 +51,49 @@ namespace alert_state_machine.RuleRunners
             if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK")
                 return;
 
- 
-            var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
-
-            var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
-            var obj = JsonConvert.DeserializeObject<Models.Message>(result);
-            var key = $"{obj.uasOperation}-{obj.subject.uniqueIdentifier}-alert";
-            var cachedProcess = await _redisService.Get<State>(key);
-            var process = new Process();
-
-            if (cachedProcess != null)
+            try
             {
-                process.CurrentState = cachedProcess.CurrentState;
-            }
-            else
-            {
-                cachedProcess = new State();
-            }
+                var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
 
-            if (!cachedProcess.Triggered && !cachedProcess.Handled)
-            {
+                var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
+                var obj = JsonConvert.DeserializeObject<Models.Message>(result);
+                var key = $"{obj.uasOperation}-{obj.subject.uniqueIdentifier}-alert";
+                var cachedProcess = await _redisService.Get<State>(key);
+                var process = new Process();
 
-                if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                if (cachedProcess != null)
                 {
-                    await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
-                    cachedProcess.Triggered = true;
+                    process.CurrentState = cachedProcess.CurrentState;
+                }
+                else
+                {
+                    cachedProcess = new State();
                 }
 
-                if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                if (!cachedProcess.Triggered && !cachedProcess.Handled)
                 {
-                    await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
-                    cachedProcess.Triggered = true;
+
+                    if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                    {
+                        await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
+                        cachedProcess.Triggered = true;
+                    }
+
+                    if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                    {
+                        await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
+                        cachedProcess.Triggered = true;
+                    }
                 }
+                cachedProcess.CurrentState = process.CurrentState;
+                await _redisService.Set(key, cachedProcess);
+
             }
-            cachedProcess.CurrentState = process.CurrentState;
-            await _redisService.Set(key, cachedProcess);
-            
+            catch (InvalidCastException e)
+            {
+                Console.WriteLine(test.Values.FirstOrDefault());
+                Console.WriteLine(e.Message);
+            }
         }
 
         private async Task SendAlert(object value)
