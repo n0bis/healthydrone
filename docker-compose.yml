@@ -194,7 +194,7 @@ services:
     environment:
       Redis__Host: redis
       Redis__Port: 6379
-      Kafka__host: kafka
+      Kafka__host: "kafka"
       Kafka__topic: collision-alert,weather-alert
       Kafka__groupId: test-group
     networks:
@@ -211,6 +211,10 @@ services:
     depends_on:
       - redis
       - kafka
+
+  auth:
+    container_name: auth
+    image: n0bis/auth
 
   alert_state_machine:
     container_name: alert_state_machine
