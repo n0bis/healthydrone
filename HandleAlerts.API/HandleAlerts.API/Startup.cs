@@ -39,6 +39,7 @@ namespace HandleAlerts.API
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
+                    policy.AllowAnyOrigin();
                     policy.AllowAnyMethod();
                 });
             });

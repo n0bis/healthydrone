@@ -5,6 +5,7 @@ import LazyRoute from "lazy-route";
 import Dashboard from "./Layout/Dashboard";
 import Login from "./Login";
 import NurseReport from "./NurseReport";
+import SignalR from "./SignalRRoute";
 import hasAnyRole from "../utils/auth";
 
 const Authorization = (isLoggedIn) =>
@@ -35,6 +36,7 @@ class App extends Component {
         <Route exact path="/" render={props => (
             User(<LazyRoute {...props} component={import("./Layout/Dashboard")} />)
           )} />
+        <Route exact path="/hello" component={SignalR} />
       </div>
     );
   }
