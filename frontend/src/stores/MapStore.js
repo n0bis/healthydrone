@@ -15,10 +15,10 @@ class MapStore {
 
   @observable drawData = {};
 
-  @observable zoom = 3;
+  @observable zoom = 9;
   @observable location = {
-    latitude: 55.676098,
-    longitude: 12.568337
+    latitude: 55.35436,
+    longitude: 10.40494
   };
 
   setZoom = () => {

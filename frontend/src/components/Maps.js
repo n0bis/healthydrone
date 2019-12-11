@@ -90,7 +90,7 @@ class Maps extends Component {
     return (
       <div style={{ height: "100%" }}>
         <MapGL
-          style={{ width: "100%", height: "90%" }}
+          style={{ width: "100%", height: "calc(100% - 50px)" }}
           mapStyle="mapbox://styles/mapbox/light-v9"
           accessToken={
             "pk.eyJ1IjoiYXNkaW9qYXNvZGoiLCJhIjoiY2syMzNrYW40MDZwYjNicmVzd2lmN3RsNiJ9.iwnj30EcPWFknoJfWczWJg"
@@ -100,7 +100,7 @@ class Maps extends Component {
           zoom={zoom}
           onClick={this.onClick}
         >
-          <NavigationControl showCompass showZoom position="top-right" />
+          <NavigationControl captureScroll showZoom position="top-right" />
           {dronesData.map(drone => (
             <Marker
               style={style}
@@ -126,16 +126,17 @@ class Maps extends Component {
               data={data}
               features={data}
               onChange={onChange}
+              lineStringControl={false}
+              combineFeaturesControl={false}
+              pointControl={false}
+              polygonControl={false}
+              trashControl={false}
+              uncombineFeaturesControl={false}
               onDrawCreate={this.onDrawCreate}
               onDrawUpdate={this.onDrawUpdate}
             />
           )}
         </MapGL>
-
-        <div>
-          <p>{JSON.stringify(data)}</p>
-          <button onClick={createFlight}>Create fligth</button>
-        </div>
       </div>
     );
   }
