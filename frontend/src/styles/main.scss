@@ -3,6 +3,14 @@ $border: 1px solid rgba(0, 0, 0, 0.1);
 body {
   margin: 0;
   /*overflow: hidden;*/
+  height: 100%;
+}
+
+/*
+** height fix
+*/
+#root {
+  height: 100%;
 }
 
 /*
@@ -49,7 +57,7 @@ body {
   }
 }
 
-.ant-select-dropdown{
+.ant-select-dropdown {
   z-index: 999999999999;
 }
 .drones {
