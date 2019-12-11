@@ -3,6 +3,7 @@ import MapGL, {
   NavigationControl,
   Layer,
   Feature,
+  FeatureState,
   Marker,
   Source
 } from "@urbica/react-map-gl";
@@ -51,7 +52,6 @@ class Maps extends Component {
   };
 
   createFlight = () => {
-    alert(1);
     this.setState({
       data: {
         type: "FeatureCollection",
@@ -79,25 +79,28 @@ class Maps extends Component {
       onChange,
       createFlight,
       dronesData,
-      landingPoints
+      landingPoints,
+      zoom,
+      location,
+      drawData
     } = this.props.mapStore;
 
-    console.log(Draw);
+    console.log("asdas: ", drawData);
 
     return (
       <div style={{ height: "100%" }}>
         <MapGL
-          style={{ width: "100%", height: "90%" }}
+          style={{ width: "100%", height: "calc(100% - 50px)" }}
           mapStyle="mapbox://styles/mapbox/light-v9"
           accessToken={
             "pk.eyJ1IjoiYXNkaW9qYXNvZGoiLCJhIjoiY2syMzNrYW40MDZwYjNicmVzd2lmN3RsNiJ9.iwnj30EcPWFknoJfWczWJg"
           }
-          latitude={55.676098}
-          longitude={12.568337}
-          zoom={3}
+          latitude={location.latitude}
+          longitude={location.longitude}
+          zoom={zoom}
           onClick={this.onClick}
         >
-          <NavigationControl showCompass showZoom position="top-right" />
+          <NavigationControl captureScroll showZoom position="top-right" />
           {dronesData.map(drone => (
             <Marker
               style={style}
@@ -123,16 +126,17 @@ class Maps extends Component {
               data={data}
               features={data}
               onChange={onChange}
+              lineStringControl={false}
+              combineFeaturesControl={false}
+              pointControl={false}
+              polygonControl={false}
+              trashControl={false}
+              uncombineFeaturesControl={false}
               onDrawCreate={this.onDrawCreate}
               onDrawUpdate={this.onDrawUpdate}
             />
           )}
         </MapGL>
-
-        <div>
-          <p>{JSON.stringify(data)}</p>
-          <button onClick={createFlight}>Create fligth</button>
-        </div>
       </div>
     );
   }
