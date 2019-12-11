@@ -5,6 +5,7 @@ import { toJS } from "mobx";
 @inject("mapStore", "droneStore")
 @observer
 class DroneOptions extends Component {
+  /*
   handleClick = event => {
     setAnchorEl(event.currentTarget);
   };
@@ -20,13 +21,19 @@ class DroneOptions extends Component {
       [-122.36777130126949, 37.76914513791027]
     );
   };
+  */
 
   startFligth = async () => {
-    const { sendOnMission } = this.props.droneStore;
-    const { data, refreshData } = this.props.mapStore;
-    const coordinates = data.features[0].geometry.coordinates;
-    await sendOnMission(coordinates);
-    refreshData();
+    try {
+      const { sendOnMission } = this.props.droneStore;
+      const { data, refreshData } = this.props.mapStore;
+      const coordinates = data.features[0].geometry.coordinates;
+
+      await sendOnMission(coordinates);
+      refreshData();
+    } catch (err) {
+      alert("Kunne ikke oprette rutes");
+    }
   };
 
   stop = () => {
@@ -37,10 +44,6 @@ class DroneOptions extends Component {
   sendHome = () => {
     const { sendHome } = this.props.droneStore;
     sendHome();
-  };
-
-  sendOnMission = () => {
-    //const { sendOnMission } = this.props.droneStore;
   };
 
   landAtLocation = () => {
@@ -75,7 +78,7 @@ class DroneOptions extends Component {
     return (
       <div className="drone-options fadeIn" style={{ display: display }}>
         {drone == false ? (
-          <h1>asda</h1>
+          <h1>Kunne ikke finde drone</h1>
         ) : (
           <>
             <div className="title">
@@ -104,8 +107,6 @@ class DroneOptions extends Component {
                       ))}
                     </select>
                     <br />
-                    <button onClick={this.createFligth}>Create fligth</button>
-                    <br />
                     <button onClick={this.startFligth}>Start fligth</button>
                   </div>
                 </>
@@ -124,8 +125,6 @@ class DroneOptions extends Component {
                       <option value={point.location}>{point.name}</option>
                     ))}
                   </select>
-                  <br />
-                  <button onClick={this.createFligth}>Create fligth</button>
                   <br />
                   <button onClick={this.startFligth}>Start fligth</button>
                 </>

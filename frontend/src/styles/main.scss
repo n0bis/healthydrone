@@ -82,6 +82,12 @@ body {
       right: 0;
       width: 50px;
     }
+    .location {
+      width: calc(100% - 30px);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -143,6 +149,7 @@ body {
     padding: 10px 20px;
     border-bottom: $border;
     background-color: #fff;
+    cursor: pointer;
     &:first-of-type {
       border-top: $border;
     }

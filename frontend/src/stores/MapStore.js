@@ -54,7 +54,10 @@ class MapStore {
   };
 
   refreshData = () => {
-    this.data = {};
+    this.data = {
+      type: "FeatureCollection",
+      features: []
+    };
   };
 
   setFligthPath = coordinates => {
