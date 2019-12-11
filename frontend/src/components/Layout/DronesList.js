@@ -39,8 +39,7 @@ class DronesList extends Component {
 
     // Initiate the connection to the server
     try {
-
-      const token = localStorage.getItem("authorization")
+      const token = localStorage.getItem("authorization");
 
       let socketClusterOptions = {
         port: 443,
