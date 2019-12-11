@@ -49,6 +49,9 @@ body {
   }
 }
 
+.ant-select-dropdown{
+  z-index: 999999999999;
+}
 .drones {
   .drone {
     position: relative;

@@ -14,12 +14,16 @@ class DroneStore {
   fetchDrones = () => {
     axios
       .get(
+<<<<<<< HEAD
         `https://healthdrone.unifly.tech/api/operators/38dc3c7a-915e-4409-b6d9-a0dc409d8808/uases/`,
         {
           headers: {
             Authorization: "Bearer " + token
           }
         }
+=======
+        `https://healthdrone.unifly.tech/api/operators/38dc3c7a-915e-4409-b6d9-a0dc409d8808/uases/`
+>>>>>>> master
       )
       .then(res => {
         const drones = res.data;
