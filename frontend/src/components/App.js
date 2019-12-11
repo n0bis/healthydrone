@@ -7,37 +7,41 @@ import Login from "./Login";
 import NurseReport from "./NurseReport";
 import hasAnyRole from "../utils/auth";
 
-const Authorization = (isLoggedIn) =>
-(component) => {
-  return isLoggedIn ? (
-    component
-  ) : (
-    <Redirect to='/login' />
-  )
-}
+const Authorization = isLoggedIn => component => {
+  return isLoggedIn ? component : <Redirect to="/login" />;
+};
 
 @inject("routing", "loginStore")
 @observer
 class App extends Component {
   render() {
-    const { loginStore } = this.props
-    const { isLoggedInPersist } = loginStore
-    const isLoggedIn = isLoggedInPersist()
-    const User = Authorization(isLoggedIn)
+    const { loginStore } = this.props;
+    const { isLoggedInPersist } = loginStore;
+    const isLoggedIn = isLoggedInPersist();
+    const User = Authorization(isLoggedIn);
 
     return (
-      <div>
+      <>
         <Route exact path="/login" component={Login} />
-        <Route exact path="/report"
-          render={props => (
+        <Route
+          exact
+          path="/report"
+          render={props =>
             User(<LazyRoute {...props} component={import("./NurseReport")} />)
-          )} />
-        <Route exact path="/" render={props => (
-            User(<LazyRoute {...props} component={import("./Layout/Dashboard")} />)
-          )} />
-      </div>
+          }
+        />
+        <Route
+          exact
+          path="/"
+          render={props =>
+            User(
+              <LazyRoute {...props} component={import("./Layout/Dashboard")} />
+            )
+          }
+        />
+      </>
     );
   }
 }
 
-export default withRouter(observer(App))
+export default withRouter(observer(App));
