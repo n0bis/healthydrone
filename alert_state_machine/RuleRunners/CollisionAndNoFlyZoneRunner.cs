@@ -57,7 +57,10 @@ namespace alert_state_machine.RuleRunners
 
                 var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
                 var obj = JsonConvert.DeserializeObject<Models.Message>(result);
-                var key = $"{obj.uasOperation}-{obj.subject.uniqueIdentifier}-alert";
+                if (obj.alertType == "OUTSIDE_OPERATION")
+                    return;
+
+                var key = $"{obj.subject.uniqueIdentifier}-{obj.relatedSubject.uniqueIdentifier}-alert";
                 var cachedProcess = await _redisService.Get<State>(key);
                 var process = new Process();
 
@@ -73,13 +76,13 @@ namespace alert_state_machine.RuleRunners
                 if (!cachedProcess.Triggered && !cachedProcess.Handled)
                 {
 
-                    if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                    if (obj.alertType == "UAS_NOFLYZONE")
                     {
                         await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
                         cachedProcess.Triggered = true;
                     }
 
-                    if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                    if (obj.alertType == "UAS_NOFLYZONE")
                     {
                         await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
                         cachedProcess.Triggered = true;
