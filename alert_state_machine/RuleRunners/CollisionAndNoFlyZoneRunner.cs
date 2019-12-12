@@ -48,7 +48,7 @@ namespace alert_state_machine.RuleRunners
         private async void OnMessage(object sender, string name, object data)
         {
             var test = (Dictionary<string, object>)(data);
-            if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK")
+            if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK" || test == null)
                 return;
 
             try
@@ -56,8 +56,12 @@ namespace alert_state_machine.RuleRunners
                 var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
 
                 var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
-                var obj = JsonConvert.DeserializeObject<Models.Message>(result);
-                if (obj.alertType == "OUTSIDE_OPERATION")
+                var obj = JsonConvert.DeserializeObject<Models.Message>(result, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore
+                });
+                if (obj.alertType == "OUTSIDE_OPERATION" || obj == null)
                     return;
 
                 var key = $"{obj.subject.uniqueIdentifier}-{obj.relatedSubject.uniqueIdentifier}-alert";
@@ -94,7 +98,7 @@ namespace alert_state_machine.RuleRunners
             }
             catch (InvalidCastException e)
             {
-                Console.WriteLine(test.Values.FirstOrDefault());
+                Console.WriteLine(test);
                 Console.WriteLine(e.Message);
             }
         }
