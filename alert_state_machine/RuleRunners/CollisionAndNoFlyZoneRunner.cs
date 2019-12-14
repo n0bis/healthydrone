@@ -61,7 +61,7 @@ namespace alert_state_machine.RuleRunners
 
             var dataObj = message.data.FirstOrDefault();
 
-            if (dataObj == null || dataObj.alertType == "OUTSIDE_OPERATION")
+            if (dataObj == null || dataObj.alertType == "OUTSIDE_OPERATION" || dataObj.alertType == "NO_OPERATION")
                 return;
 
             var key = $"{dataObj.subject.uniqueIdentifier}-{dataObj.relatedSubject.uniqueIdentifier}-alert";
