@@ -70,6 +70,7 @@ namespace alert_state_machine
             services.AddOptions();
             services.Configure<RedisOpts>(configuration.GetSection("Redis"));
             services.Configure<WeatherRuleOpts>(configuration.GetSection("WeatherRule"));
+            services.Configure<KafkaOpts>(configuration.GetSection("Kafka"));
 
             // add services:
             services.AddSingleton<IRedisService, RedisService>();

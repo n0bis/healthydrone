@@ -23,13 +23,15 @@ namespace alert_state_machine.RuleRunners
         private readonly IRedisService _redisService;
         private Boolean isConnected = false;
         private readonly IUTMLiveService _UTMLiveService;
-        private UTMService _utmService; 
+        private UTMService _utmService;
+        private readonly string _kafkaHost;
 
-        public CollisionAndNoFlyZoneRunner(IRedisService redisService, IUTMLiveService utmLiveService)
+        public CollisionAndNoFlyZoneRunner(IRedisService redisService, IUTMLiveService utmLiveService, IOptions<KafkaOpts> kafkaOpts)
         {
             _redisService = redisService;
             _redisService.Connect();
             _UTMLiveService = utmLiveService;
+            _kafkaHost = kafkaOpts.Value.Host;
         }
 
         public async Task ZonesCheck(Token token, UTMService utmService)
@@ -99,7 +101,7 @@ namespace alert_state_machine.RuleRunners
         private async Task SendAlert(object value)
         {
             Console.WriteLine($"ALERT: {JsonConvert.SerializeObject(value)}");
-            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+            var config = new ProducerConfig { BootstrapServers = $"{_kafkaHost}:9092" };
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {

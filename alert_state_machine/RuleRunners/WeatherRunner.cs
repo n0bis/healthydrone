@@ -21,13 +21,15 @@ namespace alert_state_machine.RuleRunners
         private readonly IRedisService _redisService;
         private readonly IWeatherService _weatherService;
         private readonly WeatherRule _weatherRule;
+        private readonly string _kafkaHost;
 
-        public WeatherRunner(IRedisService redisService, IWeatherService weatherService, IOptions<WeatherRuleOpts> weatherOpts)
+        public WeatherRunner(IRedisService redisService, IWeatherService weatherService, IOptions<WeatherRuleOpts> weatherOpts, IOptions<KafkaOpts> kafkaOpts)
         {
             _redisService = redisService;
             _weatherService = weatherService;
             _redisService.Connect();
             _weatherRule = new WeatherRule { MaxTemp = weatherOpts.Value.MaxTemp, MinTemp = weatherOpts.Value.MinTemp, RainPrecipitation = weatherOpts.Value.RainPrecipitation, WindSpeed = weatherOpts.Value.WindSpeed };
+            _kafkaHost = kafkaOpts.Value.Host;
         }
 
         public async Task WeatherCheck(UTMService utmService)
@@ -70,7 +72,7 @@ namespace alert_state_machine.RuleRunners
 		private async Task SendAlert(object value)
 		{
             Console.WriteLine($"ALERT: {JsonConvert.SerializeObject(value)}");
-            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+            var config = new ProducerConfig { BootstrapServers = $"{_kafkaHost}:9092" };
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {
