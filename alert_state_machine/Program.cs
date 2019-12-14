@@ -36,16 +36,14 @@ namespace alert_state_machine
 
             Scheduler.IntervalInMinutes(1, async () =>
             {
-                Console.WriteLine(DateTime.Now);
+                Console.WriteLine($"Running weather check at: {DateTime.Now}");
                 await serviceProvider.GetService<IWeatherRunner>().WeatherCheck(utmService);
-                Console.WriteLine(DateTime.Now);
             });
 
             Scheduler.IntervalInMinutes(0.5, async () =>
             {
-                Console.WriteLine(DateTime.Now);
+                Console.WriteLine($"Running collision and no-flyzone check at: {DateTime.Now}");
                 await serviceProvider.GetService<ICollisionAndNoFlyZoneRunner>().ZonesCheck(token, utmService);
-                Console.WriteLine(DateTime.Now);
             });
 
             // Handle Control+C or Control+Break
