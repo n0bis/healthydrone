@@ -86,7 +86,7 @@ namespace alert_state_machine.RuleRunners
                     cachedProcess.Triggered = true;
                 }
 
-                if (dataObj.alertType == "UAS_NOFLYZONE")
+                if (dataObj.alertType == "UAS_COLLISION")
                 {
                     await SendAlert(new Alert { droneId = dataObj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
                     cachedProcess.Triggered = true;
@@ -99,7 +99,7 @@ namespace alert_state_machine.RuleRunners
         private async Task SendAlert(object value)
         {
             Console.WriteLine($"ALERT: {JsonConvert.SerializeObject(value)}");
-            var config = new ProducerConfig { BootstrapServers = "kafka:9092" };
+            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {

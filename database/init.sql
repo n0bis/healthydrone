@@ -1,10 +1,10 @@
-CREATE TABLE IF NOT EXISTS DockerContainers (
+CREATE TABLE DockerContainers (
   Id text NOT NULL,  
   droneId text NOT NULL,  
   port integer NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Incidents (
+CREATE TABLE Incidents (
   Id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),  
   Date text NOT NULL,  
   DroneId uuid NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Incidents (
 
 CREATE TYPE EType AS ENUM ('Hospital', 'Nursery');
 
-CREATE TABLE IF NOT EXISTS LandingPoints (
+CREATE TABLE LandingPoints (
   Id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   latitude double precision NOT NULL,
   longitude double precision NOT NULL,

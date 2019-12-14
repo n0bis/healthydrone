@@ -5,12 +5,8 @@ class SignalR extends Component {
 
   async componentDidMount() {
     let connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://192.168.99.185/handlealerts/alerts")
+    .withUrl("http://localhost:1339/alerts")
     .build();
-
-    connection.start().then(function () {
-      console.log("connected");
-    });
 
     connection.on("alerts", (message) => {
       console.log(message);
@@ -18,6 +14,10 @@ class SignalR extends Component {
 
     connection.on("request_drone", (message) => {
       console.log(message);
+    });
+
+    connection.start().then(function () {
+      console.log("connected");
     });
   }
 

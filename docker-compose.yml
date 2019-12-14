@@ -49,7 +49,7 @@ services:
     restart: always
     volumes:
       - db_volume:/var/lib/postgresql/data
-      - ./database/seed.sql :/docker-entrypoint-initdb.d/seed.sql
+      - ./database:/docker-entrypoint-initdb.d/
     environment:
       POSTGRES_USER: pguser
       POSTGRES_PASSWORD: secret
@@ -67,22 +67,6 @@ services:
         - "traefik.tcp.routers.database.entryPoints=postgres"
         - "traefik.tcp.services.database.loadbalancer.server.port=5432"
   
-  redis:
-    image: redis
-    container_name: redis
-    networks: 
-      - traefik-net
-    deploy:
-      placement:
-        constraints:
-          - node.role == worker
-      labels:
-        - "traefik.enable=true"
-        - "traefik.docker.network=traefik"
-        - "traefik.tcp.routers.redis.rule=HostSNI(`*`)"
-        - "traefik.tcp.routers.redis.entryPoints=redis"
-        - "traefik.tcp.services.redis.loadbalancer.server.port=6379"
-
   kafka:
     image: wurstmeister/kafka
     ports:
@@ -90,6 +74,10 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092
+      KAFKA_LISTENERS: INSIDE://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "weather-alert:1:1,collision-alert:1:1"
     volumes:
@@ -115,6 +103,22 @@ services:
           - node.role == worker
       labels:
         - "traefik.enable=false"
+
+  redis:
+    image: redis
+    container_name: redis
+    networks: 
+      - traefik-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.tcp.routers.redis.rule=HostSNI(`*`)"
+        - "traefik.tcp.routers.redis.entryPoints=redis"
+        - "traefik.tcp.services.redis.loadbalancer.server.port=6379"
 
   manager:
     container_name: manager
@@ -194,7 +198,7 @@ services:
     environment:
       Redis__Host: redis
       Redis__Port: 6379
-      Kafka__host: "kafka"
+      Kafka__host: kafka
       Kafka__topic: collision-alert,weather-alert
       Kafka__groupId: test-group
     networks:
@@ -215,6 +219,15 @@ services:
   auth:
     container_name: auth
     image: n0bis/auth
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+        - "traefik.http.routers.auth.entrypoints=web"
+        - "traefik.http.services.auth.loadbalancer.server.port=80"
 
   alert_state_machine:
     container_name: alert_state_machine
