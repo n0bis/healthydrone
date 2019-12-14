@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -47,60 +48,52 @@ namespace alert_state_machine.RuleRunners
 
         private async void OnMessage(object sender, string name, object data)
         {
-            var test = (Dictionary<string, object>)(data);
-            if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK" || test == null)
+            var dict = (Dictionary<string, object>)(data);
+            var json = JsonConvert.SerializeObject(dict, Formatting.Indented);
+            var message = JsonConvert.DeserializeObject<EventMessage>(json, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
+
+            if (message == null || message.name == "ADSB_TRACK")
                 return;
 
-            try
+            var dataObj = message.data.FirstOrDefault();
+
+            if (dataObj == null || dataObj.alertType == "OUTSIDE_OPERATION")
+                return;
+
+            var key = $"{dataObj.subject.uniqueIdentifier}-{dataObj.relatedSubject.uniqueIdentifier}-alert";
+            var cachedProcess = await _redisService.Get<State>(key);
+            var process = new Process();
+
+            if (cachedProcess != null)
             {
-                var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
-
-                var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
-                var obj = JsonConvert.DeserializeObject<Models.Message>(result, new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    MissingMemberHandling = MissingMemberHandling.Ignore
-                });
-                if (obj.alertType == "OUTSIDE_OPERATION" || obj == null)
-                    return;
-
-                var key = $"{obj.subject.uniqueIdentifier}-{obj.relatedSubject.uniqueIdentifier}-alert";
-                var cachedProcess = await _redisService.Get<State>(key);
-                var process = new Process();
-
-                if (cachedProcess != null)
-                {
-                    process.CurrentState = cachedProcess.CurrentState;
-                }
-                else
-                {
-                    cachedProcess = new State();
-                }
-
-                if (!cachedProcess.Triggered && !cachedProcess.Handled)
-                {
-
-                    if (obj.alertType == "UAS_NOFLYZONE")
-                    {
-                        await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
-                        cachedProcess.Triggered = true;
-                    }
-
-                    if (obj.alertType == "UAS_NOFLYZONE")
-                    {
-                        await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
-                        cachedProcess.Triggered = true;
-                    }
-                }
-                cachedProcess.CurrentState = process.CurrentState;
-                await _redisService.Set(key, cachedProcess);
-
+                process.CurrentState = cachedProcess.CurrentState;
             }
-            catch (InvalidCastException e)
+            else
             {
-                Console.WriteLine(test);
-                Console.WriteLine(e.Message);
+                cachedProcess = new State();
             }
+
+            if (!cachedProcess.Triggered && !cachedProcess.Handled)
+            {
+
+                if (dataObj.alertType == "UAS_NOFLYZONE")
+                {
+                    await SendAlert(new Alert { droneId = dataObj.subject.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
+                    cachedProcess.Triggered = true;
+                }
+
+                if (dataObj.alertType == "UAS_NOFLYZONE")
+                {
+                    await SendAlert(new Alert { droneId = dataObj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
+                    cachedProcess.Triggered = true;
+                }
+            }
+            cachedProcess.CurrentState = process.CurrentState;
+            await _redisService.Set(key, cachedProcess);
         }
 
         private async Task SendAlert(object value)
@@ -112,23 +105,6 @@ namespace alert_state_machine.RuleRunners
             {
                 await producer.ProduceAsync("collision-alert", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
             }
-        }
-
-        private static dynamic DictionaryToObject(IEnumerable<object> dictionary)
-        {
-            var expandoObj = new ExpandoObject();
-            var expandoObjCollection = (ICollection<KeyValuePair<String, Object>>)expandoObj;
-
-            foreach (var keyValuePair in dictionary)
-            {
-                var test = (Dictionary<string, object>)keyValuePair;
-                foreach (var v in test)
-                {
-                    expandoObjCollection.Add(v);
-                }
-            }
-            dynamic eoDynamic = expandoObj;
-            return eoDynamic;
         }
     }
 }
