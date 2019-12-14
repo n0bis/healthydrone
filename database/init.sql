@@ -1,8 +1,12 @@
+CREATE DATABASE healthydrone;
+
 CREATE TABLE DockerContainers (
   Id text NOT NULL,  
   droneId text NOT NULL,  
   port integer NOT NULL
 );
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
 CREATE TABLE Incidents (
   Id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),  
@@ -24,6 +28,6 @@ CREATE TABLE LandingPoints (
   callsign  text NOT NULL,
   description text NOT NULL,
   name text NOT NULL,
-  address NOT NULL,
+  address text NOT NULL,
   type EType NOT NULL
 );
