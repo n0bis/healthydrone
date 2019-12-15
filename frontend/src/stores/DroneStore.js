@@ -1,39 +1,40 @@
 import { get, action, observable, toJS } from "mobx";
 import axios from "axios";
 
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmZcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOmU2MzMzZmM0LThhNzAtNDkwNi1hYzY4LTY3ZjNhMWFiN2QyZjoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmY6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwOFwiOltcInN1YnNjcmliZVwiXSIsIlwib3BlcmF0b3I6MzhkYzNjN2EtOTE1ZS00NDA5LWI2ZDktYTBkYzQwOWQ4ODA4OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODp1YXM6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiZmxpZ2h0XCI6W1wic3Vic2NyaWJlXCJdIiwiXCJuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYjpuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYlwiOltcInN1YnNjcmliZVwiXSJdLCJ1c2VyX25hbWUiOiJGUkhFTDE4QFNUVURFTlQuU0RVLkRLIiwic2NvcGUiOlsicmVhZCJdLCJleHAiOjE1NzYwOTI3MDcsImp0aSI6IjFlMzRkODA5LTJkYzYtNGRmMi1iMDUyLTcwYWUzNDZjMDJjYiIsImNsaWVudF9pZCI6InNkdUhlYWx0aERyb25lQ29ubmVjdCIsInVzaWQiOiJmZWYyMDE2Ny02ZWFkLTQ2NDktOWY0Mi04ODVhYzRlNDM2YWYifQ.IgFKZK3w1M7TpxUiIDtym_cEK7LRmWvhMmU7bEZ4c2g";
+
 class DroneStore {
   @observable showDroneOptions = false;
   @observable drones = [];
+  @observable dronesLocation = {};
   @observable drone = {};
   @observable droneManagers = [];
 
   fetchDrones = () => {
+    const token = localStorage.getItem("authorization");
+
     axios
       .get(
-        `https://healthdrone.unifly.tech/api/operators/38dc3c7a-915e-4409-b6d9-a0dc409d8808/uases/`
+        `https://healthdrone.unifly.tech/api/operators/38dc3c7a-915e-4409-b6d9-a0dc409d8808/uases/`,
+        {
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        }
       )
       .then(res => {
         const drones = res.data;
 
-        //axios.post("http://localhost:5000", )
-
-        const url = "http://localhost:5000/manager";
-
         drones.map(drone => {
-          console.log(drones);
-          axios.post(url, {
-            id: drone.uniqueIdentifier,
-            operationid: drone.uniqueIdentifier,
-            velocity: 10.0,
-            currentLocation: {
-              latitude: 55.355853,
-              longitude: 10.432952
-            },
-            homeLocation: {
-              latitude: 55.355853,
-              longitude: 10.432952
-            }
-          });
+          this.dronesLocation[drone.uniqueIdentifier] = {
+            longitude: 10.40494,
+            latitude: 55.35436,
+            name: ""
+          };
+
+          this.setDroneManager(drone);
+          this.setLocation(drone);
         });
 
         this.drones = drones;
@@ -60,7 +61,7 @@ class DroneStore {
     var port;
 
     this.droneManagers.map(drone => {
-      console.log(drone.droneId);
+      //console.log(drone.droneId);
       if (drone.droneId == drone_id) {
         port = drone.port;
       }
@@ -77,30 +78,58 @@ class DroneStore {
     axios.get(`http://localhost:${this.getDronePort()}/sendHome`);
   };
 
-  putOnFlight = (drone_id, path) => {
+  putOnFlight = () => {
     const port = this.getDronePort();
 
-    axios
-      .post(`http://localhost:${port}/sendOnMission`, [
-        {
-          latitude: 55.474558,
-          longitude: 10.325687
-        },
-        {
-          latitude: 55.149776,
-          longitude: 9.608144
-        },
-        {
-          latitude: 55.261088,
-          longitude: 9.162151
-        }
-      ])
-      .then(res => {
-        this.drones = res.data;
-      })
-      .catch(error => {
-        console.log(error);
+    axios.post(`http://localhost:${port}/sendOnMission`, [
+      {
+        latitude: 55.474558,
+        longitude: 10.325687
+      },
+      {
+        latitude: 55.149776,
+        longitude: 9.608144
+      },
+      {
+        latitude: 55.261088,
+        longitude: 9.162151
+      }
+    ]);
+  };
+
+  setDroneManager = drone => {
+    const url = "http://localhost:5000/manager";
+    axios.post(url, {
+      id: drone.uniqueIdentifier,
+      operationid: drone.uniqueIdentifier,
+      velocity: 10.0,
+      currentLocation: {
+        latitude: 55.355853,
+        longitude: 10.432952
+      },
+      homeLocation: {
+        latitude: 55.355853,
+        longitude: 10.432952
+      }
+    });
+  };
+
+  sendOnMission = coordinates => {
+    const port = this.getDronePort();
+    var cords = [];
+    coordinates.map(cord => {
+      // Reverse cords...
+      cords.push({
+        longitude: cord[0],
+        latitude: cord[1]
       });
+    });
+
+    console.log(cords);
+
+    axios.post(`http://localhost:${port}/sendOnMission`, cords).then(res => {
+      return true;
+    });
   };
 
   getDrone = () => {
@@ -110,7 +139,7 @@ class DroneStore {
     );
 
     const drone = drones[0];
-    console.log(drone);
+    //console.log(drone);
     if (typeof drone === "undefined") return false;
 
     return drone;
@@ -124,10 +153,68 @@ class DroneStore {
     });
   };
 
+  getDroneLocation = drone_id => {
+    if (this.dronesLocation[drone_id]) {
+      return this.dronesLocation[drone_id].name;
+    } else {
+      return "Søger..";
+    }
+  };
+
+  getDroneLocationCords = drone_id => {
+    if (this.dronesLocation[drone_id]) {
+      return {
+        longitude: this.dronesLocation[drone_id].longitude,
+        latitude: this.dronesLocation[drone_id].latitude
+      };
+    }
+  };
+
+  updateDroneLocation = (drone_id, longitude, latitude) => {
+    axios
+      .get(
+        `https://healthdrone.unifly.tech/api/map/locations?query=${latitude},${longitude}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        }
+      )
+      .then(res => {
+        console.log(res.data);
+
+        this.dronesLocation[drone_id].name = res.data[0].name;
+        this.dronesLocation[drone_id].latitude = latitude;
+        this.dronesLocation[drone_id].longitude = longitude;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  setLocation = drone => {
+    const latitude = this.dronesLocation[drone.uniqueIdentifier].latitude;
+    const longitude = this.dronesLocation[drone.uniqueIdentifier].longitude;
+    axios
+      .get(
+        `https://healthdrone.unifly.tech/api/map/locations?query=${latitude},${longitude}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        }
+      )
+      .then(res => {
+        this.dronesLocation[drone.uniqueIdentifier].name = res.data[0].name;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   setDroneStatus = (drone_id, status) => {
     this.drones.map((drone, key) => {
       if (drone.uniqueIdentifier === drone_id) {
-        console.log("ASOIDJSA");
         this.drones[key].flightStatus = status;
       }
     });

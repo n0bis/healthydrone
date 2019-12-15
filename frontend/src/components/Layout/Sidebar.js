@@ -5,9 +5,18 @@ import { Tabs } from "antd";
 import DronesList from "./DronesList";
 
 const { TabPane } = Tabs;
+
+@inject("mapStore")
 @observer
 class Sidebar extends Component {
+  onClick = (longitude, latitude) => {
+    const { setLocation, setZoom } = this.props.mapStore;
+    setZoom();
+    setLocation(longitude, latitude);
+  };
+
   render() {
+    const { landingPoints } = this.props.mapStore;
     return (
       <Tabs defaultActiveKey="1" type="card" style={{ marginTop: 70 }}>
         <TabPane tab="Droner" key="1">
@@ -15,12 +24,16 @@ class Sidebar extends Component {
         </TabPane>
         <TabPane tab="Hospitaler" key="2">
           <div className="hospitals-list">
-            <div className="item">
-              <p>Svendborg</p>
-            </div>
-            <div className="item">
-              <p>Odense</p>
-            </div>
+            {landingPoints.map(point => (
+              <div
+                className="item"
+                onClick={() =>
+                  this.onClick(point.location[0], point.location[1])
+                }
+              >
+                <p>{point.name}</p>
+              </div>
+            ))}
           </div>
         </TabPane>
         <TabPane tab="Anmodninger" key="3">
