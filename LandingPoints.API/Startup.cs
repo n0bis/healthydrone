@@ -32,7 +32,7 @@ namespace LandingPoints.API
             services.AddControllers();
 
             services.AddEntityFrameworkNpgsql().AddDbContext<AppDbContext>(
-                opt => opt.UseNpgsql(Configuration.GetConnectionString("AppDbContext")));
+                opt => opt.UseNpgsql(Configuration.GetConnectionString("AppDbContext")).UseSnakeCaseNamingConvention());
 
             services.AddScoped<ILandingPointRepository, LandingPointRepository>();
             services.AddScoped<ILandingPointService, LandingPointService>();
@@ -58,7 +58,7 @@ namespace LandingPoints.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

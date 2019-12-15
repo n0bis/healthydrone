@@ -39,7 +39,11 @@ namespace HandleAlerts.API
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyMethod();
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:8080");
                 });
             });
 
@@ -64,8 +68,8 @@ namespace HandleAlerts.API
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
                 endpoints.MapHub<AlertHub>("/alerts");
+                endpoints.MapControllers();
             });
 
             app.ApplicationServices.GetService<AlertRelay>();

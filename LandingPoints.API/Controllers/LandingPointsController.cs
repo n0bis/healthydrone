@@ -10,9 +10,9 @@ using LandingPoints.API.Services;
 
 namespace LandingPoints.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class LandingPointsController : Controller
+    [Route("[controller]")]
+    public class LandingPointsController : ControllerBase
     {
         private readonly ILandingPointService _landingPointService;
         private readonly IMapper _mapper;

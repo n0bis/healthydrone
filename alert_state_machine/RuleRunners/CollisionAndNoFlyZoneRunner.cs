@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -22,14 +23,15 @@ namespace alert_state_machine.RuleRunners
         private readonly IRedisService _redisService;
         private Boolean isConnected = false;
         private readonly IUTMLiveService _UTMLiveService;
-        private Models.Message _ObjectData;
-        private UTMService _utmService; 
+        private UTMService _utmService;
+        private readonly string _kafkaHost;
 
-        public CollisionAndNoFlyZoneRunner(IRedisService redisService, IUTMLiveService utmLiveService)
+        public CollisionAndNoFlyZoneRunner(IRedisService redisService, IUTMLiveService utmLiveService, IOptions<KafkaOpts> kafkaOpts)
         {
             _redisService = redisService;
             _redisService.Connect();
             _UTMLiveService = utmLiveService;
+            _kafkaHost = kafkaOpts.Value.Host;
         }
 
         public async Task ZonesCheck(Token token, UTMService utmService)
@@ -48,16 +50,23 @@ namespace alert_state_machine.RuleRunners
 
         private async void OnMessage(object sender, string name, object data)
         {
-            var test = (Dictionary<string, object>)(data);
-            if (test.Values.ElementAt(1).ToString() == "ADSB_TRACK")
+            var dict = (Dictionary<string, object>)(data);
+            var json = JsonConvert.SerializeObject(dict, Formatting.Indented);
+            var message = JsonConvert.DeserializeObject<EventMessage>(json, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
+
+            if (message == null || message.name == "ADSB_TRACK")
                 return;
 
- 
-            var testa = (IEnumerable<object>)test.Values.FirstOrDefault();
+            var dataObj = message.data.FirstOrDefault();
 
-            var result = JsonConvert.SerializeObject(DictionaryToObject(testa), Formatting.Indented);
-            var obj = JsonConvert.DeserializeObject<Models.Message>(result);
-            var key = $"{obj.uasOperation}-{obj.subject.uniqueIdentifier}-alert";
+            if (dataObj == null || dataObj.alertType == "OUTSIDE_OPERATION" || dataObj.alertType == "NO_OPERATION")
+                return;
+
+            var key = $"{dataObj.subject.uniqueIdentifier}-{dataObj.relatedSubject.uniqueIdentifier}-alert";
             var cachedProcess = await _redisService.Get<State>(key);
             var process = new Process();
 
@@ -73,49 +82,31 @@ namespace alert_state_machine.RuleRunners
             if (!cachedProcess.Triggered && !cachedProcess.Handled)
             {
 
-                if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                if (dataObj.alertType == "UAS_NOFLYZONE")
                 {
-                    await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
+                    await SendAlert(new Alert { droneId = dataObj.subject.uniqueIdentifier, type = "no-fly-zone-alert", reason = "Out of Bounds" });
                     cachedProcess.Triggered = true;
                 }
 
-                if (obj.alertType.ToString() == "UAS_NOFLYZONE")
+                if (dataObj.alertType == "UAS_COLLISION")
                 {
-                    await SendAlert(new Alert { droneId = obj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
+                    await SendAlert(new Alert { droneId = dataObj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
                     cachedProcess.Triggered = true;
                 }
             }
             cachedProcess.CurrentState = process.CurrentState;
             await _redisService.Set(key, cachedProcess);
-            
         }
 
         private async Task SendAlert(object value)
         {
             Console.WriteLine($"ALERT: {JsonConvert.SerializeObject(value)}");
-            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+            var config = new ProducerConfig { BootstrapServers = $"{_kafkaHost}" };
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {
                 await producer.ProduceAsync("collision-alert", new Message<Null, string> { Value = JsonConvert.SerializeObject(value) });
             }
-        }
-
-        private static dynamic DictionaryToObject(IEnumerable<object> dictionary)
-        {
-            var expandoObj = new ExpandoObject();
-            var expandoObjCollection = (ICollection<KeyValuePair<String, Object>>)expandoObj;
-
-            foreach (var keyValuePair in dictionary)
-            {
-                var test = (Dictionary<string, object>)keyValuePair;
-                foreach (var v in test)
-                {
-                    expandoObjCollection.Add(v);
-                }
-            }
-            dynamic eoDynamic = expandoObj;
-            return eoDynamic;
         }
     }
 }

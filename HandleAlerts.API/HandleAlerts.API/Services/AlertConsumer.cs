@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -13,7 +15,7 @@ namespace HandleAlerts.API.Services
     {
         private readonly IAlertStream _alertStream;
         private readonly ConsumerConfig _kafkaConfig;
-        private readonly string _kafkaTopic;
+        private readonly List<string> _kafkaTopics;
 
         public AlertConsumer(IOptions<KafkaOpts> kafkaOptions, IAlertStream alertStream)
         {
@@ -23,7 +25,7 @@ namespace HandleAlerts.API.Services
                 BootstrapServers = kafkaOptions.Value.Host,
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
-            _kafkaTopic = kafkaOptions.Value.Topic;
+            _kafkaTopics = kafkaOptions.Value.Topic.Split(",").ToList();
             _alertStream = alertStream;
         }
 
@@ -31,7 +33,7 @@ namespace HandleAlerts.API.Services
         {
             using (var consumer = new ConsumerBuilder<Ignore, string>(_kafkaConfig).Build())
             {
-                consumer.Subscribe(_kafkaTopic);
+                consumer.Subscribe(_kafkaTopics);
                 
                 var cts = new CancellationTokenSource();
 

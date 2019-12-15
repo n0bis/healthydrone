@@ -16,7 +16,7 @@ namespace DroneManager.API.Persistence.Contexts
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<DockerContainer>().ToTable("DockerContainers");
+            builder.Entity<DockerContainer>().ToTable("dockercontainers");
             builder.Entity<DockerContainer>().HasKey(p => p.Id);
             builder.Entity<DockerContainer>().Property(p => p.Id).IsRequired();
             builder.Entity<DockerContainer>().Property(p => p.port).IsRequired().HasMaxLength(5);

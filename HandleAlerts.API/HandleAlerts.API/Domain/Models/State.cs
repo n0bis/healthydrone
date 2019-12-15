@@ -1,7 +1,5 @@
-﻿using alert_state_machine.States;
-using System;
-
-namespace alert_state_machine.Models
+﻿using System;
+namespace HandleAlerts.API.Domain.Models
 {
     public class State
     {
@@ -17,5 +15,12 @@ namespace alert_state_machine.Models
             this.Triggered = false;
             this.Handled = false;
         }
+    }
+
+    public enum ProcessState
+    {
+        Inactive,
+        Active,
+        Raised
     }
 }
