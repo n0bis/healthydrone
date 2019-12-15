@@ -25,12 +25,13 @@ class DroneOptions extends Component {
 
   startFligth = async () => {
     try {
-      const { sendOnMission } = this.props.droneStore;
+      const { sendOnMission, setDroneStatus } = this.props.droneStore;
       const { data, refreshData } = this.props.mapStore;
       const coordinates = data.features[0].geometry.coordinates;
 
       await sendOnMission(coordinates);
       refreshData();
+      setDroneStatus(data.uniqueIdentifier, "IN_FLIGHT");
     } catch (err) {
       alert("Kunne ikke oprette rutes");
     }
