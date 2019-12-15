@@ -6,6 +6,18 @@ import DronesList from "./DronesList";
 
 const { TabPane } = Tabs;
 
+const reports = [
+  {
+    title: "Odense",
+    message:
+      "Vi skal bruge en drone daspok apsod aopks dopd kasok dsaopkd koaskdpos kpodsa"
+  },
+  {
+    title: "Svendborg",
+    message: "Vi skal bruge en drone"
+  }
+];
+
 @inject("mapStore")
 @observer
 class Sidebar extends Component {
@@ -38,14 +50,12 @@ class Sidebar extends Component {
         </TabPane>
         <TabPane tab="Anmodninger" key="3">
           <div className="reports-list">
-            <div className="report">
-              <p className="location">Odense</p>
-              <p className="message">Vi skal bruge en drone</p>
-            </div>
-            <div className="report">
-              <p className="location">Svendborg</p>
-              <p className="message">Vi skal bruge en drone</p>
-            </div>
+            {reports.map(item => (
+              <div className="report">
+                <p className="location">{item.title}</p>
+                <p className="message">{item.message}</p>
+              </div>
+            ))}
           </div>
         </TabPane>
       </Tabs>

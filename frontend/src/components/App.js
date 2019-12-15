@@ -29,12 +29,19 @@ class App extends Component {
           path="/report"
           render={props =>
             User(<LazyRoute {...props} component={import("./NurseReport")} />)
-          )} />
-        <Route exact path="/" render={props => (
-            User(<LazyRoute {...props} component={import("./Layout/Dashboard")} />)
-          )} />
+          }
+        />
+        <Route
+          exact
+          path="/"
+          render={props =>
+            User(
+              <LazyRoute {...props} component={import("./Layout/Dashboard")} />
+            )
+          }
+        />
         <Route exact path="/hello" component={SignalR} />
-      </div>
+      </>
     );
   }
 }

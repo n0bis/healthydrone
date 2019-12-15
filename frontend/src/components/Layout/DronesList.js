@@ -77,7 +77,6 @@ class DronesList extends Component {
                   data.xy.longitude,
                   data.xy.latitude
                 );
-                console.log(1);
               }
             }
           });
