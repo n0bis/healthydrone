@@ -72,7 +72,7 @@ namespace alert_state_machine.RuleRunners
 		private async Task SendAlert(object value)
 		{
             Console.WriteLine($"ALERT: {JsonConvert.SerializeObject(value)}");
-            var config = new ProducerConfig { BootstrapServers = $"{_kafkaHost}:9092" };
+            var config = new ProducerConfig { BootstrapServers = $"{_kafkaHost}" };
 
             using (var producer = new ProducerBuilder<Null, string>(config).Build())
             {
