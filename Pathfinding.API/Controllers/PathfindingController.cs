@@ -7,8 +7,8 @@ using Pathfinding.API.Resources;
 
 namespace Pathfinding.API.Controllers
 {
-    [Route("api/Pathfinding")]
     [ApiController]
+    [Route("[controller]")]
     public class PathfindingController : ControllerBase
     {
         private readonly IPathfindingService _pathfindingService;

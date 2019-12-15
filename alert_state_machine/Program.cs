@@ -9,11 +9,15 @@ using Microsoft.Extensions.DependencyInjection;
 using alert_state_machine.Persistence;
 using alert_state_machine.Settings;
 using AutoMapper;
+using System.Threading;
 
 namespace alert_state_machine
 {
     class Program
     {
+        // AutoResetEvent to signal when to exit the application.
+        private static readonly AutoResetEvent waitHandle = new AutoResetEvent(false);
+
         static async Task Main(string[] args)
         {
             var services = new ServiceCollection();
@@ -30,21 +34,29 @@ namespace alert_state_machine
 
             var token = await utmService.Tokens.Auth();
 
-            /*Scheduler.IntervalInMinutes(1, async () =>
+            Scheduler.IntervalInMinutes(1, async () =>
             {
-                Console.WriteLine(DateTime.Now);
+                Console.WriteLine($"Running weather check at: {DateTime.Now}");
                 await serviceProvider.GetService<IWeatherRunner>().WeatherCheck(utmService);
-                Console.WriteLine(DateTime.Now);
-            });*/
+            });
 
             Scheduler.IntervalInMinutes(0.5, async () =>
             {
-                Console.WriteLine(DateTime.Now);
+                Console.WriteLine($"Running collision and no-flyzone check at: {DateTime.Now}");
                 await serviceProvider.GetService<ICollisionAndNoFlyZoneRunner>().ZonesCheck(token, utmService);
-                Console.WriteLine(DateTime.Now);
             });
 
-            Console.ReadKey(true);
+            // Handle Control+C or Control+Break
+            Console.CancelKeyPress += (o, e) =>
+            {
+                Console.WriteLine("Exit");
+
+                // Allow the manin thread to continue and exit...
+                waitHandle.Set();
+            };
+
+            // Wait
+            waitHandle.WaitOne();
         }
 
         private static void ConfigureServices(IServiceCollection services)
@@ -58,6 +70,7 @@ namespace alert_state_machine
             services.AddOptions();
             services.Configure<RedisOpts>(configuration.GetSection("Redis"));
             services.Configure<WeatherRuleOpts>(configuration.GetSection("WeatherRule"));
+            services.Configure<KafkaOpts>(configuration.GetSection("Kafka"));
 
             // add services:
             services.AddSingleton<IRedisService, RedisService>();

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using alert_state_machine.Models;
-using alert_state_machine.States;
+﻿using System.Threading.Tasks;
 using HandleAlerts.API.Domain.Models;
 using HandleAlerts.API.Hubs;
 using HandleAlerts.API.Persistence;
@@ -15,8 +10,9 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace HandleAlerts.API.Controllers
 {
-    [Route("api/[controller]")]
-    public class AlertsController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class AlertsController : ControllerBase
     {
         private readonly IRedisService _redisService;
         private readonly IHubContext<AlertHub> _hubContext;

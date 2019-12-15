@@ -18,7 +18,7 @@ namespace reportIncident.API.Persistence.Contexts
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Incident>().ToTable("Incidents");
+            builder.Entity<Incident>().ToTable("incidents");
             builder.Entity<Incident>().HasKey(p => p.Id);
             builder.Entity<Incident>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Entity<Incident>().Property(p => p.Date).IsRequired();

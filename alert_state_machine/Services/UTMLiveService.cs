@@ -1,12 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 using System.Threading.Tasks;
-using alert_state_machine.Models;
-using AutoMapper;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using PureSocketCluster;
 using PureWebSockets;
 
