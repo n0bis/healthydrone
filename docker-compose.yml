@@ -48,12 +48,10 @@ services:
     image: postgres:latest
     restart: always
     volumes:
-      - db_volume:/var/lib/postgresql/data
-      - ./database/seed.sql :/docker-entrypoint-initdb.d/seed.sql
+      - ./database:/docker-entrypoint-initdb.d/
     environment:
       POSTGRES_USER: pguser
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: healthydrone
     networks:
       - traefik-net
     deploy:
@@ -66,7 +64,82 @@ services:
         - "traefik.tcp.routers.database.rule=HostSNI(`*`)"
         - "traefik.tcp.routers.database.entryPoints=postgres"
         - "traefik.tcp.services.database.loadbalancer.server.port=5432"
-  
+
+#  zookeeper:
+#    image: wurstmeister/zookeeper
+#    networks: 
+#      - traefik-net
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.role == worker
+#      labels:
+#        - "traefik.enable=false"
+        
+#  kafka:
+#    image: wurstmeister/kafka
+#    ports:
+#      - "9093:9093"
+#    environment:
+#      KAFKA_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
+#      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_CREATE_TOPICS: "weather-alert:1:1,collision-alert:1:1"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    networks:
+#      - traefik-net
+#    depends_on:
+#      - zookeeper
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.role == worker
+#      labels:
+#        - "traefik.enable=false"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.3.1
+    container_name: zookeeper
+    networks:
+      - traefik-net
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.enable=false"
+
+  kafka:
+    image: confluentinc/cp-enterprise-kafka:5.3.1
+    container_name: kafka
+    networks:
+      - traefik-net
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+      - 29094:29094
+      - 29092:29092
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.enable=false"
+
   redis:
     image: redis
     container_name: redis
@@ -83,46 +156,14 @@ services:
         - "traefik.tcp.routers.redis.entryPoints=redis"
         - "traefik.tcp.services.redis.loadbalancer.server.port=6379"
 
-  kafka:
-    image: wurstmeister/kafka
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "weather-alert:1:1,collision-alert:1:1"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - traefik-net
-    depends_on:
-      - zookeeper
-    deploy:
-      placement:
-        constraints:
-          - node.role == worker
-      labels:
-        - "traefik.enable=false"
-
-  zookeeper:
-    image: wurstmeister/zookeeper
-    networks: 
-      - traefik-net
-    deploy:
-      placement:
-        constraints:
-          - node.role == worker
-      labels:
-        - "traefik.enable=false"
-
   manager:
     container_name: manager
     image: n0bis/dronemanager
     environment:
-      - ConnectionStrings__AppDbContext=Host=database;Database=healthydrone;Username=pguser;Password=secret;
+      ConnectionStrings__AppDbContext: "Host=database;Database=healthydrone;Username=pguser;Password=secret;"
     networks:
       - traefik-net
+    #command: ["./wait-for-postgres.sh", postgres, "5432", "pguser"]
     deploy:
       placement:
         constraints:
@@ -194,7 +235,7 @@ services:
     environment:
       Redis__Host: redis
       Redis__Port: 6379
-      Kafka__host: "kafka"
+      Kafka__host: kafka:29092
       Kafka__topic: collision-alert,weather-alert
       Kafka__groupId: test-group
     networks:
@@ -205,7 +246,7 @@ services:
           - node.role == worker
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.handlealerts.rule=PathPrefix(`/handlealerts`)"
+        - "traefik.http.routers.handlealerts.rule=(PathPrefix(`/handlealerts`) && PathPrefix(`/alerts`))"
         - "traefik.http.routers.handlealerts.entrypoints=web"
         - "traefik.http.services.handlealerts.loadbalancer.server.port=80"
     depends_on:
@@ -215,6 +256,15 @@ services:
   auth:
     container_name: auth
     image: n0bis/auth
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+        - "traefik.http.routers.auth.entrypoints=web"
+        - "traefik.http.services.auth.loadbalancer.server.port=80"
 
   alert_state_machine:
     container_name: alert_state_machine
@@ -229,7 +279,7 @@ services:
         - "traefik.enable=false"
 
 volumes:
-  db_volume:
+  postgres-data:
 
 networks:
   traefik-net:

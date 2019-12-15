@@ -10,8 +10,9 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace HandleAlerts.API.Controllers
 {
-    [Route("api/[controller]")]
-    public class AlertsController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class AlertsController : ControllerBase
     {
         private readonly IRedisService _redisService;
         private readonly IHubContext<AlertHub> _hubContext;

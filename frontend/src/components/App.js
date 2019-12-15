@@ -22,26 +22,19 @@ class App extends Component {
     const User = Authorization(isLoggedIn);
 
     return (
-      <>
+      <div>
         <Route exact path="/login" component={Login} />
         <Route
           exact
           path="/report"
           render={props =>
             User(<LazyRoute {...props} component={import("./NurseReport")} />)
-          }
-        />
-        <Route
-          exact
-          path="/"
-          render={props =>
-            User(
-              <LazyRoute {...props} component={import("./Layout/Dashboard")} />
-            )
-          }
-        />
+          )} />
+        <Route exact path="/" render={props => (
+            User(<LazyRoute {...props} component={import("./Layout/Dashboard")} />)
+          )} />
         <Route exact path="/hello" component={SignalR} />
-      </>
+      </div>
     );
   }
 }

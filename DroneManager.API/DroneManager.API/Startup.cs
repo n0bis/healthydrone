@@ -43,7 +43,7 @@ namespace DroneManager.API
             });
 
             services.AddEntityFrameworkNpgsql().AddDbContext<AppDbContext>(
-                opt => opt.UseNpgsql(Configuration.GetConnectionString("AppDbContext")));
+                opt => opt.UseNpgsql(Configuration.GetConnectionString("AppDbContext")).UseSnakeCaseNamingConvention());
 
             services.AddScoped<IDroneRepository, DroneRepository>();
             services.AddScoped<IDroneService, DroneService>();
