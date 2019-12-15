@@ -12,8 +12,8 @@ using reportIncident.API.Extensions;
 
 namespace reportIncident.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class IncidentsController : ControllerBase
     {
 

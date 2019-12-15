@@ -64,24 +64,50 @@ services:
         - "traefik.tcp.routers.database.rule=HostSNI(`*`)"
         - "traefik.tcp.routers.database.entryPoints=postgres"
         - "traefik.tcp.services.database.loadbalancer.server.port=5432"
-  
-  kafka:
-    image: wurstmeister/kafka
-    ports:
-      - "9092:9093"
-    environment:
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
-      KAFKA_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "weather-alert:1:1,collision-alert:1:1"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+
+#  zookeeper:
+#    image: wurstmeister/zookeeper
+#    networks: 
+#      - traefik-net
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.role == worker
+#      labels:
+#        - "traefik.enable=false"
+        
+#  kafka:
+#    image: wurstmeister/kafka
+#    ports:
+#      - "9093:9093"
+#    environment:
+#      KAFKA_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
+#      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_CREATE_TOPICS: "weather-alert:1:1,collision-alert:1:1"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    networks:
+#      - traefik-net
+#    depends_on:
+#      - zookeeper
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.role == worker
+#      labels:
+#        - "traefik.enable=false"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.3.1
+    container_name: zookeeper
     networks:
       - traefik-net
-    depends_on:
-      - zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     deploy:
       placement:
         constraints:
@@ -89,10 +115,24 @@ services:
       labels:
         - "traefik.enable=false"
 
-  zookeeper:
-    image: wurstmeister/zookeeper
-    networks: 
+  kafka:
+    image: confluentinc/cp-enterprise-kafka:5.3.1
+    container_name: kafka
+    networks:
       - traefik-net
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+      - 29094:29094
+      - 29092:29092
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     deploy:
       placement:
         constraints:
@@ -123,6 +163,7 @@ services:
       - ConnectionStrings__AppDbContext=Host=database;Database=healthydrone;Username=pguser;Password=secret;
     networks:
       - traefik-net
+    #command: ["./wait-for-postgres.sh", postgres, "5432", "pguser"]
     deploy:
       placement:
         constraints:
@@ -205,7 +246,7 @@ services:
           - node.role == worker
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.handlealerts.rule=PathPrefix(`/handlealerts`)"
+        - "traefik.http.routers.handlealerts.rule=(PathPrefix(`/handlealerts`) && PathPrefix(`/alerts`))"
         - "traefik.http.routers.handlealerts.entrypoints=web"
         - "traefik.http.services.handlealerts.loadbalancer.server.port=80"
     depends_on:
