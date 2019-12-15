@@ -36,7 +36,7 @@ namespace reportIncident.API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddEntityFrameworkNpgsql().AddDbContext<AppDbContext>(options => {
-                options.UseNpgsql(Configuration.GetConnectionString("AppDbContext"));
+                options.UseNpgsql(Configuration.GetConnectionString("AppDbContext")).UseSnakeCaseNamingConvention();
             });
 
             services.AddScoped<IIncidentsRepository, IncidentsRepository>();
