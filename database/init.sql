@@ -4,7 +4,7 @@ create table dockercontainers (
   id      text    not null primary key,
   port      integer not null,
   drone_id text    not null
-)
+);
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
