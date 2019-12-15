@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
+import { toJS } from "mobx";
 
 @inject("mapStore", "droneStore")
 @observer
 class DroneOptions extends Component {
+  /*
   handleClick = event => {
     setAnchorEl(event.currentTarget);
   };
@@ -19,10 +21,19 @@ class DroneOptions extends Component {
       [-122.36777130126949, 37.76914513791027]
     );
   };
+  */
 
-  startFligth = () => {
-    const { putOnFlight } = this.props.droneStore;
-    putOnFlight();
+  startFligth = async () => {
+    try {
+      const { sendOnMission } = this.props.droneStore;
+      const { data, refreshData } = this.props.mapStore;
+      const coordinates = data.features[0].geometry.coordinates;
+
+      await sendOnMission(coordinates);
+      refreshData();
+    } catch (err) {
+      alert("Kunne ikke oprette rutes");
+    }
   };
 
   stop = () => {
@@ -35,26 +46,39 @@ class DroneOptions extends Component {
     sendHome();
   };
 
-  sendOnMission = () => {
-    alert("Sending home");
-  };
-
   landAtLocation = () => {
     alert("Land at location");
   };
 
+  onLocationChange = event => {
+    const { setDraw } = this.props.mapStore;
+    const { getDroneLocationCords, drone } = this.props.droneStore;
+    const value = event.target.value.split(",");
+
+    const location = getDroneLocationCords(drone.uniqueIdentifier);
+
+    const to = [parseFloat(value[0]), parseFloat(value[1])];
+    const from = [location.longitude, location.latitude];
+    console.log(from, to);
+    setDraw(from, to);
+  };
+
   render() {
-    const { startFligth, landingPoints } = this.props.mapStore;
+    const { setZoom, landingPoints } = this.props.mapStore;
     const {
       showDroneOptions,
       closeDroneOptions,
-      drone
+      drone,
+      getDroneLocation
     } = this.props.droneStore;
     const display = showDroneOptions ? "block" : "none";
+
+    //console.log(toJS(drone), toJS(droneManagers), toJS(droneLocations));
+
     return (
       <div className="drone-options fadeIn" style={{ display: display }}>
         {drone == false ? (
-          <h1>asda</h1>
+          <h1>Kunne ikke finde drone</h1>
         ) : (
           <>
             <div className="title">
@@ -74,31 +98,33 @@ class DroneOptions extends Component {
                 <>
                   <button onClick={this.stop}>Stop</button>
                   <button onClick={this.sendHome}>Send hjem</button>
-                  <button onClick={this.sendOnMission}>Send on mission</button>
-                  <select onChange={this.landAtLocation}>
-                    <option>Land på lokation</option>
-                    <option>a</option>
-                    <option>b</option>
-                    <option>c</option>
-                  </select>
+                  <div>
+                    <p>Send på ny mission:</p>
+                    <select onChange={this.onLocationChange}>
+                      <option default>Vælg lokation</option>
+                      {landingPoints.map(point => (
+                        <option value={point.location}>{point.name}</option>
+                      ))}
+                    </select>
+                    <br />
+                    <button onClick={this.startFligth}>Start fligth</button>
+                  </div>
                 </>
               ) : (
                 <>
                   <p>
                     <b>Fra</b>
                   </p>
-                  <p>Svendbord</p>
+                  <p>{getDroneLocation(drone.uniqueIdentifier)}</p>
                   <p>
                     <b>Til</b>
                   </p>
-                  <select>
+                  <select onChange={this.onLocationChange}>
                     <option default>Vælg lokation</option>
                     {landingPoints.map(point => (
-                      <option>{point.name}</option>
+                      <option value={point.location}>{point.name}</option>
                     ))}
                   </select>
-                  <br />
-                  <button onClick={this.createFligth}>Create fligth</button>
                   <br />
                   <button onClick={this.startFligth}>Start fligth</button>
                 </>
