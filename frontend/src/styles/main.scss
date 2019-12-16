@@ -103,6 +103,15 @@ body {
   }
 }
 
+.drone-on-map {
+  cursor: pointer;
+  margin: 30px;
+  position: relative;
+  &:hover {
+    color: red;
+  }
+}
+
 .drone-options {
   position: absolute;
   top: 80px;

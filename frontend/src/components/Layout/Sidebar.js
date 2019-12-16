@@ -3,6 +3,7 @@ import ChevronRight from "@material-ui/icons/ChevronRight";
 import { inject, observer } from "mobx-react";
 import { Tabs } from "antd";
 import DronesList from "./DronesList";
+const signalR = require("@microsoft/signalr");
 
 const { TabPane } = Tabs;
 
@@ -18,9 +19,31 @@ const reports = [
   }
 ];
 
-@inject("mapStore")
+@inject("mapStore", "droneStore")
 @observer
 class Sidebar extends Component {
+  async componentDidMount() {
+    const { setDroneStatusAndStop } = this.props.droneStore
+    let connection = new signalR.HubConnectionBuilder()
+    .withUrl("http://localhost:1339/alerts")
+    .build();
+
+    connection.on("alerts", (message) => {
+      message = JSON.parse(message)
+      console.log(message.droneId)
+      setDroneStatusAndStop(message.droneId, "DANGER");
+    });
+
+    connection.on("request_drone", (message) => {
+      console.log(message);
+      reports.push({ title: "Odense", message: "Med. Drone" })
+    });
+
+    connection.start().then(function () {
+      console.log("connected");
+    });
+  }
+
   onClick = (longitude, latitude) => {
     const { setLocation, setZoom } = this.props.mapStore;
     setZoom();

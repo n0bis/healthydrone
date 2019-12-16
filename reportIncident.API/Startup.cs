@@ -43,11 +43,19 @@ namespace reportIncident.API
             services.AddScoped<IIncidentsService, IncidentsService>();
 
             services.AddAutoMapper(typeof(Startup));
-            
-            
-
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:8080");
+                });
+            });
         }
 
 
@@ -63,6 +71,8 @@ namespace reportIncident.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,9 +1,6 @@
 import { get, action, observable, toJS } from "mobx";
 import axios from "axios";
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFja2luZ0FsdGl0dWRlRmlsdGVyIjo0MDAwLjAsImF1ZCI6WyJ1c2VyTWFuYWdlbWVudFNlcnZpY2UiXSwiY2hhbm5lbHMiOlsiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmZcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOmU2MzMzZmM0LThhNzAtNDkwNi1hYzY4LTY3ZjNhMWFiN2QyZjoqXCI6W1wic3Vic2NyaWJlXCJdIiwiXCJvcGVyYXRvcjplNjMzM2ZjNC04YTcwLTQ5MDYtYWM2OC02N2YzYTFhYjdkMmY6dWFzOipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImZsaWdodFwiOltcInN1YnNjcmliZVwiXSIsIlwibmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2I6bmVhcmJ5OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcImFkc2JcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwOFwiOltcInN1YnNjcmliZVwiXSIsIlwib3BlcmF0b3I6MzhkYzNjN2EtOTE1ZS00NDA5LWI2ZDktYTBkYzQwOWQ4ODA4OipcIjpbXCJzdWJzY3JpYmVcIl0iLCJcIm9wZXJhdG9yOjM4ZGMzYzdhLTkxNWUtNDQwOS1iNmQ5LWEwZGM0MDlkODgwODp1YXM6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiZmxpZ2h0XCI6W1wic3Vic2NyaWJlXCJdIiwiXCJuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYjpuZWFyYnk6KlwiOltcInN1YnNjcmliZVwiXSIsIlwiYWRzYlwiOltcInN1YnNjcmliZVwiXSJdLCJ1c2VyX25hbWUiOiJGUkhFTDE4QFNUVURFTlQuU0RVLkRLIiwic2NvcGUiOlsicmVhZCJdLCJleHAiOjE1NzYwOTI3MDcsImp0aSI6IjFlMzRkODA5LTJkYzYtNGRmMi1iMDUyLTcwYWUzNDZjMDJjYiIsImNsaWVudF9pZCI6InNkdUhlYWx0aERyb25lQ29ubmVjdCIsInVzaWQiOiJmZWYyMDE2Ny02ZWFkLTQ2NDktOWY0Mi04ODVhYzRlNDM2YWYifQ.IgFKZK3w1M7TpxUiIDtym_cEK7LRmWvhMmU7bEZ4c2g";
-
 class DroneStore {
   @observable showDroneOptions = false;
   @observable drones = [];
@@ -71,6 +68,7 @@ class DroneStore {
   };
 
   stopDrone = () => {
+    console.log(`stop: ${this.getDronePort()}`)
     axios.get(`http://localhost:${this.getDronePort()}/stop`);
   };
 
@@ -132,10 +130,9 @@ class DroneStore {
     });
   };
 
-  getDrone = () => {
-    const drone_id = this.currentDrone;
+  getDrone = (id) => {
     const drones = this.drones.filter(
-      drone => drone.uniqueIdentifier === drone_id
+      drone => drone.uniqueIdentifier === id
     );
 
     const drone = drones[0];
@@ -171,6 +168,8 @@ class DroneStore {
   };
 
   updateDroneLocation = (drone_id, longitude, latitude) => {
+    const token = localStorage.getItem("authorization");
+
     axios
       .get(
         `https://healthdrone.unifly.tech/api/map/locations?query=${latitude},${longitude}`,
@@ -181,7 +180,6 @@ class DroneStore {
         }
       )
       .then(res => {
-        console.log(res.data);
 
         this.dronesLocation[drone_id].name = res.data[0].name;
         this.dronesLocation[drone_id].latitude = latitude;
@@ -195,6 +193,7 @@ class DroneStore {
   setLocation = drone => {
     const latitude = this.dronesLocation[drone.uniqueIdentifier].latitude;
     const longitude = this.dronesLocation[drone.uniqueIdentifier].longitude;
+    const token = localStorage.getItem("authorization");
     axios
       .get(
         `https://healthdrone.unifly.tech/api/map/locations?query=${latitude},${longitude}`,
@@ -216,6 +215,22 @@ class DroneStore {
     this.drones.map((drone, key) => {
       if (drone.uniqueIdentifier === drone_id) {
         this.drones[key].flightStatus = status;
+      }
+    });
+  };
+
+  getDroneStatusColor = drone => ({
+    "DANGER": "red",
+    "IN_FLIGHT": "green",
+    "LANDED": "grey"
+  })[drone.flightStatus]
+
+  setDroneStatusAndStop = (drone_id, status) => {
+    this.drones.map((drone, key) => {
+      if (drone.uniqueIdentifier === drone_id) {
+        this.drones[key].flightStatus = status;
+        this.drone = this.drones[key];
+        stopDrone();
       }
     });
   };

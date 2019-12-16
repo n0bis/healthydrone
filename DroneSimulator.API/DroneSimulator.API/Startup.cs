@@ -33,6 +33,18 @@ namespace DroneSimulator.API
             services.Configure<DroneOpts>(Configuration.GetSection("Drone"));
             services.Configure<UTMOpts>(Configuration.GetSection("UTM"));
             services.AddSingleton<IDroneSim, DroneSim>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:8080");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +60,8 @@ namespace DroneSimulator.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {

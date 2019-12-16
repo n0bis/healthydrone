@@ -18,7 +18,7 @@ class ReportStore {
 
   @action onSendModal = e => {
     axios
-      .post("/INSERT_BACK_END_URL", this.data)
+      .post(`http://localhost:1337/incidents`, this.data)
       .then(res => {
         console.log(res);
       })

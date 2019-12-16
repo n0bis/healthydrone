@@ -63,7 +63,7 @@ class DronesList extends Component {
         subscription = socket.subscribe("adsb", { waitForAuth: true });
         subscription.watch(msg => {
           msg.data.map(data => {
-            if (data.source == "simulator") {
+            if (data.source == "simulation") {
               setDroneStatus(data.uas, "IN_FLIGHT");
               setDroneLocation(
                 data.UASOPERATION,
