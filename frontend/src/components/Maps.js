@@ -11,6 +11,7 @@ import Draw from "@urbica/react-map-gl-draw";
 import { inject, observer } from "mobx-react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import DroneLogo from "../styles/drone.svg"
 /*
 const Map = ReactMapboxGl({
   accessToken:
@@ -46,7 +47,7 @@ class Maps extends Component {
   };
 
   onClick = event => {
-    console.log(test.lngLat);
+    //console.log(test.lngLat);
     const lng = event.lngLat.lng;
     const lat = event.lngLat.lat;
   };
@@ -85,8 +86,6 @@ class Maps extends Component {
       drawData
     } = this.props.mapStore;
 
-    console.log("asdas: ", drawData);
-
     return (
       <div style={{ height: "100%" }}>
         <MapGL
@@ -107,7 +106,7 @@ class Maps extends Component {
               longitude={drone.location[0]}
               latitude={drone.location[1]}
             >
-              <h1>DRONE</h1>
+              <span style={{ margin: '30px' }} dangerouslySetInnerHTML={{__html: DroneLogo}} />
             </Marker>
           ))}
 

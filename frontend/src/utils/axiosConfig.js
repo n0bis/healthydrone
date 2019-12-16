@@ -30,6 +30,7 @@ axios.interceptors.response.use(
   },
   function (error) {
     // Do something with response error
+    console.log(error)
     if (error.response.status === 401 && window.location.pathname != "/login") {
       LoginStore.logout()
       window.location.replace("/login");

@@ -55,7 +55,11 @@ module.exports = {
         use: ["style-loader", "css-loader"]
       },
       {
-        test: /\.(jpe?g|gif|png|svg)$/i,
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
+      },
+      {
+        test: /\.(jpe?g|gif|png)$/i,
         use: [
           {
             loader: "url-loader",
