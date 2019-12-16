@@ -17,7 +17,6 @@ namespace DroneSimulator.API.Services
     // degrees (e.g. lat, lon, brng)
     public class DroneSim : IDroneSim
     {
-        private readonly double _earthRadius = 6371; // radius in km
         private static Drone _drone;
         private readonly UTMService _utmService;
 
@@ -71,7 +70,7 @@ namespace DroneSimulator.API.Services
         {
             var startLocation = startPoint;
             var endLocation = endPoint;
-            var distanceBetweenPoints = CalculateDistanceBetweenLocations(startLocation, endLocation) * 1000; // multiply by 1000 to get in meters
+            var distanceBetweenPoints = LatLonSpherical.CalculateDistanceBetweenLocations(startLocation, endLocation) * 1000; // multiply by 1000 to get in meters
             var timeRequired = distanceBetweenPoints / _drone.Velocity;
 
             for (int i = 0; i < timeRequired; i++)
@@ -81,9 +80,9 @@ namespace DroneSimulator.API.Services
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                var bearing = CalculateBearing(startLocation, endLocation);
+                var bearing = LatLonSpherical.CalculateBearing(startLocation, endLocation);
                 var distanceInKm = _drone.Velocity / 1000;
-                var intermediaryLocation = CalculateDestinationLocation(startLocation, bearing, distanceInKm);
+                var intermediaryLocation = LatLonSpherical.CalculateDestinationLocation(startLocation, bearing, distanceInKm);
 
                 var coordinates = new Coordinates { latitude = intermediaryLocation.latitude, longitude = intermediaryLocation.longitude };
                 var track = new Track { location = coordinates, timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ") };
