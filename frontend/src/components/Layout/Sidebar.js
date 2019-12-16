@@ -50,12 +50,16 @@ class Sidebar extends Component {
         </TabPane>
         <TabPane tab="Anmodninger" key="3">
           <div className="reports-list">
-            {reports.map(item => (
-              <div className="report">
-                <p className="location">{item.title}</p>
-                <p className="message">{item.message}</p>
-              </div>
-            ))}
+            {reports.length === 0 ? (
+              <p style={{ padding: "20px" }}>Der er ingen anmodninger</p>
+            ) : (
+              reports.map(item => (
+                <div className="report">
+                  <p className="location">{item.title}</p>
+                  <p className="message">{item.message}</p>
+                </div>
+              ))
+            )}
           </div>
         </TabPane>
       </Tabs>
