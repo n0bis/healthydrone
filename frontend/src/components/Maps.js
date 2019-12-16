@@ -29,7 +29,7 @@ const style = {
   borderRadius: "6px"
 };
 
-@inject("mapStore")
+@inject("mapStore", "droneStore")
 @observer
 class Maps extends Component {
   componentDidMount() {
@@ -72,6 +72,16 @@ class Maps extends Component {
     });
   };
 
+  onDroneClick = drone => {
+    const { onClick, getDroneLocationCords } = this.props.droneStore;
+    const { setLocation, setZoom } = this.props.mapStore;
+    const location = getDroneLocationCords(drone.uniqueIdentifier);
+    onClick(drone);
+    setZoom();
+    console.log(getDroneLocationCords(drone.uniqueIdentifier));
+    setLocation(location.longitude, location.latitude);
+  };
+
   render() {
     const {
       data,
@@ -107,7 +117,12 @@ class Maps extends Component {
               longitude={drone.location[0]}
               latitude={drone.location[1]}
             >
-              <h1>DRONE</h1>
+              <h1
+                className="drone-on-map"
+                onClick={() => this.onDroneClick(drone)}
+              >
+                DRONE
+              </h1>
             </Marker>
           ))}
 
