@@ -68,6 +68,7 @@ class DroneStore {
   };
 
   stopDrone = () => {
+    console.log(`stop: ${this.getDronePort()}`)
     axios.get(`http://localhost:${this.getDronePort()}/stop`);
   };
 
@@ -129,10 +130,9 @@ class DroneStore {
     });
   };
 
-  getDrone = () => {
-    const drone_id = this.currentDrone;
+  getDrone = (id) => {
     const drones = this.drones.filter(
-      drone => drone.uniqueIdentifier === drone_id
+      drone => drone.uniqueIdentifier === id
     );
 
     const drone = drones[0];
@@ -180,7 +180,6 @@ class DroneStore {
         }
       )
       .then(res => {
-        console.log(res.data);
 
         this.dronesLocation[drone_id].name = res.data[0].name;
         this.dronesLocation[drone_id].latitude = latitude;
@@ -216,6 +215,22 @@ class DroneStore {
     this.drones.map((drone, key) => {
       if (drone.uniqueIdentifier === drone_id) {
         this.drones[key].flightStatus = status;
+      }
+    });
+  };
+
+  getDroneStatusColor = drone => ({
+    "DANGER": "red",
+    "IN_FLIGHT": "green",
+    "LANDED": "grey"
+  })[drone.flightStatus]
+
+  setDroneStatusAndStop = (drone_id, status) => {
+    this.drones.map((drone, key) => {
+      if (drone.uniqueIdentifier === drone_id) {
+        this.drones[key].flightStatus = status;
+        this.drone = this.drones[key];
+        stopDrone();
       }
     });
   };

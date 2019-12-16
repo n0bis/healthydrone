@@ -19,7 +19,7 @@ class NurseReport extends Component {
     event.preventDefault();
     var formData = new FormData(event.target);
     console.log(formData);
-    axios.post("http://localhost:5000/RequetDrone", formData);
+    axios.post("http://localhost:1339/RequetDrone", formData);
   };
 
   render() {

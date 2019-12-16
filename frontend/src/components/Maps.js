@@ -9,9 +9,11 @@ import MapGL, {
 } from "@urbica/react-map-gl";
 import Draw from "@urbica/react-map-gl-draw";
 import { inject, observer } from "mobx-react";
+import { toJS } from "mobx";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import DroneLogo from "../styles/drone.svg"
+import DroneLogo from "../styles/drone.svg";
+import DroneBorder from "../styles/direction.svg";
 /*
 const Map = ReactMapboxGl({
   accessToken:
@@ -74,12 +76,12 @@ class Maps extends Component {
   };
 
   onDroneClick = drone => {
-    const { onClick, getDroneLocationCords } = this.props.droneStore;
+    drone = toJS(drone)
+    const { onClick, getDroneLocationCords, getDrone } = this.props.droneStore;
     const { setLocation, setZoom } = this.props.mapStore;
-    const location = getDroneLocationCords(drone.uniqueIdentifier);
-    onClick(drone);
+    const location = getDroneLocationCords(drone.drone_id);
+    onClick(getDrone(drone.drone_id));
     setZoom();
-    console.log(getDroneLocationCords(drone.uniqueIdentifier));
     setLocation(location.longitude, location.latitude);
   };
 
@@ -95,6 +97,10 @@ class Maps extends Component {
       location,
       drawData
     } = this.props.mapStore;
+    const {
+      getDroneStatusColor,
+      getDrone
+    } = this.props.droneStore;
 
     return (
       <div style={{ height: "100%" }}>
@@ -110,16 +116,22 @@ class Maps extends Component {
           onClick={this.onClick}
         >
           <NavigationControl captureScroll showZoom position="top-right" />
-          {dronesData.map(drone => (
-            <Marker
-              style={style}
-              longitude={drone.location[0]}
-              latitude={drone.location[1]}
-            >
-              <span className="drone-on-map"
-                onClick={() => this.onDroneClick(drone)} style={{ margin: '30px' }} dangerouslySetInnerHTML={{__html: DroneLogo}} />
-            </Marker>
-          ))}
+          {dronesData.map(drone => {
+            drone = toJS(drone)
+            return (
+              <Marker
+                style={style}
+                longitude={drone.location[0]}
+                latitude={drone.location[1]}
+              >
+                <span className="drone-on-map"
+                  onClick={() => this.onDroneClick(drone)} >
+                    <DroneLogo style={{position: "absolute"}} />
+                    <DroneBorder fill={getDroneStatusColor(getDrone(drone.drone_id))} />
+                  </span>
+              </Marker>
+            )
+          })}
 
           {landingPoints.map(point => (
             <Marker
