@@ -90,7 +90,7 @@ namespace alert_state_machine.RuleRunners
 
                 if (dataObj.alertType == "UAS_COLLISION")
                 {
-                    await SendAlert(new Alert { droneId = dataObj.subject.uniqueIdentifier, type = "collision-alert", reason = "Collision" });
+                    await SendAlert(new Alert { droneId = dataObj.subject.uniqueIdentifier, name = dataObj.subject?.reference, type = "collision-alert", reason = "Collision" });
                     cachedProcess.Triggered = true;
                 }
             }

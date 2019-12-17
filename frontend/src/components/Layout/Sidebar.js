@@ -30,8 +30,8 @@ class Sidebar extends Component {
 
     connection.on("alerts", (message) => {
       message = JSON.parse(message)
-      console.log(message.droneId)
-      setDroneStatusAndStop(message.droneId, "DANGER");
+      console.log(message.name)
+      setDroneStatusAndStop(message.name, "DANGER");
     });
 
     connection.on("request_drone", (message) => {

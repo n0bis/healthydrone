@@ -214,7 +214,8 @@ class DroneStore {
   setDroneStatus = (drone_id, status) => {
     this.drones.map((drone, key) => {
       if (drone.uniqueIdentifier === drone_id) {
-        this.drones[key].flightStatus = status;
+        if (this.drones[key].flightStatus !== "DANGER")
+          this.drones[key].flightStatus = status;
       }
     });
   };
@@ -225,12 +226,14 @@ class DroneStore {
     "LANDED": "grey"
   })[drone.flightStatus]
 
-  setDroneStatusAndStop = (drone_id, status) => {
+  @action setDroneStatusAndStop = (name, status) => {
     this.drones.map((drone, key) => {
-      if (drone.uniqueIdentifier === drone_id) {
+      if (drone.nickname === name) {
+        console.log(this.drones[key])
         this.drones[key].flightStatus = status;
+        console.log(this.drones[key].flightStatus)
         this.drone = this.drones[key];
-        stopDrone();
+        this.stopDrone();
       }
     });
   };
