@@ -95,7 +95,7 @@ class DroneOptions extends Component {
               </p>
             </div>
             <div className="actions">
-              {drone.flightStatus === "IN_FLIGHT" ? (
+              {drone.flightStatus === "IN_FLIGHT" || drone.flightStatus === "DANGER" ? (
                 <>
                   <button onClick={this.stop}>Stop</button>
                   <button onClick={this.sendHome}>Send hjem</button>

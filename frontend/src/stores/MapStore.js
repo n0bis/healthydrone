@@ -84,7 +84,7 @@ class MapStore {
         location: [10.40237, 55.403756]
       },
       {
-        name: "Svendbord",
+        name: "Svendborg",
         location: [10.607282, 55.067434]
       },
       {

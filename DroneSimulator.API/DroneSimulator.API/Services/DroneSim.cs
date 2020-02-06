@@ -19,6 +19,7 @@ namespace DroneSimulator.API.Services
     {
         private static Drone _drone;
         private readonly UTMService _utmService;
+        private readonly double _earthRadius = 6378137;
 
         public DroneSim(IOptions<DroneOpts> droneOpts, IOptions<UTMOpts> utmOpts)
         {
